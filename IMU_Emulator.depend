@@ -1,0 +1,100 @@
+# depslib dependency file v1.0
+1498691775 source:c:\users\christopher harris\desktop\collect05032017\imu_emulator\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdint.h>
+	<math.h>
+	<inttypes.h>
+	<stdbool.h>
+	"Emulator.h"
+
+1498537302 c:\users\christopher harris\desktop\collect05032017\imu_emulator\emulator.h
+	"IMU10736_Lib/IMU10736_Config.h"
+	"DSP_Lib/DSP_Common.h"
+	"IMU_Common.h"
+	"WISE_Lib/WISE_Common.h"
+
+1498693051 c:\users\christopher harris\desktop\collect05032017\imu_emulator\imu10736_lib\imu10736_config.h
+	"../Common_Config.h"
+
+1498535789 c:\users\christopher harris\desktop\collect05032017\imu_emulator\imu_common.h
+	<stdbool.h>
+	<inttypes.h>
+	<stdio.h>
+
+1498535790 c:\users\christopher harris\desktop\collect05032017\imu_emulator\dsp_lib\dsp_common.h
+	<inttypes.h>
+
+1498618280 c:\users\christopher harris\desktop\collect05032017\imu_emulator\wise_lib\wise_common.h
+
+1498693086 source:c:\users\christopher harris\desktop\collect05032017\imu_emulator\common_functions.c
+	"Common_Config.h"
+	"DSP_Lib/DSP_Config.h"
+	"WISE_Lib/WISE_Config.h"
+	"IMU10736_Lib/IMU10736_Config.h"
+	"Emulator_Config.h"
+
+1498693115 source:c:\users\christopher harris\desktop\collect05032017\imu_emulator\dcm_functions.c
+	"Common_Config.h"
+	<math.h>
+	<stdio.h>
+	<stdlib.h>
+	"DSP_Lib/DSP_Config.h"
+	"WISE_Lib/WISE_Config.h"
+	"IMU10736_Lib/IMU10736_Config.h"
+	"Math.h"
+	"Emulator_Config.h"
+
+1498692911 c:\users\christopher harris\desktop\collect05032017\imu_emulator\math.h
+	"Common_Config.h"
+
+1498693071 source:c:\users\christopher harris\desktop\collect05032017\imu_emulator\dsp_lib\dsp_functions.c
+	"../Common_Config.h"
+	<string.h>
+	"DSP_Config.h"
+	"../WISE_Lib/WISE_Config.h"
+	"../IMU10736_Lib/IMU10736_Config.h"
+	"../Emulator_Config.h"
+
+1498693125 source:c:\users\christopher harris\desktop\collect05032017\imu_emulator\hw_functions.c
+	"Common_Config.h"
+	"DSP_Lib/DSP_Config.h"
+	"WISE_Lib/WISE_Config.h"
+	"IMU10736_Lib/IMU10736_Config.h"
+	"Emulator_Config.h"
+
+1498692875 source:c:\users\christopher harris\desktop\collect05032017\imu_emulator\math.c
+	"Common_Config.h"
+	<math.h>
+	"Emulator_Config.h"
+
+1498535438 source:c:\users\christopher harris\desktop\collect05032017\imu_emulator\cal_functions.c
+	"IMU_Common.h"
+	"Emulator.h"
+
+1498693142 source:c:\users\christopher harris\desktop\collect05032017\imu_emulator\wise_lib\wise_functions.c
+	"../Common_Config.h"
+	<math.h>
+	"../Math.h"
+	"../DSP_Lib/DSP_Config.h"
+	"WISE_Config.h"
+	"../IMU10736_Lib/IMU10736_Config.h"
+	"../Emulator_Config.h"
+
+1498535789 c:\users\christopher harris\desktop\collect05032017\imu_emulator\common_config.h
+	<stdbool.h>
+	<inttypes.h>
+	<stdio.h>
+
+1498535790 c:\users\christopher harris\desktop\collect05032017\imu_emulator\dsp_lib\dsp_config.h
+	<inttypes.h>
+
+1498618280 c:\users\christopher harris\desktop\collect05032017\imu_emulator\wise_lib\wise_config.h
+
+1498693105 c:\users\christopher harris\desktop\collect05032017\imu_emulator\emulator_config.h
+	"IMU10736_Lib/IMU10736_Config.h"
+	"DSP_Lib/DSP_Config.h"
+	"Common_Config.h"
+	"WISE_Lib/WISE_Config.h"
+

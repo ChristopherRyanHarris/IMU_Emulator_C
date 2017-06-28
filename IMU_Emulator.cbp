@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="IMU_Emulator" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/IMU_Emulator" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/IMU_Emulator" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="CAL_Functions.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Common_Config.h" />
+		<Unit filename="Common_Functions.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="DCM_Functions.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="DSP_Lib/DSP_Config.h" />
+		<Unit filename="DSP_Lib/DSP_Functions.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Emulator_Config.h" />
+		<Unit filename="HW_Functions.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="IMU10736_Lib/IMU10736_Config.h" />
+		<Unit filename="Math.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Math.h" />
+		<Unit filename="WISE_Lib/WISE_Config.h" />
+		<Unit filename="WISE_Lib/WISE_Functions.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
