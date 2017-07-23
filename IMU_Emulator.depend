@@ -98,3 +98,161 @@
 	"Common_Config.h"
 	"WISE_Lib/WISE_Config.h"
 
+1498693086 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\common_functions.c
+	"Common_Config.h"
+	"DSP_Lib/DSP_Config.h"
+	"WISE_Lib/WISE_Config.h"
+	"IMU10736_Lib/IMU10736_Config.h"
+	"Emulator_Config.h"
+
+1498535789 c:\users\christopher harris\documents\githubp\imu_emulator_c\common_config.h
+	<stdbool.h>
+	<inttypes.h>
+	<stdio.h>
+
+1498535790 c:\users\christopher harris\documents\githubp\imu_emulator_c\dsp_lib\dsp_config.h
+	<inttypes.h>
+
+1498709045 c:\users\christopher harris\documents\githubp\imu_emulator_c\wise_lib\wise_config.h
+
+1498693051 c:\users\christopher harris\documents\githubp\imu_emulator_c\imu10736_lib\imu10736_config.h
+	"../Common_Config.h"
+
+1500180910 c:\users\christopher harris\documents\githubp\imu_emulator_c\emulator_config.h
+	"IMU10736_Lib/IMU10736_Config.h"
+	"DSP_Lib/DSP_Config.h"
+	"Common_Config.h"
+	"WISE_Lib/WISE_Config.h"
+
+1499109592 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\dcm_functions.c
+	"Common_Config.h"
+	<math.h>
+	<stdio.h>
+	<stdlib.h>
+	"DSP_Lib/DSP_Config.h"
+	"WISE_Lib/WISE_Config.h"
+	"IMU10736_Lib/IMU10736_Config.h"
+	"Math.h"
+	"Emulator_Config.h"
+
+1498692911 c:\users\christopher harris\documents\githubp\imu_emulator_c\math.h
+	"Common_Config.h"
+
+1498693071 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\dsp_lib\dsp_functions.c
+	"../Common_Config.h"
+	<string.h>
+	"DSP_Config.h"
+	"../WISE_Lib/WISE_Config.h"
+	"../IMU10736_Lib/IMU10736_Config.h"
+	"../Emulator_Config.h"
+
+1498693125 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\hw_functions.c
+	"Common_Config.h"
+	"DSP_Lib/DSP_Config.h"
+	"WISE_Lib/WISE_Config.h"
+	"IMU10736_Lib/IMU10736_Config.h"
+	"Emulator_Config.h"
+
+1498692875 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\math.c
+	"Common_Config.h"
+	<math.h>
+	"Emulator_Config.h"
+
+1498709302 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\wise_lib\wise_functions.c
+	"../Common_Config.h"
+	<math.h>
+	"../Math.h"
+	"../DSP_Lib/DSP_Config.h"
+	"WISE_Config.h"
+	"../IMU10736_Lib/IMU10736_Config.h"
+	<string.h>
+	"../Emulator_Config.h"
+
+1498709423 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdint.h>
+	<math.h>
+	<inttypes.h>
+	<stdbool.h>
+	"Emulator_Config.h"
+
+1500760552 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\calibration_functions.c
+	"../Include/Common_Config.h"
+	"../Include/Emulator_Config.h"
+
+1500774133 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\common_config.h
+	<stdbool.h>
+	<inttypes.h>
+	<stdio.h>
+
+1500760945 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\emulator_config.h
+	"IMU10736_Config.h"
+	"DSP_Config.h"
+	"Common_Config.h"
+	"WISE_Config.h"
+
+1500760923 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\imu10736_config.h
+	"Common_Config.h"
+
+1500760880 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\dsp_config.h
+	<inttypes.h>
+
+1498709045 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\wise_config.h
+
+1500771850 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\common_functions.c
+	"../Include/Common_Config.h"
+	"../Include/DSP_Config.h"
+	"../Include/WISE_Config.h"
+	"../Include/IMU10736_Config.h"
+	"../Include/Emulator_Config.h"
+
+1500771883 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\dcm_functions.c
+	"../Include/Common_Config.h"
+	<math.h>
+	<stdio.h>
+	<stdlib.h>
+	"../Include/DSP_Config.h"
+	"../Include/WISE_Config.h"
+	"../Include/IMU10736_Config.h"
+	"../Include/Math.h"
+	"../Include/Emulator_Config.h"
+
+1500760854 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\math.h
+	"Common_Config.h"
+
+1500771894 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\dsp_functions.c
+	"../Include/Common_Config.h"
+	<string.h>
+	"../Include/DSP_Config.h"
+	"../Include/WISE_Config.h"
+	"../Include/IMU10736_Config.h"
+	"../Include/Emulator_Config.h"
+
+1500771901 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\hw_functions.c
+	"../Include/Common_Config.h"
+	"../Include/DSP_Config.h"
+	"../Include/WISE_Config.h"
+	"../Include/IMU10736_Config.h"
+	"../Include/Emulator_Config.h"
+
+1500772124 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\emulator_functions.c
+	"../Include/Common_Config.h"
+	"../Include/Emulator_Config.h"
+
+1500772163 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<stdint.h>
+	<math.h>
+	<inttypes.h>
+	<stdbool.h>
+	"../Include/Emulator_Config.h"
+
+1500758316 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\math.c
+	"../Include/Common_Config.h"
+	<math.h>
+	"../Include/Emulator_Config.h"
+
