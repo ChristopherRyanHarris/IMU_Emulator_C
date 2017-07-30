@@ -41,7 +41,7 @@ EMULATE_TYPE        g_emu_data;
 // Order:
 // Timestamp, accel[0:2], gyro[0:2], yaw, pitch, roll, aest_ave[0:1], vest_ave[0:1]
 // Timestamp in micro seconds
-const char* g_EmuFile = "..\\Data\\BinaryData\\Subject1\\Subject1_2p7_0pct.bin";
+const char* g_EmuFile = ".\\Data\\BinaryData\\Subject1\\Subject1_2p7_0pct.bin";
 FILE *      g_fid;
 
 

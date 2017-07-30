@@ -201,47 +201,55 @@
 
 1498709045 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\wise_config.h
 
-1500771850 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\common_functions.c
+1500773950 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\common_functions.c
 	"../Include/Common_Config.h"
+	"../Include/IMU10736_Config.h"
+	<SparkFunMPU9250-DMP.h>
+	"../Include/IMU9250_Config.h"
 	"../Include/DSP_Config.h"
 	"../Include/WISE_Config.h"
-	"../Include/IMU10736_Config.h"
 	"../Include/Emulator_Config.h"
 
-1500771883 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\dcm_functions.c
+1500773926 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\dcm_functions.c
 	"../Include/Common_Config.h"
 	<math.h>
 	<stdio.h>
 	<stdlib.h>
+	"../Include/IMU10736_Config.h"
+	<SparkFunMPU9250-DMP.h>
+	"../Include/IMU9250_Config.h"
 	"../Include/DSP_Config.h"
 	"../Include/WISE_Config.h"
-	"../Include/IMU10736_Config.h"
 	"../Include/Math.h"
 	"../Include/Emulator_Config.h"
 
 1500760854 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\math.h
 	"Common_Config.h"
 
-1500771894 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\dsp_functions.c
+1500773960 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\dsp_functions.c
 	"../Include/Common_Config.h"
 	<string.h>
+	"../Include/IMU10736_Config.h"
+	<SparkFunMPU9250-DMP.h>
+	"../Include/IMU9250_Config.h"
 	"../Include/DSP_Config.h"
 	"../Include/WISE_Config.h"
-	"../Include/IMU10736_Config.h"
 	"../Include/Emulator_Config.h"
 
-1500771901 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\hw_functions.c
+1500773968 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\hw_functions.c
 	"../Include/Common_Config.h"
+	"../Include/IMU10736_Config.h"
+	<SparkFunMPU9250-DMP.h>
+	"../Include/IMU9250_Config.h"
 	"../Include/DSP_Config.h"
 	"../Include/WISE_Config.h"
-	"../Include/IMU10736_Config.h"
 	"../Include/Emulator_Config.h"
 
 1500772124 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\emulator_functions.c
 	"../Include/Common_Config.h"
 	"../Include/Emulator_Config.h"
 
-1500772163 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\main.c
+1500863001 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -254,5 +262,20 @@
 1500758316 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\math.c
 	"../Include/Common_Config.h"
 	<math.h>
+	"../Include/Emulator_Config.h"
+
+1500773854 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\imu9250_config.h
+	"Common_Config.h"
+
+1500862920 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\wise_functions.c
+	"../Include/Common_Config.h"
+	<math.h>
+	<string.h>
+	"../Include/IMU10736_Config.h"
+	<SparkFunMPU9250-DMP.h>
+	"../Include/IMU9250_Config.h"
+	"../Include/Math.h"
+	"../Include/DSP_Config.h"
+	"../Include/WISE_Config.h"
 	"../Include/Emulator_Config.h"
 

@@ -31,34 +31,37 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
-		<Unit filename="CAL_Functions.c">
+		<Unit filename="Include/Common_Config.h" />
+		<Unit filename="Include/Emulator_Config.h" />
+		<Unit filename="Include/IMU10736_Config.h" />
+		<Unit filename="Include/IMU9250_Config.h" />
+		<Unit filename="Include/Math.h" />
+		<Unit filename="Include/WISE_Config.h" />
+		<Unit filename="Src/Calibration_Functions.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="Common_Config.h" />
-		<Unit filename="Common_Functions.c">
+		<Unit filename="Src/Common_Functions.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="DCM_Functions.c">
+		<Unit filename="Src/DCM_Functions.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="DSP_Lib/DSP_Config.h" />
-		<Unit filename="DSP_Lib/DSP_Functions.c">
+		<Unit filename="Src/DSP_Functions.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="Emulator_Config.h" />
-		<Unit filename="HW_Functions.c">
+		<Unit filename="Src/Emulator_Functions.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="IMU10736_Lib/IMU10736_Config.h" />
-		<Unit filename="Math.c">
+		<Unit filename="Src/HW_Functions.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="Math.h" />
-		<Unit filename="WISE_Lib/WISE_Config.h" />
-		<Unit filename="WISE_Lib/WISE_Functions.c">
+		<Unit filename="Src/Math.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="main.c">
+		<Unit filename="Src/WISE_Functions.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Src/main.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>

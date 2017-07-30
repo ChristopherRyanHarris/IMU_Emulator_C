@@ -72,7 +72,7 @@ void WISE_Init ( void )
   g_wise_state.GaitStart.drift[0]     = 0.0f;
   g_wise_state.GaitStart.drift[1]     = 0.0f;
   g_wise_state.GaitStart.drift[2]     = 0.0f;
-  
+
   g_wise_state.GaitEnd.vel[0]       = 999;
   g_wise_state.GaitEnd.vel[1]       = 999;
   g_wise_state.GaitEnd.vel_total[0] = 999;
@@ -164,6 +164,9 @@ void WISE_Reset ( void )
 */
 void Map_Accel_2D ( void )
 {
+
+	float accel_w[3];
+
   /*
   ** Notes on orientation for the 10736 IMU
   **   Terms:
@@ -183,11 +186,17 @@ void Map_Accel_2D ( void )
   ** Note: IMU coordinate ref. frame definced in IMU#_Config.h
   **       Rotation will need to be accounted for */
   float Ax, Az;
+
+  Matrix_Vector_Multiply( g_dcm_state.DCM_Matrix, g_sensor_state.accel, &accel_w[0] );
+  accel_w[0] = accel_w[0] * GTOMPS2/250 * MPSTOMPH;
+  accel_w[2] = (accel_w[2] - 250) * GTOMPS2/250 * MPSTOMPH;
+
   Ax = g_sensor_state.accel[0];
   Az = g_sensor_state.accel[2];
 
   g_wise_state.accel_delta[0] = Ax;
   g_wise_state.accel_delta[1] = Az;
+
 
   /**********************************
   ** Tangent Part *******************
@@ -220,6 +229,11 @@ void Map_Accel_2D ( void )
   /* Get average */
   g_wise_state.accel_total[1] += g_wise_state.accel[1];
   g_wise_state.accel_ave[1]  = g_wise_state.accel_total[1]/g_wise_state.Nsamples;
+
+	fprintf(stdout,"accT[0]:%f accN[1]:%f\n",g_wise_state.accel[0],g_wise_state.accel[1]);
+	fprintf(stdout,"accW[0]:%f accW[1]:%f accW[2]:%f\n",accel_w[0],accel_w[1],accel_w[2]);
+  //g_wise_state.accel[0] = accel_w[0];
+  //g_wise_state.accel[1] = accel_w[2];
 
 } /* End Map_Accel_2D */
 
@@ -255,6 +269,8 @@ void Integrate_Accel_2D ( void )
     g_wise_state.vel_total[i] += g_wise_state.vel[i];
     //g_wise_state.vel_ave[i]  = g_wise_state.vel_total[i]/g_wise_state.Nsample;
   }
+
+  g_wise_state.Time += g_control_state.G_Dt;
 } /* End Integrate_Accel_2D */
 
 
@@ -316,7 +332,7 @@ void Adjust_Velocity( void )
 
     /* Reset saved minima and increment cycle counter */
     g_wise_state.Ncycles++;
-    
+
     memcpy( &(g_wise_state.GaitStart), &(g_wise_state.GaitEnd), sizeof(WISE_GATE_TYPE) );
     g_wise_state.GaitStart.Nsamples = 1.0f;
 
@@ -364,6 +380,20 @@ void Adjust_Velocity( void )
 } /* End Adjust_Velocity */
 
 
+
+/*
+** Function: Adjust_Incline
+** This function determines the
+** Incline.
+*/
+void Adjust_Incline( void )
+{
+  int i;
+  for( i=0; i<2; i++)
+  {
+    g_wise_state.dist[i] = g_wise_state.vel_ave[i]*g_control_state.G_Dt;
+  }
+}
 
 
 /*

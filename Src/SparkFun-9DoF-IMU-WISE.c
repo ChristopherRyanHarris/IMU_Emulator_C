@@ -77,6 +77,7 @@ void setup()
   
   /* Set the initial roll/pitch/yaw from 
   ** initial accel/gyro */
+  Read_Sensors();
   Reset_Sensor_Fusion(); 
   
   if( CALIBRATE_MODE ) { Calibration_Init(); }
