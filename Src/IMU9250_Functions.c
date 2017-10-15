@@ -6,6 +6,7 @@
 ** reading the sensor registeres
 **************************************************/
 
+#ifdef _IMU9250_
 
 /*******************************************************************
 ** Functions *******************************************************
@@ -19,6 +20,8 @@
 */
 void Read_Sensors()
 {
+  int i;
+  
   /* Set the initial accel and gyro vectors */
   imu.updateAccel();
   g_sensor_state.accel[0] = imu.ax;
@@ -28,6 +31,7 @@ void Read_Sensors()
   g_sensor_state.gyro[0] = imu.gx;
   g_sensor_state.gyro[1] = imu.gy;
   g_sensor_state.gyro[2] = imu.gz;
+  
 }
 
 
@@ -39,6 +43,9 @@ void Read_Sensors()
 */
 bool Init_IMU(void)
 {
+	
+	LOG_PRINTLN("> Initializing IMU9250");
+	
   /* Set up MPU-9250 interrupt input (active-low) */
   pinMode(MPU9250_INT_PIN, INPUT_PULLUP);
   
@@ -56,6 +63,9 @@ bool Init_IMU(void)
   imu.setSampleRate( IMU_AG_SAMPLE_RATE );
   return true; // Return success
 }
+
+#endif /* #ifdef _IMU9250_ */
+
 
 
 

@@ -23,11 +23,15 @@
 #endif
 
 #define DEBUG 1
+
+/* IO params */
+#define OUTPUT_MODE 4
+#define NUM_COM_MODES 6
+
+/* Calibration params  */
 #define CALIBRATE_MODE  0
 #define CAL_OUTPUT_MODE 0
-
 #define NUM_CALCOM_MODES 2
-#define NUM_COM_MODES 5
 
 /*******************************************************************
 ** Tyedefs *********************************************************
@@ -39,7 +43,7 @@
 ** data useful for calibration */
 typedef struct
 {
-  int output_mode;// = 0;
+  int output_mode;
 
   float accel_total[3];
   float accel_max[3];
@@ -61,6 +65,13 @@ typedef struct
   float Omega_P[3];
   float Omega_I[3];
   float DCM_Matrix[3][3];
+
+  float gyro_ave[3];
+  float gyro_var[3];
+  float gyro_std[3];
+
+  long int SampleNumber;
+  float std_time;
 } DCM_STATE_TYPE;
 
 /*
@@ -78,6 +89,7 @@ typedef struct
   /* Accel x:Fore y:Port z:Zenith */
   float accel[3];
   float gyro[3];
+
 } SENSOR_STATE_TYPE;
 
 /*
@@ -94,10 +106,12 @@ typedef struct
 
   /* Serial communication globals */
   bool g_BaudLock; /* Used to set baud rate */
+  uint32_t  g_LastLogTime; /* Sets the UART LOG Rate */
 
   /* LED state globals */
   bool      g_LedState; /* Used to set LED state */
   uint32_t  g_LastBlinkTime; /* Used to set LED state */
+
 
 } CONTROL_STATE_TYPE;
 

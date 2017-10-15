@@ -24,7 +24,7 @@
 
 /* The LED can be used for external debugging */
 //#define UART_BLINK_RATE 100
-#define UART_BLINK_RATE 0
+#define UART_BLINK_RATE 1000
 
 /* DCM parameters
 *******************************************************************/
@@ -38,8 +38,6 @@
 #define Kp_YAW 1.2f
 #define Ki_YAW 0.00002f
 
-/* "1G reference" used for DCM filter and accelerometer calibration */
-#define GRAVITY 256.0f
 
 /*
 ** Notes on orientation for the 10736 IMU
@@ -222,6 +220,9 @@
 /******************************************************************
 ** Sensor Calibration
 *******************************************************************/
+
+/* "1G reference" used for DCM filter and accelerometer calibration */
+#define GRAVITY 256.0f
 
 /* Calibration Macros
 ******************************************************************/

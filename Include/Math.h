@@ -17,9 +17,9 @@
 #if EXE_MODE /* Emulator mode */
 #define FCONSTRAIN(x,m,M) (fmin(fmax(x,m),M))
 #else
-#define FCONSTRAIN(x,m,M) constrain(x,m,M ))
+#define FCONSTRAIN constrain
 #endif /* EXE_MODE */
 
-#define SIGN(x) ( (0<x) - (x<0) )
+#define SIGN(x) ( (0<x)-(x<0)+(x==0) )
 
 #endif /* End MATH_H */

@@ -20,7 +20,7 @@ extern DCM_STATE_TYPE      g_dcm_state;
 extern DSP_COMMON_TYPE     g_dsp;
 extern SENSOR_STATE_TYPE   g_sensor_state;
 extern CONTROL_STATE_TYPE  g_control_state;
-extern SWE_STATE_TYPE      g_swe_state;
+extern WISE_STATE_TYPE     g_wise_state;
 #endif /* End Emulator Mode */
 
 
@@ -39,67 +39,48 @@ extern SWE_STATE_TYPE      g_swe_state;
 void Debug_LogOut( void )
 {
   String imuLog = ""; 
-  //imuLog += "T:" + String( g_control_state.timestamp ) + ", "; // Add time to log string
-  //imuLog += "DT:" + String( g_control_state.G_Dt,3 ) + ", ";
-  //imuLog += "SR:" + String( (1/g_control_state.G_Dt),3 ) + ", "; // Add delta time to log string
+  char fastlog[500];
 
   switch ( g_control_state.output_mode )
   {
     case 0:
-      imuLog += "R:" + String( TO_DEG( g_sensor_state.roll ),3 ) + ", ";
-      imuLog += "P:" + String( TO_DEG( g_sensor_state.pitch ),3 ) + ", ";
-      imuLog += "Y:" + String( TO_DEG( g_sensor_state.yaw ),5 ) + ", ";
-      imuLog += "Acc:" + String( g_sensor_state.accel[0],3 ) + ",";
-      imuLog += String( g_sensor_state.accel[1],3 ) + ",";
-      imuLog += String( g_sensor_state.accel[2],3 ) + " ";
-      imuLog += "Gyr:" + String( g_sensor_state.gyro[0],3 ) + ",";
-      imuLog += String( g_sensor_state.gyro[1],3 ) + ",";
-      imuLog += String( g_sensor_state.gyro[2],3 ) + " ";
+    	sprintf(fastlog,"T:%09d, DT:%.4f, SR:% 07.4f, R:% 09.4f, P:% 09.4f, Y:% 09.4f, A:% 05.0f,% 05.0f,% 05.0f, G:% 05.0f,% 05.0f,% 05.0f\n",
+    		g_control_state.timestamp,g_control_state.G_Dt,(1/g_control_state.G_Dt),
+	    	TO_DEG(g_sensor_state.roll),TO_DEG(g_sensor_state.pitch),TO_DEG(g_sensor_state.yaw),
+	    	g_sensor_state.accel[0],g_sensor_state.accel[1],g_sensor_state.accel[2],
+	    	g_sensor_state.gyro[0],g_sensor_state.gyro[1],g_sensor_state.gyro[2]);
       break;
     case 1:
-      imuLog += "swe_v (v/av/d/od/op):";
-      imuLog += String( g_swe_state.vel[0],3 ) + "/" + String( g_swe_state.vel_ave[0],3 ) + "/";
-      imuLog += String( g_swe_state.vel_delta[0],3 ) + "/" + String( g_swe_state.omega_vd[0],3 ) + "/";
-      imuLog += String( g_swe_state.omega_vp[0],5 ) + " , ";
-      imuLog += String( g_swe_state.vel[1],3 ) + "/" + String( g_swe_state.vel_ave[0],3 ) + "/";
-      imuLog += String( g_swe_state.vel_delta[1],3 ) + "/" + String( g_swe_state.omega_vd[1],3 ) + "/";
-      imuLog += String( g_swe_state.omega_vp[1],5 );
+    	sprintf(fastlog,"WISE: v:%.4f %.4f vave: %.4f %.4f Igait: %.4f Iave: %.4f I: %.4f\n",
+    		g_wise_state.vel[0],g_wise_state.vel[1],g_wise_state.vel_ave[0],g_wise_state.vel_ave[1],
+    		g_wise_state.Incline_gait,g_wise_state.Incline_ave,g_wise_state.Incline );
       break;
     case 2:
-      imuLog += "swe_a (a/aa/d/od/op):";
-      imuLog += String( g_swe_state.accel[0],3 ) + "/" + String( g_swe_state.accel_ave[0],3 ) + "/";
-      imuLog += String( g_swe_state.accel_delta[0],3 ) + "/" + String( g_swe_state.omega_ad[0],3 ) + "/";
-      imuLog += String( g_swe_state.omega_ap[0],5 ) + " , ";
-      imuLog += String( g_swe_state.accel[1],3 ) + "/" + String( g_swe_state.accel_ave[1],3 ) + "/";
-      imuLog += String( g_swe_state.accel_delta[1],3 ) + "/" + String( g_swe_state.omega_ad[1],3 ) + "/";
-      imuLog += String( g_swe_state.omega_ap[1],5 );
+    	sprintf(fastlog,"WISE(v) (v/av/d/od/op): 1:%.4f/%.4f/%.4f/%.4f 2:%.4f/%.4f/%.4f/%.4f\n",
+    		g_wise_state.vel[0],g_wise_state.vel_ave[0],g_wise_state.vel_delta[0],g_wise_state.omega_vd[0],g_wise_state.omega_vp[0],
+    		g_wise_state.vel[1],g_wise_state.vel_ave[1],g_wise_state.vel_delta[1],g_wise_state.omega_vd[1],g_wise_state.omega_vp[1] );
       break;
     case 3:
-      imuLog += String( g_control_state.timestamp ) + ",";
-      imuLog += String( g_sensor_state.accel[0],0 ) + ",";
-      imuLog += String( g_sensor_state.accel[1],0 ) + ",";
-      imuLog += String( g_sensor_state.accel[2],0 ) + ",";
-      imuLog += String( g_sensor_state.gyro[0],0 ) + ",";
-      imuLog += String( g_sensor_state.gyro[1],0 ) + ",";
-      imuLog += String( g_sensor_state.gyro[2],0 ) + ",";
-      imuLog += String( TO_DEG(g_sensor_state.yaw), 2 ) + ",";
-      imuLog += String( TO_DEG(g_sensor_state.pitch), 2 ) + ",";
-      imuLog += String( TO_DEG(g_sensor_state.roll), 2 ) + ",";
-      //imuLog += String( g_swe_state.accel[0],3 ) + "," + String( g_swe_state.accel[1],3 ) + ",";
-      imuLog += String( g_swe_state.accel_ave[0],3 ) + ",";
-      imuLog += String( g_swe_state.accel_ave[1],3 ) + ",";
-      //imuLog += String( g_swe_state.vel[0],3 ) + "," + String( g_swe_state.vel[1],3 )  + ",";
-      imuLog += String( g_swe_state.vel_ave[0],3 ) + ",";
-      imuLog += String( g_swe_state.vel_ave[1],3 );
+    	sprintf(fastlog,"WISE(a) (a/aa/d/od/op): 1:%.4f/%.4f/%.4f/%.4f 2:%.4f/%.4f/%.4f/%.4f\n",
+    		g_wise_state.accel[0],g_wise_state.accel_ave[0],g_wise_state.accel_delta[0],g_wise_state.omega_ad[0],g_wise_state.omega_ap[0],
+    		g_wise_state.accel[1],g_wise_state.accel_ave[1],g_wise_state.accel_delta[1],g_wise_state.omega_ad[1],g_wise_state.omega_ap[1]);
       break;
     case 4:
-      imuLog += "\t";
-      imuLog = "err est (p1/p2/p3/pave): ";
-      imuLog += String( g_swe_state.pe[0],7 ) + "/" + String( g_swe_state.pe[1],7 ) + "/" + String( g_swe_state.pe[2],7 ) + "/";
-      imuLog += String( g_swe_state.pave,7 );
+    	sprintf(fastlog,"%d,%.0f,%.0f,%.0f,%.0f,%.0f,%.0f,%.4f,%.4f,%.4f\n",
+    		g_control_state.timestamp,
+	    	g_sensor_state.accel[0],g_sensor_state.accel[1],g_sensor_state.accel[2],
+	    	g_sensor_state.gyro[0],g_sensor_state.gyro[1],g_sensor_state.gyro[2],
+	    	TO_DEG(g_sensor_state.yaw),TO_DEG(g_sensor_state.pitch),TO_DEG(g_sensor_state.roll) );
+	    LOG_PRINT( fastlog ); 
+      break;
+    case 5:
+    	sprintf(fastlog,"G_ave: %.4f %.4f %.4f G_std: %.4f %.4f %.4f\n",
+    		g_dcm_state.gyro_ave[0],g_dcm_state.gyro_ave[1],g_dcm_state.gyro_ave[2],
+    		g_dcm_state.gyro_std[0],g_dcm_state.gyro_std[1],g_dcm_state.gyro_std[2]  );
+    default:
+    	break;
   }
-  imuLog += "\r\n"; 
-  LOG_PRINT( imuLog ); 
+  LOG_PRINT( fastlog ); 
 } /* End Debug_LogOut */
 
 /*************************************************
@@ -136,13 +117,13 @@ void Cal_LogOut(void)
 } /* End Cal_LogOut */
 
 /*************************************************
-** f_SendData
+** f_RespondToInput
 ** We have recieved a request
 ** The request will be a single character (one Byte)
 ** which will coorespond to a given type of data being
 ** requested by the master 
 */
-void f_SendData( int nBytesIn )
+void f_RespondToInput( int nBytesIn )
 {
   int i;
   unsigned char RequestByte;
@@ -277,11 +258,11 @@ void f_SendData( int nBytesIn )
         break;
 
       case 0x64:
-        /* SWE - Reset SWE state variables
+        /* WISE - Reset WISE state variables
         ** Simulate heel strike */
-        LOG_PRINT("\t> Recieved SWE Reset Request ... Case : ");
+        LOG_PRINT("\t> Recieved WISE Reset Request ... Case : ");
         LOG_PRINTLN(RequestByte, DEC);
-        SWE_Reset();
+        WISE_Reset();
         break;
 
       default:
@@ -294,7 +275,7 @@ void f_SendData( int nBytesIn )
     /* Reset the input buffer */
     RequestByte = 0;
   }
-} /* End f_SendData */
+} /* End f_RespondToInput */
 
 
 /*************************************************

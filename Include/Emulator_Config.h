@@ -41,6 +41,7 @@ void WISE_Update ( void );
 void Map_Accel_2D ( void );
 void Integrate_Accel_2D ( void );
 void Adjust_Velocity ( void );
+void Adjust_Incline ( void );
 void Estimate_Error ( void );
 
 /* Com_Functions */

@@ -44,11 +44,10 @@ MPU9250_DMP imu;
 /* DCM variables */
 CAL_STATE_TYPE      g_calibration;
 DCM_STATE_TYPE      g_dcm_state;
-DSP_COMMON_TYPE     g_dsp;
 SENSOR_STATE_TYPE   g_sensor_state;
 CONTROL_STATE_TYPE  g_control_state;
-SWE_STATE_TYPE      g_swe_state;
-
+WISE_STATE_TYPE     g_wise_state;
+DSP_COMMON_TYPE     g_dsp;
 
 /*******************************************************************
 ** START ***********************************************************
@@ -63,6 +62,8 @@ SWE_STATE_TYPE      g_swe_state;
 */
 void setup()
 {
+  Common_Init();
+  
   /* Initialize the hardware */
   Init_Hardware();
 
@@ -70,20 +71,31 @@ void setup()
   if ( !Init_IMU() ) 
   {
     LOG_PRINTLN("Error connecting to IMU");
-    while(1){ }  // Loop forever if we fail to connect
+    while(1){ }
   }
-  LOG_PRINTLN("> IMU Initialized");
-  delay(20);
+  delay(2000);
   
   /* Set the initial roll/pitch/yaw from 
   ** initial accel/gyro */
   Read_Sensors();
   Reset_Sensor_Fusion(); 
   
-  if( CALIBRATE_MODE ) { Calibration_Init(); }
+  #if( CALIBRATE_MODE==1 )
+  Calibration_Init();
+  #endif
+
+  DCM_Init();
   
-  SWE_Init();
+  #if( DSP_ON==1 )
   DSP_Filter_Init();
+  #endif
+  
+  #if( WISE_ON==1 )
+  WISE_Init();
+  #endif
+  
+  LOG_PRINTLN("> IMU Setup Done");
+  
 } /* End setup */
 
 // Main loop
@@ -93,21 +105,44 @@ void loop()
   Read_Sensors();
   
   /* Apply Freq Filter to Input */
-  //FIR_Filter();
-  //IIR_Filter();
-  //DSP_Shift();
+  #if( DSP_ON==1 )
+  FIR_Filter();
+  IIR_Filter();
+  DSP_Shift();
+  #endif
 
-  if( CALIBRATE_MODE ) { Calibrate(); }
+  #if( CALIBRATE_MODE==1 )
+  Calibrate();
+  #endif
   
   /* Apply the DCM Filter */
   Update_Time();
   DCM_Filter();
   
   /* Estimate Walking Speed and Incline */
-  SWE_Update();
-
+  #if( WISE_ON==1 )
+  if( ((g_dcm_state.gyro_std[0]+g_dcm_state.gyro_std[1]+g_dcm_state.gyro_std[2])/3 > MOVE_MIN_GYRO_STD) )
+	{
+		WISE_Update();
+	}
+	#endif
+    
   /* Read/Respond to command */
-  if( Serial.available() > 0 ) { f_SendData( Serial.available() );  }
+  if( COMM_PORT.available()>0 ) { f_RespondToInput( COMM_PORT.available() );  }
+
+  /* We blink every UART_LOG_RATE millisecods */
+  if ( micros()>(g_control_state.g_LastLogTime+UART_LOG_RATE) )
+  {
+  	/* Log the current states to the debug port */
+    Debug_LogOut();
+    
+    g_control_state.g_LastLogTime = micros();
+
+    /* Display number of bytes available on comm port
+    ** Com port is used for real-time communication with
+    ** connected processor */
+    //LOG_PORT.println("> # Available on COMM_PORT: " + String(COMM_PORT.available()) );
+  }
 
   /* Blink LED 
   ** TO DO: It would be nice to have a blink code

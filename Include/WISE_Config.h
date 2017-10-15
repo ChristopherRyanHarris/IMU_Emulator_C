@@ -9,6 +9,8 @@
 #ifndef WISE_COMMON_H
 #define WISE_COMMON_H
 
+#define WISE_ON 0
+
 //#define WISE_GAIN_AD 0.025f
 #define WISE_GAIN_AD 0.05f
 //#define WISE_GAIN_AP 0.00005f
@@ -20,11 +22,12 @@
 //#define WISE_GAIN_VP 0.03f
 #define WISE_GAIN_VP 0.0f
 
-#define WISE_CORRECTION 5.0
+#define WISE_CORRECTION 1.8
+//#define WISE_CORRECTION 5.0
 //#define WISE_CORRECTION 3.720962
 //#define WISE_CORRECTION 1.0
 
-#define WISE_MINCOUNT 20
+#define WISE_MINCOUNT 50
 
 /*******************************************************************
 ** Tyedefs
@@ -41,6 +44,7 @@ typedef struct
 	float vel[3];
 	float vel_total[3];
 	float drift[3];
+	long int Time;
 	float Nsamples;
 } WISE_GATE_TYPE;
 
@@ -58,6 +62,8 @@ typedef struct
 
 	WISE_GATE_TYPE GaitStart;
 	WISE_GATE_TYPE GaitEnd;
+	
+	WISE_GATE_TYPE CrossingP;
 
   float pitch_mem;
   float pitch_delta;
@@ -84,10 +90,28 @@ typedef struct
   float vel_delta[3];
   float omega_vd[3];
   float omega_vp[3];
+  
+  
+  /* [r_x, r_y, r_Z]
+  ** Integral of gyro data
+  ** Used to determine gait toe-off (max point)
+  ** Can also be used to fine heel strike (min point) */
+  float gyr[3];
+  float rot[3];
+  float rot_total[3];
+  float rot_ave[3];
+  float rot_delta[3];
+  
+  float dist[3];
+  
+  float Incline;
+  float Incline_ave;
+  float Incline_gait;
 
   float pe[3];
   float pave;
 
+	float Time;
   float Nsamples;
   float Ncycles;
 } WISE_STATE_TYPE;

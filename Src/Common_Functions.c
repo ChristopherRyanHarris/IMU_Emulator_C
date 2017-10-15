@@ -47,9 +47,11 @@ extern WISE_STATE_TYPE     g_wise_state;
 */
 void Common_Init( void )
 {
-  LOG_PRINT("> Initializing\n");
+  LOG_PRINT("> Initializing Common\n");
 
-  g_calibration.output_mode    = CAL_OUTPUT_MODE;
+	/* Set default IO mode */
+	g_control_state.output_mode = OUTPUT_MODE;
+  g_calibration.output_mode   = CAL_OUTPUT_MODE;
   //g_calibration.calibrate_flag = 0;
 
   g_control_state.timestamp      = 0;

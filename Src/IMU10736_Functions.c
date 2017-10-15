@@ -6,27 +6,11 @@
 ** reading the sensor registeres
 **************************************************/
 
+#ifdef _IMU10736_
 
 /*******************************************************************
 ** Includes ********************************************************
 ********************************************************************/
-
-
-//#include "../Include/Common_Config.h"
-//
-//#if EXE_MODE==1 /* Emulator Mode */
-//#include "../Include/DSP_Lib/DSP_Config.h"
-//#include "../Include/WISE_Lib/WISE_Config.h"
-//#include "../Include/IMU10736_Config.h"
-//#include "../Include/Emulator_Config.h"
-//extern CAL_STATE_TYPE      g_calibration;
-//extern DCM_STATE_TYPE      g_dcm_state;
-//extern DSP_COMMON_TYPE     g_dsp;
-//extern SENSOR_STATE_TYPE   g_sensor_state;
-//extern CONTROL_STATE_TYPE  g_control_state;
-//extern WISE_STATE_TYPE     g_wise_state;
-//#endif /* End Emulator Mode */
-
 
 /*******************************************************************
 ** Functions *******************************************************
@@ -76,6 +60,9 @@ void Read_Sensors( void )
 */
 bool Init_IMU( void )
 {
+	
+	LOG_PRINTLN("> Initializing IMU10736");
+	
   /* Initialize sensors */
   delay(50);  // Give sensors enough time to start
   I2C_Init();
@@ -332,5 +319,15 @@ void Read_Gyro( void )
     Serial.println("!ERR: reading gyroscope");
   }
 } /* End Read_Gyro */
+
+
+#endif /* #ifdef _IMU10736_ */
+
+
+
+
+
+
+
 
 

@@ -44,7 +44,9 @@ extern WISE_STATE_TYPE     g_wise_state;
 ********************************************************************/
 
 
-/*
+
+
+/*****************************************************************
 ** Function: WISE_Init
 ** This function initializes the WISE state
 ** variables.
@@ -52,6 +54,8 @@ extern WISE_STATE_TYPE     g_wise_state;
 void WISE_Init ( void )
 {
   int i;
+  
+  LOG_PRINTLN("> Initializing WISE");
 
   g_wise_state.swing_state = FALSE; /* Bool */
   g_wise_state.toe_off     = FALSE; /* Bool */
@@ -72,7 +76,7 @@ void WISE_Init ( void )
   g_wise_state.GaitStart.drift[0]     = 0.0f;
   g_wise_state.GaitStart.drift[1]     = 0.0f;
   g_wise_state.GaitStart.drift[2]     = 0.0f;
-
+  
   g_wise_state.GaitEnd.vel[0]       = 999;
   g_wise_state.GaitEnd.vel[1]       = 999;
   g_wise_state.GaitEnd.vel_total[0] = 999;
@@ -81,27 +85,46 @@ void WISE_Init ( void )
   g_wise_state.GaitEnd.drift[0]     = 0.0f;
   g_wise_state.GaitEnd.drift[1]     = 0.0f;
   g_wise_state.GaitEnd.drift[2]     = 0.0f;
+  
+  g_wise_state.CrossingP.vel[0] = 999;
 
   for( i=0;i<3;i++ )
   {
     /* Initialize WISE Acceleration state vector */
-    g_wise_state.accel_ave[i]   =  1.0f;
     g_wise_state.accel[i]       =  0.0f;
+    g_wise_state.accel_ave[i]   =  1.0f;
     g_wise_state.accel_total[i] =  0.0f;
+    g_wise_state.accel_delta[i] =  0.0f;
 
     /* Initialize WISE Velocity state vector */
-    g_wise_state.vel_ave[i] = 1.0f;
-    g_wise_state.vel[i]     = 0.0f;
-    //g_wise_state.vel_total[i] = 0.0f;
+    g_wise_state.vel[i]         = 0.0f;
+    g_wise_state.vel_ave[i]     = 1.0f;
+    //g_wise_state.vel_total[i]   = 0.0f;
+    g_wise_state.vel_delta[i]   =  0.0f;
+    
+    /* Initialize WISE rotation state vector */
+    g_wise_state.gyr[i]       = 0.0f;
+    g_wise_state.rot[i]       = 0.0f;
+    g_wise_state.rot_ave[i]   = 1.0f;
+    g_wise_state.rot_total[i] = 0.0f;
+    g_wise_state.rot_delta[i] = 0.0f;
+    
+    g_wise_state.CrossingP.vel[0] = 0.0f;
+    g_wise_state.CrossingP.vel[1] = 0.0f;
 
     g_wise_state.vel_delta[i] = 0.0f;
     g_wise_state.omega_vd[i]  = 0.0f;
     g_wise_state.omega_vp[i]  = 0.0f;
+    
+    g_wise_state.dist[i]      = 0.0f;
   }
   g_wise_state.Nsamples++;
 } /* End WISE_Init*/
 
-/*
+
+
+
+/*****************************************************************
 ** Function: WISE_Update
 ** This code executes the speed and
 ** walking incline estimation state update
@@ -116,15 +139,26 @@ void WISE_Update ( void )
 
   /* Map acceleration to normal/tangent */
   Map_Accel_2D();
+  
   /* Integrate accel to get vel */
   Integrate_Accel_2D();
+  
   /* Velocity Adjustment */
   Adjust_Velocity();
+  
+  /* Get distance traveled and compute incline */
+  Adjust_Incline();
+  
+  /* Reset at toeoff */
+  if( g_wise_state.toe_off==TRUE ) { WISE_Reset(); }
 
   g_wise_state.pitch_mem = g_sensor_state.pitch;
 } /* End WISE_Update */
 
-/*
+
+
+
+/*****************************************************************
 ** Function: WISE_Reset
 ** This function resets the WISE
 ** state variables. In particular,
@@ -140,9 +174,10 @@ void WISE_Reset ( void )
   for( i=0; i<=2; i++)
   {
     /* Initialize WISE Acceleration state vector */
-    g_wise_state.accel_ave[i]   =  1.0f;
     g_wise_state.accel[i]       =  0.0f;
+    g_wise_state.accel_ave[i]   =  1.0f;
     g_wise_state.accel_total[i] =  0.0f;
+    g_wise_state.accel_delta[i] =  0.0f;
 
     /* Initialize WISE Velocity state vector */
     g_wise_state.vel[i]       = 0.0f;
@@ -150,11 +185,22 @@ void WISE_Reset ( void )
     g_wise_state.vel_delta[i] = 0.0f;
     g_wise_state.omega_vd[i]  = 0.0f;
     g_wise_state.omega_vp[i]  = 0.0f;
+    
+    /* Initialize WISE Rotation state vector */
+    g_wise_state.gyr[i]       = 0.0f;
+    g_wise_state.rot[i]       = 0.0f;
+    g_wise_state.rot_ave[i]   = 0.0f;
+    g_wise_state.rot_total[i] = 0.0f;
+    g_wise_state.rot_delta[i] = 0.0f;
+    
+    g_wise_state.dist[i]      = 0.0f;
   }
 } /* End WISE_Reset */
 
 
-/*
+
+
+/*****************************************************************
 ** Function: Map_Accel_2D
 ** This function maps a_t and a_n to a_x and a_y
 ** using the filtered pitch assuming 2D motion.
@@ -164,8 +210,6 @@ void WISE_Reset ( void )
 */
 void Map_Accel_2D ( void )
 {
-
-	float accel_w[3];
 
   /*
   ** Notes on orientation for the 10736 IMU
@@ -182,21 +226,53 @@ void Map_Accel_2D ( void )
   **     +z is Zenith,     -z is Nadir
   */
 
+	/*
+	** Notes on orientation for the 9250 IMU
+	**   Terms:
+	**     Fore:       (Front) Edge of the USB port
+	**     Aft:        (Rear) Edge oposite of the USB port
+	**     Starboard:  (Right) Edge oposite of PWR switch
+	**     Port:       (Left) Edge with PWR switch
+	**     Zenith:     (Up) face with USB port
+	**     Nadir:      (Down) face oposite USB port
+	**   Contrary to the silk, the axis are positioned as follows:
+	**     +x is Fore,       -x is Aft
+	**     +y is Starboard,  -y is Port
+	**     +z is Zenith,     -z is Nadir
+	**   This means, placing the board on a flat surface with the
+	**   face without the USB port (Nadir) down will result in an acceleration
+	**   of about -2000 (1xg) for accel[2] (z) since the acceleration
+	**   from gravity with be acting along -z.
+	*/
+
   /* Accel x:Fore y:Port z:Zenith
   ** Note: IMU coordinate ref. frame definced in IMU#_Config.h
-  **       Rotation will need to be accounted for */
-  float Ax, Az;
+  **       Rotation will need to be accounted for
+  */
+	float accel_w[3];
+  float Ax, Az, R;
 
-  Matrix_Vector_Multiply( g_dcm_state.DCM_Matrix, g_sensor_state.accel, &accel_w[0] );
-  accel_w[0] = accel_w[0] * GTOMPS2/250 * MPSTOMPH;
-  accel_w[2] = (accel_w[2] - 250) * GTOMPS2/250 * MPSTOMPH;
-
-  Ax = g_sensor_state.accel[0];
-  Az = g_sensor_state.accel[2];
-
+  switch( PITCH_O )
+  {
+  	case 1: /* P: 0:Nadir0/Zenith down  +90:Aft down   -90:Fore down */
+		  Ax = g_sensor_state.accel[0]; /* Movement: +x */
+		  Az = g_sensor_state.accel[2]; /* Gravity:  -z */
+		  R  = g_sensor_state.gyro[1];  /* Rotation: -y */
+		  break;
+		case 2: /* P: 0:Fore/Aft down       +90:Port down  -90:Starboard down */
+		  Ax = g_sensor_state.accel[1]; /* Movement: +y (stbd) */
+		  Az = g_sensor_state.accel[0]; /* Gravity:  -x (fwd) */
+		  R  = g_sensor_state.gyro[2];  /* Rotation: -z */
+			break;
+		case 3: /* P: 0:Fore/Aft down       +90:Nadir down -90:Zenith down */
+		  Ax = g_sensor_state.accel[2]; /* Movement: +x */
+		  Az = g_sensor_state.accel[0]; /* Gravity:  -z */
+		  R  = g_sensor_state.gyro[1];  /* Rotation: -y */
+			break;
+	}
   g_wise_state.accel_delta[0] = Ax;
   g_wise_state.accel_delta[1] = Az;
-
+  g_wise_state.gyr[0]         = R;
 
   /**********************************
   ** Tangent Part *******************
@@ -212,14 +288,14 @@ void Map_Accel_2D ( void )
 
   /* Get average */
   g_wise_state.accel_total[0] += g_wise_state.accel[0];
-  g_wise_state.accel_ave[0]  = g_wise_state.accel_total[0]/g_wise_state.Nsamples;
+  g_wise_state.accel_ave[0]    = g_wise_state.accel_total[0]/g_wise_state.Nsamples;
 
   /*********************************
   ** Normal Part *******************
   **********************************/
 
   /* Calc Ay wrt world coordinate system */
-  g_wise_state.accel[1]  = -(Ax*sin(g_sensor_state.pitch) - Az*cos(g_sensor_state.pitch)  - GRAVITY) * GTOMPS2/GRAVITY * MPSTOMPH * (1/WISE_CORRECTION);
+  g_wise_state.accel[1]  = -(Ax*sin(g_sensor_state.pitch) - Az*cos(g_sensor_state.pitch)  - GRAVITY) * GTOMPS2/GRAVITY * MPSTOMPH;// * (1/WISE_CORRECTION);
 
   /* Feedback */
   g_wise_state.accel_delta[1] = g_wise_state.accel[1] - g_wise_state.accel_delta[1];
@@ -228,18 +304,14 @@ void Map_Accel_2D ( void )
 
   /* Get average */
   g_wise_state.accel_total[1] += g_wise_state.accel[1];
-  g_wise_state.accel_ave[1]  = g_wise_state.accel_total[1]/g_wise_state.Nsamples;
-
-	fprintf(stdout,"accT[0]:%f accN[1]:%f\n",g_wise_state.accel[0],g_wise_state.accel[1]);
-	fprintf(stdout,"accW[0]:%f accW[1]:%f accW[2]:%f\n",accel_w[0],accel_w[1],accel_w[2]);
-  //g_wise_state.accel[0] = accel_w[0];
-  //g_wise_state.accel[1] = accel_w[2];
+  g_wise_state.accel_ave[1]    = g_wise_state.accel_total[1]/g_wise_state.Nsamples;
 
 } /* End Map_Accel_2D */
 
 
 
-/*
+
+/*****************************************************************
 ** Function: Integrate_Accel_2D
 ** Integrate acceleration (wrt leg ref coordinates)
 ** to get velocity (wrt leg ref coordinates)
@@ -267,14 +339,22 @@ void Integrate_Accel_2D ( void )
 		}
 
     g_wise_state.vel_total[i] += g_wise_state.vel[i];
-    //g_wise_state.vel_ave[i]  = g_wise_state.vel_total[i]/g_wise_state.Nsample;
+    //g_wise_state.vel_ave[i]  = g_wise_state.vel_total[i]/g_wise_state.Nsample; 
   }
-
-  g_wise_state.Time += g_control_state.G_Dt;
+  
+  
+  /*********************************
+  ** Rotational Part ***************
+  **********************************/
+  g_wise_state.rot[0] = g_wise_state.rot[i] + g_wise_state.gyr[i]*g_control_state.G_Dt;
+  
+  
 } /* End Integrate_Accel_2D */
 
 
-/*
+
+
+/*****************************************************************
 ** Function: Adjust_Velocity
 ** This function adjusts for velocity drift.
 ** We detect toe-off events, from there we
@@ -292,8 +372,30 @@ void Adjust_Velocity( void )
     g_wise_state.GaitStart.vel[1]       = g_wise_state.vel[1];
     g_wise_state.GaitStart.vel_total[0] = g_wise_state.vel_total[0];
     g_wise_state.GaitStart.vel_total[1] = g_wise_state.vel_total[1];
+    g_wise_state.GaitStart.Time         = g_control_state.timestamp;
     g_wise_state.GaitStart.Nsamples     = g_wise_state.Nsamples;
+    
+    g_wise_state.CrossingP.vel[0]       = g_wise_state.rot[0];
+    g_wise_state.CrossingP.vel[1]       = g_wise_state.rot[0];
   }
+  
+  
+  /* In Testing */
+  if( g_wise_state.rot[0]>g_wise_state.CrossingP.vel[0] )
+	{
+		/* Record rotational maximum */
+		g_wise_state.CrossingP.vel[0] = g_wise_state.rot[0];
+		
+		/* Record velocity minimum 
+		** GaitStart[0] = { vel tangent at minima }
+		** GaitStart[1] = { vel normal at minima  } */
+		g_wise_state.GaitEnd.Time         = g_control_state.timestamp;
+		g_wise_state.GaitEnd.vel[0]       = g_wise_state.vel[0];
+		g_wise_state.GaitEnd.vel[1]       = g_wise_state.vel[1];
+		g_wise_state.GaitEnd.vel_total[0] = g_wise_state.vel_total[0];
+		g_wise_state.GaitEnd.vel_total[1] = g_wise_state.vel_total[1];
+		g_wise_state.GaitEnd.Nsamples     = g_wise_state.Nsamples;
+	}
 
   /* Part I : At toe-off, we must correct velocity measured
   ** We must wait a few full gait cycles to get
@@ -304,7 +406,7 @@ void Adjust_Velocity( void )
   ** GaitStart[0] is reset within the first full gait cycle */
   if ( (g_wise_state.Nsamples-g_wise_state.GaitEnd.Nsamples)>(g_wise_state.minCount) )
   {
-  	fprintf(stdout,"DEBUG - Toe off! S:%f vel[0]:%f vel[1]:%f\n",g_wise_state.GaitEnd.Nsamples,g_wise_state.GaitEnd.vel[0],g_wise_state.GaitEnd.vel[1]);
+  	//fprintf(stdout,"DEBUG - Toe off! S:%f vel[0]:%f vel[1]:%f\n",g_wise_state.GaitEnd.Nsamples,g_wise_state.GaitEnd.vel[0],g_wise_state.GaitEnd.vel[1]);
 
     /* We must be within, at a minimum, the second
     ** gait cycle. This garuntees we are calculating the
@@ -313,10 +415,11 @@ void Adjust_Velocity( void )
     ** GaitStart[1] is reset within the first full gait cycle */
     if( g_wise_state.Ncycles>=1 )
     {
+    	/* Get number of samples in this gait */
     	NGaitSamples = g_wise_state.GaitEnd.Nsamples - g_wise_state.GaitStart.Nsamples - 1;
 
       /* We correct for the drift by approximating
-      ** the drift over the gait cycle.
+      ** the slope in velocity over the gait cycle.
       ** We can then subtract the accumulated drift
       ** over the cycle and the dc bias.
       ** GaitStart = {vel0_i, vel1_i}
@@ -325,78 +428,100 @@ void Adjust_Velocity( void )
       g_wise_state.vel_ave[0]   = ( (g_wise_state.GaitStart.vel_total[0]) - (g_wise_state.GaitEnd.drift[0]*0.5*NGaitSamples*NGaitSamples) - (g_wise_state.GaitStart.vel[0]*NGaitSamples) ) * (1/NGaitSamples);
 
       g_wise_state.GaitEnd.drift[1] = ( g_wise_state.GaitEnd.vel[1]-g_wise_state.GaitStart.vel[1] )/NGaitSamples;
-      g_wise_state.vel_ave[1]   = ( (g_wise_state.GaitStart.vel_total[1]) - (g_wise_state.GaitEnd.drift[1]*0.5*NGaitSamples*NGaitSamples) - (g_wise_state.GaitStart.vel[1]*NGaitSamples) ) / (1*NGaitSamples);
-
-      fprintf(stdout,"DEBUG - Vel Estimate V[0]:%f V[1]:%f\n",g_wise_state.vel_ave[0],g_wise_state.vel_ave[1]);
+      g_wise_state.vel_ave[1]   = ( (g_wise_state.GaitStart.vel_total[1]) - (g_wise_state.GaitEnd.drift[1]*0.5*NGaitSamples*NGaitSamples) - (g_wise_state.GaitStart.vel[1]*NGaitSamples) ) * (1/NGaitSamples);
     }
 
     /* Reset saved minima and increment cycle counter */
     g_wise_state.Ncycles++;
-
+    
     memcpy( &(g_wise_state.GaitStart), &(g_wise_state.GaitEnd), sizeof(WISE_GATE_TYPE) );
-    g_wise_state.GaitStart.Nsamples = 1.0f;
-
+    g_wise_state.GaitStart.Nsamples   = 1.0f;
+    
     g_wise_state.GaitEnd.vel[0]       = (999);
     g_wise_state.GaitEnd.vel[1]       = (999);
     g_wise_state.GaitEnd.vel_total[0] = (999);
     g_wise_state.GaitEnd.vel_total[1] = (999);
     g_wise_state.GaitEnd.Nsamples     = (999);
+    
+    g_wise_state.CrossingP.vel[0] = g_wise_state.rot[0];
 
     /* Reset gait parameters
     ** for next cycle */
-    WISE_Reset();
+    g_wise_state.toe_off = TRUE; /* Signal reset */
+    //WISE_Reset();
   }
 
-  /* Part II : Record minima
-  ** Here we are attempting to locate the local minima
-  ** If this velocit is lower than the previous minima ... */
-  if ( g_wise_state.vel[0] < g_wise_state.GaitEnd.vel[0] )
-  {
-    /* If this sample is more than the minimal required */
-    if ( (g_wise_state.Nsamples-g_wise_state.GaitEnd.Nsamples ) > (g_wise_state.minCount) )
-    { } /* This shouldn't happen */
-    else
-    {
-    	//fprintf(stdout,"DEBUG - Desending S:%f\n",g_wise_state.Nsamples);
+//  /* Part II : Record minima
+//  ** Here we are attempting to locate the local minima
+//  ** If this velocit is lower than the previous minima ... */
+//  if ( g_wise_state.vel[0] < g_wise_state.GaitEnd.vel[0] )
+//  {
+//    /* If this sample is more than the minimal required */
+//    if ( (g_wise_state.Nsamples-g_wise_state.GaitEnd.Nsamples ) > (g_wise_state.minCount) )
+//    { } /* This shouldn't happen */
+//    else
+//    {
+//      /* GaitStart[0] = { vel tangent at minima }
+//      ** GaitStart[1] = { vel normal at minima  } */
+//    	g_wise_state.GaitEnd.Time         = g_control_state.timestamp;
+//      g_wise_state.GaitEnd.vel[0]       = g_wise_state.vel[0];
+//      g_wise_state.GaitEnd.vel[1]       = g_wise_state.vel[1];
+//      g_wise_state.GaitEnd.vel_total[0] = g_wise_state.vel_total[0];
+//      g_wise_state.GaitEnd.vel_total[1] = g_wise_state.vel_total[1];
+//      g_wise_state.GaitEnd.Nsamples     = g_wise_state.Nsamples;
+//    }
+//  }
 
-      /* GaitStart[0] = { vel tangent at minima }
-      ** GaitStart[1] = { vel normal at minima  } */
-      g_wise_state.GaitEnd.vel[0]       = g_wise_state.vel[0];
-      g_wise_state.GaitEnd.vel[1]       = g_wise_state.vel[1];
-      g_wise_state.GaitEnd.vel_total[0] = g_wise_state.vel_total[0];
-      g_wise_state.GaitEnd.vel_total[1] = g_wise_state.vel_total[1];
-      g_wise_state.GaitEnd.Nsamples     = g_wise_state.Nsamples;
-    }
-  }
+//  /* Part III : Update the min count threshold
+//  ** Once we have warmed up, we can try to
+//  ** estimate how far apart each gait is */
+//  if ( (g_wise_state.Ncycles>3) & (g_wise_state.Nsamples==1) )
+//  {
+//    g_wise_state.minCount = ceil( ((NGaitSamples*0.4)+g_wise_state.minCount)*0.5 );
+//  }
 
-  /* Part III : Update the min count threshold
-  ** Once we have warmed up, we can try to
-  ** estimate how far apart each gait is */
-  if ( (g_wise_state.Ncycles>3) & (g_wise_state.Nsamples==1) )
-  {
-    g_wise_state.minCount = ceil( ((NGaitSamples*0.4)+g_wise_state.minCount)*0.5 );
-		//fprintf(stdout,"DEBUG - Updating minCount:%d\n",g_wise_state.minCount);
-  }
 } /* End Adjust_Velocity */
 
 
-
-/*
+/*****************************************************************
 ** Function: Adjust_Incline
-** This function determines the
-** Incline.
+** From our latest velocity estimate (from Adjust_Velocity)
+** we can determine our distance traveled along each dimension.
+** Distance can be computed as dist += vel*dt
+** Incline can be computed as (dy/dx)*100
 */
 void Adjust_Incline( void )
 {
-  int i;
-  for( i=0; i<2; i++)
-  {
-    g_wise_state.dist[i] = g_wise_state.vel_ave[i]*g_control_state.G_Dt;
-  }
-}
+	int i;
+	float tempi;
+	float tempx,tempy;
+	
+	/* Compute distance traveled in each direction */
+	g_wise_state.dist[0] += g_wise_state.vel[0]*(g_control_state.G_Dt);
+	g_wise_state.dist[1] += g_wise_state.vel[1]*(g_control_state.G_Dt);
+	
+	
+	/* Compute incline estimate */
+	tempi = (g_wise_state.dist[1]/g_wise_state.dist[0])*100;
+	g_wise_state.Incline_ave = Rolling_Mean( g_wise_state.Nsamples, g_wise_state.Incline_ave, tempi );
+	
+	/* Compute an average incline estimate using the final velocity estimate */
+	if( (g_wise_state.Ncycles>3) )
+	{
+		tempx = g_wise_state.vel_ave[0]*(g_control_state.timestamp-g_wise_state.GaitStart.Time)/TIME_RESOLUTION;
+		tempx = g_wise_state.vel_ave[1]*(g_control_state.timestamp-g_wise_state.GaitStart.Time)/TIME_RESOLUTION;
+		g_wise_state.Incline_gait = (tempy/tempx)*100;
+	}
+	
+} /* End Get_WISE */
 
 
-/*
+
+
+
+
+
+/*****************************************************************
 ** Function: Estimate_Error
 ** This function is inteded to estimate the
 ** error in the intitial velocity estimates.

@@ -73,6 +73,25 @@ void Update_Time( void )
 
 
 /*************************************************
+** DCM_Init
+** Initialize DCM varaibles
+*/
+void DCM_Init( void )
+{
+  int i;
+  
+  LOG_PRINTLN("> Initializing DCM Filter");
+  
+  for(i=0;i<3;i++) g_dcm_state.Omega_I[i] = 0.0f;
+  for(i=0;i<3;i++) g_dcm_state.Omega_P[i] = 0.0f;
+  for(i=0;i<3;i++) g_dcm_state.gyro_ave[i] = g_sensor_state.gyro[i];
+  for(i=0;i<3;i++) g_dcm_state.gyro_var[i] = 0.0f;
+  for(i=0;i<3;i++) g_dcm_state.gyro_std[i] = 0.0f;
+  g_dcm_state.SampleNumber=0;
+  g_dcm_state.std_time=0;
+}
+
+/*************************************************
 ** Init_Rotation_Matrix
 ** Initialize the DCM rotation matrix using
 ** euler angles
@@ -160,6 +179,8 @@ void Set_Sensor_Fusion( void )
 */
 void DCM_Filter( void )
 {
+  int i;
+  float temp;
   float error = 0;
   float renorm = 0;
 
@@ -173,6 +194,30 @@ void DCM_Filter( void )
   float ErrorGain[3];
   float errorRollPitch[3];
   float errorYaw[3];
+  
+  /* Clear Rolling Std/Average after set time */
+  #if( WISE_ON==1 )
+  g_dcm_state.std_time+=(g_control_state.G_Dt*TIME_RESOLUTION);
+  if( g_dcm_state.std_time>MOVE_RESET_RATE )
+ 	{
+	  for(i=0;i<3;i++) g_dcm_state.gyro_ave[i] = g_sensor_state.gyro[i];
+	  for(i=0;i<3;i++) g_dcm_state.gyro_var[i] = 0.0f;
+	  for(i=0;i<3;i++) g_dcm_state.gyro_std[i] = 0.0f;
+	  g_dcm_state.SampleNumber=0;
+	  g_dcm_state.std_time=0;
+ 	}
+  
+  /* Update Rolling Std */
+  g_dcm_state.SampleNumber++;
+  for( i=0;i<3;i++)
+  {
+  	temp = Rolling_Mean( g_dcm_state.SampleNumber, g_dcm_state.gyro_ave[i], g_sensor_state.gyro[i] );
+  	g_dcm_state.gyro_var[i] = Rolling_Variance( g_dcm_state.gyro_ave[i], temp, g_sensor_state.gyro[i], g_dcm_state.gyro_var[i] );
+  	g_dcm_state.gyro_ave[i] = temp;
+  	g_dcm_state.gyro_std[i] = g_dcm_state.gyro_var[i]/g_dcm_state.SampleNumber;
+  }
+  #endif
+  
 
   /******************************************************************
   ** DCM 1. Update the Direction Cosine Matrix
@@ -210,8 +255,6 @@ void DCM_Filter( void )
   g_dcm_state.DCM_Matrix[1][0] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[1][1]*Omega_Vector[2] - g_dcm_state.DCM_Matrix[1][2]*Omega_Vector[1]) + g_dcm_state.DCM_Matrix[1][0];
   g_dcm_state.DCM_Matrix[1][1] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[1][2]*Omega_Vector[0] - g_dcm_state.DCM_Matrix[1][0]*Omega_Vector[2]) + g_dcm_state.DCM_Matrix[1][1];
   g_dcm_state.DCM_Matrix[1][2] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[1][0]*Omega_Vector[1] - g_dcm_state.DCM_Matrix[1][1]*Omega_Vector[0]) + g_dcm_state.DCM_Matrix[1][2];
-
-
 
   /******************************************************************
   ** DCM 2. Normalize DCM
@@ -269,7 +312,7 @@ void DCM_Filter( void )
 
   /* Dynamic weighting of accelerometer info (reliability filter)
   ** Weight for accelerometer info (<0.5G = 0.0, 1G = 1.0 , >1.5G = 0.0) */
-  Accel_weight = FCONSTRAIN(1.0 - 2.0*abs(1 - Accel_magnitude),0.0,1.0);
+  Accel_weight = FCONSTRAIN( 1.0-2.0*abs(1-Accel_magnitude), 0.0, 1.0 ) ;
 
   /* Adjust the ground of reference
   ** errorRP = accel x DCM[2][:]
@@ -300,18 +343,13 @@ void DCM_Filter( void )
   ** particular direction, this should be ok */
 
   Vector_Scale( &g_dcm_state.DCM_Matrix[2][0], g_dcm_state.DCM_Matrix[0][0], errorYaw ); /* Applys the yaw correction to the XYZ rotation of the aircraft, depeding the position. */
-
+  
   /* Update the proportional and integral gains per yaw error */
   Vector_Scale( &errorYaw[0], Kp_YAW, &ErrorGain[0] ); /* proportional of YAW. */
   Vector_Add( g_dcm_state.Omega_P, ErrorGain, g_dcm_state.Omega_P ); /* Adding  Proportional. */
 
   Vector_Scale( &errorYaw[0], Ki_YAW, &ErrorGain[0] ); /* Adding Integrator */
   Vector_Add( g_dcm_state.Omega_I, ErrorGain, g_dcm_state.Omega_I ); /* Adding integrator to the Omega_I */
-
-//	fprintf(stdout,"DCM[0][0]:%f DCM[0][1]:%f DCM[0][2]:%f \n",g_dcm_state.DCM_Matrix[0][0],g_dcm_state.DCM_Matrix[0][1],g_dcm_state.DCM_Matrix[0][2]);
-//	fprintf(stdout,"DCM[1][0]:%f DCM[1][1]:%f DCM[1][2]:%f \n",g_dcm_state.DCM_Matrix[1][0],g_dcm_state.DCM_Matrix[1][1],g_dcm_state.DCM_Matrix[1][2]);
-//	fprintf(stdout,"DCM[2][0]:%f DCM[2][1]:%f DCM[2][2]:%f \n",g_dcm_state.DCM_Matrix[2][0],g_dcm_state.DCM_Matrix[2][1],g_dcm_state.DCM_Matrix[2][2]);
-
 
   /******************************************************************
   ** DCM 4. Extract Euler Angles from DCM
@@ -372,6 +410,7 @@ void DCM_Filter( void )
       g_sensor_state.roll =  ROLL_ROT_CONV*f_atan2( g_dcm_state.DCM_Matrix[2][2], -ROLL_ZREF*g_dcm_state.DCM_Matrix[2][1] );
       break;
   }
+  
   g_sensor_state.yaw   =  f_atan2( g_dcm_state.DCM_Matrix[1][0], g_dcm_state.DCM_Matrix[0][0] ); // A faster atan2
 } /* End DCM_Filter */
 

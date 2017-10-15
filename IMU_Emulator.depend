@@ -178,30 +178,30 @@
 	<stdbool.h>
 	"Emulator_Config.h"
 
-1500760552 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\calibration_functions.c
+1508101759 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\calibration_functions.c
 	"../Include/Common_Config.h"
 	"../Include/Emulator_Config.h"
 
-1500774133 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\common_config.h
+1508102156 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\common_config.h
 	<stdbool.h>
 	<inttypes.h>
 	<stdio.h>
 
-1500760945 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\emulator_config.h
+1508102664 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\emulator_config.h
 	"IMU10736_Config.h"
 	"DSP_Config.h"
 	"Common_Config.h"
 	"WISE_Config.h"
 
-1500760923 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\imu10736_config.h
+1508102004 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\imu10736_config.h
 	"Common_Config.h"
 
-1500760880 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\dsp_config.h
+1508102105 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\dsp_config.h
 	<inttypes.h>
 
-1498709045 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\wise_config.h
+1508101950 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\wise_config.h
 
-1500773950 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\common_functions.c
+1508101716 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\common_functions.c
 	"../Include/Common_Config.h"
 	"../Include/IMU10736_Config.h"
 	<SparkFunMPU9250-DMP.h>
@@ -210,7 +210,7 @@
 	"../Include/WISE_Config.h"
 	"../Include/Emulator_Config.h"
 
-1500773926 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\dcm_functions.c
+1508101695 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\dcm_functions.c
 	"../Include/Common_Config.h"
 	<math.h>
 	<stdio.h>
@@ -223,10 +223,10 @@
 	"../Include/Math.h"
 	"../Include/Emulator_Config.h"
 
-1500760854 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\math.h
+1508101987 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\math.h
 	"Common_Config.h"
 
-1500773960 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\dsp_functions.c
+1508101645 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\dsp_functions.c
 	"../Include/Common_Config.h"
 	<string.h>
 	"../Include/IMU10736_Config.h"
@@ -236,7 +236,7 @@
 	"../Include/WISE_Config.h"
 	"../Include/Emulator_Config.h"
 
-1500773968 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\hw_functions.c
+1508101619 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\hw_functions.c
 	"../Include/Common_Config.h"
 	"../Include/IMU10736_Config.h"
 	<SparkFunMPU9250-DMP.h>
@@ -249,7 +249,7 @@
 	"../Include/Common_Config.h"
 	"../Include/Emulator_Config.h"
 
-1500863001 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\main.c
+1508101851 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -259,15 +259,15 @@
 	<stdbool.h>
 	"../Include/Emulator_Config.h"
 
-1500758316 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\math.c
+1508101454 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\math.c
 	"../Include/Common_Config.h"
 	<math.h>
 	"../Include/Emulator_Config.h"
 
-1500773854 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\imu9250_config.h
+1508102092 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\imu9250_config.h
 	"Common_Config.h"
 
-1500862920 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\wise_functions.c
+1508102463 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\wise_functions.c
 	"../Include/Common_Config.h"
 	<math.h>
 	<string.h>
