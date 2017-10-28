@@ -44,6 +44,15 @@ void Adjust_Velocity ( void );
 void Adjust_Incline ( void );
 void Estimate_Error ( void );
 
+/* GaPA_Functions */
+void GaPA_Init( void );
+void GaPA_Reset( void );
+void GaPA_Update( void );
+void calc_SftPrmLeft( void );
+void calc_SftPrmRight( void );
+void calc_ScaleFactor( void );
+void calc_PhaseAngle( void );
+
 /* Com_Functions */
 void Debug_LogOut( void );
 void Cal_LogOut( void );
