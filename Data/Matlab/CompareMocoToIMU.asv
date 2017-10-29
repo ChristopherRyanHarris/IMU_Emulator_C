@@ -1,69 +1,96 @@
 
 % Example read/plot code
-%clear; clc; close all;
+clear; clc; close all;
+
+
+%% Start
+
+
+
+IMUFiles = { ... 
+            'F1_2.bin',... %2    1.8mph  15deg
+            'F2.bin',...   %3    2.7mph  15deg
+            'F3.bin',...   %4    1.8mph  0deg
+            'F4.bin',...   %5    2.7mph  0deg
+            'F5.bin',...   %6    1.8mph  -3deg
+            'F6.bin',...   %7    2.7mph  -3deg
+            'S1.bin',...   %8    1.8mph  15deg
+            'S2.bin',...   %9    2.7mph  15deg
+            'S3.bin',...   %10   1.8mph  0deg
+            'S4.bin',...   %11   2.7mph  0deg
+            'S5.bin',...   %12   1.8mph -3deg
+            'S6.bin',...   %13   2.7mph -3deg
+            'Z1.bin',...   %14   1.8mph  15deg
+            'Z2.bin',...   %15   2.7mph  15deg
+            'Z3.bin',...   %16   1.8mph  0deg 
+            'Z4.bin',...   %17   2.7mph  0deg
+            'Z5.bin',...   %18   1.8mph -3deg
+            'Z6.bin' ...   %19   2.7mph -3deg
+            };
+
+% Note:
+% MoCap Data only applies to Subject 4_2
+MoCapFiles = {  'MoCap/F1.csv',... %2
+                'MoCap/F2.csv',... %3 
+                'MoCap/F3.csv',... %4
+                'MoCap/F4.csv',... %5
+                'MoCap/F5.csv',... %6
+                'MoCap/F6.csv',... %7
+                'MoCap/S1.csv',... %8
+                'MoCap/S2.csv',... %9
+                'MoCap/S3.csv',... %10
+                'MoCap/S4.csv',... %11
+                'MoCap/S5.csv',... %12
+                'MoCap/S6.csv',... %13
+                'MoCap/Z1.csv',... %14
+                'MoCap/Z2.csv',... %15
+                'MoCap/Z3.csv',... %16
+                'MoCap/Z4.csv',... %17
+                'MoCap/Z5.csv',... %18
+                'MoCap/Z6.csv' ... %19
+                };
+
+% Z Truth
+Incline_Truth = [ ...
+                15
+                15
+                0
+                0
+                -3
+                -3
+                15
+                15
+                0
+                0
+                -3
+                -3
+                15
+                15
+                0
+                0
+                -3
+                -3
+                ];
+                
+
+f=15;
 
 Subject4_dir = '..\BinaryData\Subject4_2';
 Subject3_dir = '..\BinaryData\Subject3_2';
 
+Incline = Incline_Truth(f);
 
+IMU_file   = fullfile(Subject4_dir,IMUFiles{f});
+MoCap_file = fullfile(Subject4_dir,MoCapFiles{f});
 
+%% Read MoCap data
+ 
 
-%% Start
-IMUFiles = { ... 
-            'F1_2.bin',... %2    1.8mph  15
-            'F2.bin',...   %3    2.7mph  15
-            'F3.bin',...   %4    1.8mph  0
-            'F4.bin',...   %5    2.7mph  0
-            'F5.bin',...   %6    1.8mph  -3
-            'F6.bin',...   %7    2.7mph  -3
-            'F1.bin',...   %1    1.8mph  15
-            'S1.bin',...   %8    1.8mph  15
-            'S2.bin',...   %9    2.7mph  15
-            'S3.bin',...   %10   1.8mph  0 
-            'S4.bin',...   %11   2.7mph  0
-            'S5.bin',...   %12   1.8mph -3
-            'S6.bin',...   %13   2.7mph -3
-            'Z1.bin',...   %14   1.8mph  15
-            'Z2.bin',...   %15   2.7mph  15
-            'Z3.bin',...   %16   1.8mph  0 
-            'Z4.bin',...   %17   2.7  0
-            'Z5.bin',...   %18   1.8 -3
-            'Z6.bin' };
-
-MocoFiles = {   '../Kyle/IMU_MoCap/F1.csv',...
-                '../Kyle/IMU_MoCap/F2.csv',...
-                '../Kyle/IMU_MoCap/F3.csv',...
-                '../Kyle/IMU_MoCap/F4.csv',...
-                '../Kyle/IMU_MoCap/F5.csv',...
-                '../Kyle/IMU_MoCap/F6.csv',...
-                '../Kyle/IMU_MoCap/S1.csv',...
-                '../Kyle/IMU_MoCap/S2.csv',...
-                '../Kyle/IMU_MoCap/S3.csv',...
-                '../Kyle/IMU_MoCap/S4.csv',...
-                '../Kyle/IMU_MoCap/S5.csv',...
-                '../Kyle/IMU_MoCap/S6.csv',...
-                '../Kyle/IMU_MoCap/Z1.csv',...
-                '../Kyle/IMU_MoCap/Z2.csv',...
-                '../Kyle/IMU_MoCap/Z3.csv',...
-                '../Kyle/IMU_MoCap/Z4.csv',...
-                '../Kyle/IMU_MoCap/Z5.csv',...
-                '../Kyle/IMU_MoCap/Z6.csv'     };
-   
-%% Read Moco
-
-% ../Kyle/Data_Binary_Corrected/F1_2.bin:	Moco:64	../Kyle/IMU_MoCap/F1.csv:	IMU:64
-% ../Kyle/Data_Binary_Corrected/F2.bin:     Moco:85	../Kyle/IMU_MoCap/F2.csv:	IMU:79
-% ../Kyle/Data_Binary_Corrected/F3.bin:     Moco:61	../Kyle/IMU_MoCap/F3.csv:	IMU:61
-% ../Kyle/Data_Binary_Corrected/F4.bin:     Moco:82	../Kyle/IMU_MoCap/F4.csv:	IMU:82
-% ../Kyle/Data_Binary_Corrected/F5.bin:     Moco:63	../Kyle/IMU_MoCap/F5.csv:	IMU:63
-% ../Kyle/Data_Binary_Corrected/F6.bin:     Moco:80	../Kyle/IMU_MoCap/F6.csv:	IMU:79
-
-% for f=1:6
-f=1;
-    
 % O[xyz] Primary[xyz] Secondary[xyz] Center1 Center2 Center3
-if( ~isempty(regexp( MocoFiles{f},'/Z\d+', 'once')) )
-    data = csvread(MocoFiles{f},8,2);
+if( ~isempty(regexp( MoCap_file,'Z\d+', 'once')) ) % if zappatos (foot data)
+  
+    
+    data = csvread(MoCap_file,8,2);
     data = data(:,1:16*3);
 
     lank = data(:,(7*3+1):(3+3*7));
@@ -102,13 +129,14 @@ if( ~isempty(regexp( MocoFiles{f},'/Z\d+', 'once')) )
 
     X=[1 0 0]; Y=[0 1 0]; Z=[0 0 1];
     % FootVecot dot YAxis
-    MocoPitch  = acos( sum(Foot.*Y,2)./( sqrt(sum(Foot.^2,2)) .* sqrt(sum(Y.^2,2)) )).*180/pi;
+    MoCapPitch  = acos( sum(Foot.*Y,2)./( sqrt(sum(Foot.^2,2)) .* sqrt(sum(Y.^2,2)) )).*180/pi;
     % LegVecot dot ZAxis
-    MocoRoll  = acos( sum(Leg.*Z,2)./( sqrt(sum(Leg.^2,2)) .* sqrt(sum(Z.^2,2)) )).*180/pi;
+    MoCapRoll  = acos( sum(Leg.*Z,2)./( sqrt(sum(Leg.^2,2)) .* sqrt(sum(Z.^2,2)) )).*180/pi;
 
-else
+else % Not foot data
+    
     % O[xyz] Primary[xyz] Secondary[xyz] Center1 Center2 Center3 
-    data = csvread(MocoFiles{f},8,2);
+    data = csvread(MoCap_file,8,2); 
     data = data(:,1:3*6);
 
     O  = data(:,1:3);
@@ -134,14 +162,15 @@ else
     Plane    = cross(P,S,2);
     Pitch1   = -1*asin( sum(P*(Z.'),2)./( sqrt(sum(P.^2,2)) .* sqrt(sum(Z.^2,2)) )).*180/pi;
     Pitch2   = -1*asin( sum(S*(Y.'),2)./( sqrt(sum(S.^2,2)) .* sqrt(sum(Y.^2,2)) )).*180/pi;
-    MocoPitch    = (Pitch1+Pitch2)/2;
-    MocoRoll     = -1*asin( sum(Plane*(Z.'),2)./( sqrt(sum(Plane.^2,2)) .* sqrt(sum(Z.^2,2)) )).*180/pi;
+    MoCapPitch    = (Pitch1+Pitch2)/2;
+    MoCapRoll     = -1*asin( sum(Plane*(Z.'),2)./( sqrt(sum(Plane.^2,2)) .* sqrt(sum(Z.^2,2)) )).*180/pi;
 end
-MocoTime = (1:numel(MocoPitch))/100;
-MocoTime = MocoTime-MocoTime(1);
+MoCapTime = (1:numel(MoCapPitch))/100;
+MoCapTime = MoCapTime-MoCapTime(1);
 
-%% Read IMU
-fid = fopen(IMUFiles{f},'r');
+%% Read IMU data 
+
+fid = fopen(IMU_file,'r');
 out = fread(fid,inf,'float32');
 fclose(fid);
 out = reshape(out,10,numel(out)/10).';
@@ -156,36 +185,86 @@ IMUYaw   = out(1:m,8);
 IMUPitch = out(1:m,9);
 IMURoll  = out(1:m,10);
 
+
+%% Look for estimated pitch
+
+IMUPitch_f = IMUPitch;
+IMUPitch_f = IMUPitch_f - (mean(IMUPitch_f(1:100)) - Incline_Truth(f));
+
+% freq filt
+stop=0.01;
+Ntaps = 2^4;
+downFilter = fir1(Ntaps-1,stop); 
+downFilter = conv(downFilter,downFilter); % linearize in phase
+IMUPitch_f = conv(IMUPitch_f,downFilter);
+IMUPitch_f = IMUPitch_f(ceil(numel(downFilter)/2):end-floor(numel(downFilter)/2));
+
+% moving ave
+wSize = 10;
+wind = ones(1,wSize)/wSize;
+IMUPitch_f = conv(IMUPitch_f,wind);
+
+figure(1);clf(1);grid on;hold on;
+myZ = ones(1,numel(IMUPitch_f))*Incline_Truth(f);
+plot(IMUPitch_f,'b-');
+plot(myZ,'r-');
+
+pf=fftshift(abs(fft(IMUPitch_f))); 
+figure(1);clf(1);grid on;hold on;
+plot(pf);
+
+
+
 %% Compare
 
-M=0.5*max(MocoPitch);
-[Mocopeaks,Mocoloc]= findpeaks(MocoPitch,'MinPeakDistance',100,'MinPeakHeight',M);
-Mocoloc=Mocoloc(Mocopeaks>0); Mocopeaks=Mocopeaks(Mocopeaks>0);
-% figure(1); clf(1); hold on; grid on;
-% plot(MocoPitch,'b-'); 
-% plot(Mocoloc,MocoPitch(Mocoloc),'ro');
-% fprintf('%s:\tMoco:%d\t',IMUFiles{f}, numel(Mocopeaks))
+factor=0.3;
+InitVal = mean(MoCapPitch(1:100));
+Threshold=factor*max(MoCapPitch-InitVal)+InitVal;
+[MoCappeaks,MoCaploc]= findpeaks(MoCapPitch,'MinPeakDistance',100,'MinPeakHeight',Threshold);
+MoCaploc=MoCaploc(MoCappeaks>0); MoCappeaks=MoCappeaks(MoCappeaks>0);
+figure(1); clf(1); hold on; grid on;
+plot(MoCapPitch,'b-'); 
+plot(MoCaploc,MoCapPitch(MoCaploc),'ro');
+fprintf('%s:\tMoCap:%d\t',IMUFiles{f}, numel(MoCappeaks))
 
-M=0.5*max(IMUPitch);
-[IMUpeaks,IMUloc]= findpeaks(IMUPitch,'MinPeakDistance',200,'MinPeakHeight',M);
+
+factor=0.3;
+InitVal = mean(IMUPitch(1:100));
+Threshold=factor*max(IMUPitch-InitVal)+InitVal;
+[IMUpeaks,IMUloc]= findpeaks(IMUPitch,'MinPeakDistance',200,'MinPeakHeight',Threshold);
 IMUloc=IMUloc(IMUpeaks>0); IMUpeaks=IMUpeaks(IMUpeaks>0);
-% figure(2); clf(2); hold on; grid on;
-% plot(IMUPitch,'b-'); 
-% plot(IMUloc,IMUPitch(IMUloc),'ro');
-% fprintf('%s:\tIMU:%d\n',MocoFiles{f}, numel(IMUpeaks))
+figure(2); clf(2); hold on; grid on;
+plot(IMUPitch,'b-'); 
+plot(IMUloc,IMUPitch(IMUloc),'ro');
+fprintf('%s:\tIMU:%d\n',MoCapFiles{f}, numel(IMUpeaks))
 
-MocoFirst = find(MocoPitch>(max(MocoPitch(1:50))+abs(max(MocoPitch(1:50)))*0.5),1,'first');
-IMUFirst = find(IMUPitch>(max(IMUPitch(1:50))+abs(max(IMUPitch(1:50)))*0.5),1,'first');
+MoCapFirst = find(MoCapPitch>max(MoCapPitch(1:50)),1,'first');
+MoCapLast  = find(MoCapPitch>max(MoCapPitch(1:50)),1,'last');
+IMUFirst   = find(IMUPitch>max(IMUPitch(1:50)),1,'first');
+IMULast    = find(IMUPitch>max(IMUPitch(1:50)),1,'last');
 
-MocoTime = MocoTime - mean(MocoTime(Mocoloc)-IMUTime(IMUloc).');
-%MocoTime = MocoTime +(IMUTime(IMUFirst) - MocoTime(MocoFirst));
-% MocoTime = MocoTime+1;
+
+MoCapDT = (MoCapTime(end)-MoCapTime(1))/(numel(MoCapTime)-1);
+IMUDT   = (IMUTime(end)-IMUTime(1))/(numel(IMUTime)-1);
+
+MoCapTimeScaled = (IMUDT/MoCapDT)*MoCapTime;
+IMUTimeScaled   = IMUTime;
+
+
+
+figure(1);clf(1); hold on;
+plot(MoCapTimeScaled,'r-');
+plot(IMUTimeScaled,'b--');
+
+% MoCapTime = MoCapTime - mean(MoCapTime(MoCaploc)-IMUTime(IMUloc).');
+% MoCapTime = MoCapTime +(IMUTime(IMUFirst) - MoCapTime(MoCapFirst));
+% MoCapTime = MoCapTime+1;
 % IMUTime=IMUTime*0.99;
 
 figure(1); clf(1); hold on; grid on;
 xlabel('Time (s)'); ylabel('Pitch (deg)');
 plot(IMUTime,IMUPitch,'b-'); 
-plot(MocoTime,MocoPitch,'r-');
+plot(MoCapTime,MoCapPitch,'r-');
 legend({'IMU','Vicom'});
 
 % end

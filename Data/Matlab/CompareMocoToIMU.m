@@ -73,7 +73,7 @@ Incline_Truth = [ ...
                 ];
                 
 
-f=13;
+f=15;
 
 Subject4_dir = '..\BinaryData\Subject4_2';
 Subject3_dir = '..\BinaryData\Subject3_2';
@@ -87,7 +87,7 @@ MoCap_file = fullfile(Subject4_dir,MoCapFiles{f});
  
 
 % O[xyz] Primary[xyz] Secondary[xyz] Center1 Center2 Center3
-if( ~isempty(regexp( MoCap_file,'/Z\d+', 'once')) ) % if zappatos (foot data)
+if( ~isempty(regexp( MoCap_file,'Z\d+', 'once')) ) % if zappatos (foot data)
   
     
     data = csvread(MoCap_file,8,2);
@@ -185,29 +185,86 @@ IMUYaw   = out(1:m,8);
 IMUPitch = out(1:m,9);
 IMURoll  = out(1:m,10);
 
+
+%% Look for estimated pitch
+
+IMUPitch_f = IMUPitch;
+IMUPitch_f = IMUPitch_f - (mean(IMUPitch_f(1:100)) - Incline_Truth(f));
+
+% freq filt
+stop=0.01;
+Ntaps = 2^4;
+downFilter = fir1(Ntaps-1,stop); 
+downFilter = conv(downFilter,downFilter); % linearize in phase
+IMUPitch_f = conv(IMUPitch_f,downFilter);
+IMUPitch_f = IMUPitch_f(ceil(numel(downFilter)/2):end-floor(numel(downFilter)/2));
+
+% moving ave
+wSize = 10;
+wind = ones(1,wSize)/wSize;
+IMUPitch_f = conv(IMUPitch_f,wind);
+
+figure(1);clf(1);grid on;hold on;
+myZ = ones(1,numel(IMUPitch_f))*Incline_Truth(f);
+plot(IMUPitch_f,'b-');
+plot(myZ,'r-');
+
+% pf=fftshift(abs(fft(IMUPitch_f))); 
+% figure(1);clf(1);grid on;hold on;
+% plot(pf);
+
+MoCapPitch_f = MoCapPitch;
+MoCapPitch_f = MoCapPitch_f - (mean(MoCapPitch_f(1:100)) - Incline_Truth(f));
+
+figure(2);clf(2);grid on;hold on;
+myZ = ones(1,numel(MoCapPitch_f))*Incline_Truth(f);
+plot(MoCapPitch_f,'b-');
+plot(myZ,'r-');
+
+
 %% Compare
 
-Threshold=0.5*max(MoCapPitch);
+factor=0.3;
+InitVal = mean(MoCapPitch(1:100));
+Threshold=factor*max(MoCapPitch-InitVal)+InitVal;
 [MoCappeaks,MoCaploc]= findpeaks(MoCapPitch,'MinPeakDistance',100,'MinPeakHeight',Threshold);
 MoCaploc=MoCaploc(MoCappeaks>0); MoCappeaks=MoCappeaks(MoCappeaks>0);
-% figure(1); clf(1); hold on; grid on;
-% plot(MoCapPitch,'b-'); 
-% plot(MoCaploc,MoCapPitch(MoCaploc),'ro');
-% fprintf('%s:\tMoCap:%d\t',IMUFiles{f}, numel(MoCappeaks))
+figure(1); clf(1); hold on; grid on;
+plot(MoCapPitch,'b-'); 
+plot(MoCaploc,MoCapPitch(MoCaploc),'ro');
+fprintf('%s:\tMoCap:%d\t',IMUFiles{f}, numel(MoCappeaks))
 
-Threshold=0.5*max(IMUPitch);
+
+factor=0.3;
+InitVal = mean(IMUPitch(1:100));
+Threshold=factor*max(IMUPitch-InitVal)+InitVal;
 [IMUpeaks,IMUloc]= findpeaks(IMUPitch,'MinPeakDistance',200,'MinPeakHeight',Threshold);
 IMUloc=IMUloc(IMUpeaks>0); IMUpeaks=IMUpeaks(IMUpeaks>0);
-% figure(2); clf(2); hold on; grid on;
-% plot(IMUPitch,'b-'); 
-% plot(IMUloc,IMUPitch(IMUloc),'ro');
-% fprintf('%s:\tIMU:%d\n',MoCapFiles{f}, numel(IMUpeaks))
+figure(2); clf(2); hold on; grid on;
+plot(IMUPitch,'b-'); 
+plot(IMUloc,IMUPitch(IMUloc),'ro');
+fprintf('%s:\tIMU:%d\n',MoCapFiles{f}, numel(IMUpeaks))
 
-MoCapFirst = find(MoCapPitch>(max(MoCapPitch(1:50))+abs(max(MoCapPitch(1:50)))*0.5),1,'first');
-IMUFirst = find(IMUPitch>(max(IMUPitch(1:50))+abs(max(IMUPitch(1:50)))*0.5),1,'first');
+MoCapFirst = find(MoCapPitch>max(MoCapPitch(1:50)),1,'first');
+MoCapLast  = find(MoCapPitch>max(MoCapPitch(1:50)),1,'last');
+IMUFirst   = find(IMUPitch>max(IMUPitch(1:50)),1,'first');
+IMULast    = find(IMUPitch>max(IMUPitch(1:50)),1,'last');
 
-MoCapTime = MoCapTime - mean(MoCapTime(MoCaploc)-IMUTime(IMUloc).');
-%MoCapTime = MoCapTime +(IMUTime(IMUFirst) - MoCapTime(MoCapFirst));
+
+MoCapDT = (MoCapTime(end)-MoCapTime(1))/(numel(MoCapTime)-1);
+IMUDT   = (IMUTime(end)-IMUTime(1))/(numel(IMUTime)-1);
+
+MoCapTimeScaled = (IMUDT/MoCapDT)*MoCapTime;
+IMUTimeScaled   = IMUTime;
+
+
+
+figure(1);clf(1); hold on;
+plot(MoCapTimeScaled,'r-');
+plot(IMUTimeScaled,'b--');
+
+% MoCapTime = MoCapTime - mean(MoCapTime(MoCaploc)-IMUTime(IMUloc).');
+% MoCapTime = MoCapTime +(IMUTime(IMUFirst) - MoCapTime(MoCapFirst));
 % MoCapTime = MoCapTime+1;
 % IMUTime=IMUTime*0.99;
 
