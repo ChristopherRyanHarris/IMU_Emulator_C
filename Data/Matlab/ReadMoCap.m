@@ -1,34 +1,66 @@
-
 % Example read/plot code
-clear; clc; close all;
+% clear; clc; close all;
+
 
 %% Start
-Files = {   '../Kyle/IMU_MoCap/F1.csv',...
-            '../Kyle/IMU_MoCap/F2.csv',...
-            '../Kyle/IMU_MoCap/F3.csv',...
-            '../Kyle/IMU_MoCap/F4.csv',...
-            '../Kyle/IMU_MoCap/F5.csv',...
-            '../Kyle/IMU_MoCap/F6.csv',...
-            '../Kyle/IMU_MoCap/S1.csv',...
-            '../Kyle/IMU_MoCap/S2.csv',...
-            '../Kyle/IMU_MoCap/S3.csv',...
-            '../Kyle/IMU_MoCap/S4.csv',...
-            '../Kyle/IMU_MoCap/S5.csv',...
-            '../Kyle/IMU_MoCap/S6.csv',...
-            '../Kyle/IMU_MoCap/Z1.csv',...
-            '../Kyle/IMU_MoCap/Z2.csv',...
-            '../Kyle/IMU_MoCap/Z3.csv',...
-            '../Kyle/IMU_MoCap/Z4.csv',...
-            '../Kyle/IMU_MoCap/Z5.csv',...
-            '../Kyle/IMU_MoCap/Z6.csv' };
+
+% Note:
+% MoCap Data only applies to Subject 4_2
+MoCapFiles = {  'MoCap/F1.csv',... %2
+                'MoCap/F2.csv',... %3 
+                'MoCap/F3.csv',... %4
+                'MoCap/F4.csv',... %5
+                'MoCap/F5.csv',... %6
+                'MoCap/F6.csv',... %7
+                'MoCap/S1.csv',... %8
+                'MoCap/S2.csv',... %9
+                'MoCap/S3.csv',... %10
+                'MoCap/S4.csv',... %11
+                'MoCap/S5.csv',... %12
+                'MoCap/S6.csv',... %13
+                'MoCap/Z1.csv',... %14
+                'MoCap/Z2.csv',... %15
+                'MoCap/Z3.csv',... %16
+                'MoCap/Z4.csv',... %17
+                'MoCap/Z5.csv',... %18
+                'MoCap/Z6.csv' ... %19
+                };
+
+% incline truth in deg
+Incline_Truth = [ ...
+                15
+                15
+                0
+                0
+                -3
+                -3
+                15
+                15
+                0
+                0
+                -3
+                -3
+                15
+                15
+                0
+                0
+                -3
+                -3
+                ];
+                
+
+Subject4_dir = '..\BinaryData\Subject4_2';
+
 %%
 
 fh1=figure(1); fh2=figure(2); fh3=figure(3); fh4=figure(4); fh5=figure(5);
-for f = 13 : numel(Files)
+for f = 13 : numel(MoCapFiles)
     
+    MoCap_file = fullfile(Subject4_dir,MoCapFiles{f});
+
     % O[xyz] Primary[xyz] Secondary[xyz] Center1 Center2 Center3
-    if( ~isempty(regexp( Files{f},'/Z\d+', 'once')) )
-        data = csvread(Files{f},8,2);
+    if( ~isempty(regexp( MoCap_file,'Z\d+', 'once')) )
+        data = csvread(MoCap_file,8,2);
         data = data(:,1:16*3);
 
         lank = data(:,(7*3+1):(3+3*7));
@@ -74,7 +106,7 @@ for f = 13 : numel(Files)
         
     else
         % O[xyz] Primary[xyz] Secondary[xyz] Center1 Center2 Center3 
-        data = csvread(Files{f},8,2);
+        data = csvread(MoCap_file,8,2);
         data = data(:,1:3*6);
 
         O  = data(:,1:3);
@@ -114,7 +146,7 @@ for f = 13 : numel(Files)
     plot(Time,Roll,'r-');
     hold off;
     legend({'Pitch','Roll'}, 'Interpreter', 'none');
-    title(sprintf('%s : Euler Angles : %2.3f Secs',Files{f},max(Time)), 'Interpreter', 'none');
+    title(sprintf('%s : Euler Angles : %2.3f Secs',MoCapFiles{f},max(Time)), 'Interpreter', 'none');
     xlabel('Time (s)');
     ylabel('deg');
     %saveas(fh1,strrep(Files{f},'.csv','_EulerAngles'),'png');
@@ -126,7 +158,7 @@ for f = 13 : numel(Files)
     plot(Time(X1),Roll(X1),'r-');
     hold off;
     legend({'Pitch','Roll'}, 'Interpreter', 'none');
-    title(sprintf('%s : Euler Angles : %2.3f Secs',Files{f},max(Time)), 'Interpreter', 'none');
+    title(sprintf('%s : Euler Angles : %2.3f Secs',MoCapFiles{f},max(Time)), 'Interpreter', 'none');
     xlabel('Time (s)'); 
     ylabel('deg');
     %saveas(fh2,strrep(Files{f},'.csv','_EulerAngles_z'),'png');
@@ -140,14 +172,14 @@ for f = 13 : numel(Files)
     %plot pich freq data - full
     figure(fh3); clf(fh3);
     plot(xax,F);
-    title(sprintf('%s : Pitch Freq : Nyq %2.3f Hz',Files{f},Fs/2), 'Interpreter', 'none');
+    title(sprintf('%s : Pitch Freq : Nyq %2.3f Hz',MoCapFiles{f},Fs/2), 'Interpreter', 'none');
     xlabel('Freq (Hz)'); ylabel('Freq Count');
     %saveas(fh3,strrep(Files{f},'.csv','_PitchFreq'),'png');
 
     %plot pitch freq data - zoomed
     figure(fh4); clf(fh4); 
     plot(xax(X2),F(X2));  grid on;
-    title(sprintf('%s : Pitch Freq : Nyq %2.3f Hz',Files{f},Fs/2), 'Interpreter', 'none');
+    title(sprintf('%s : Pitch Freq : Nyq %2.3f Hz',MoCapFiles{f},Fs/2), 'Interpreter', 'none');
     xlabel('Freq (Hz)'); ylabel('Freq Count');
     %saveas(fh4,strrep(Files{f},'.csv','_PitchFreq_z'),'png');
 
