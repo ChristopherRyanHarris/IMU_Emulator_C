@@ -11,8 +11,11 @@
 
 #define FALSE 0
 #define TRUE 1
+
 #define GTOMPS2 (9.80665)
 #define MPSTOMPH (2.23694)
+
+#define PI (3.14159265359)
 
 #if EXE_MODE /* Emulator mode */
 #define FCONSTRAIN(x,m,M) (fmin(fmax(x,m),M))

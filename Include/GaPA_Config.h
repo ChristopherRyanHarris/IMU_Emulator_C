@@ -29,6 +29,7 @@ typedef struct
 {
 	float phi; /* "thigh angle wrt vertical down (i.e. Pitch) */ 
 	float phi_max, phi_min; /* max/min pitch in previous gait */
+	float phi_max_next, phi_min_next; /* max/min pitch in this gait (for use in next cycle) */
 	float PHI; /* Time integral of the thigh angle (i.e. Integral of the Pitch) */ 
 	float PHI_max, PHI_min; /* max/min pitch integral in previous gait */ 
 	
@@ -37,6 +38,7 @@ typedef struct
 	float z; /* the "scale factor" */
 	
 	float nu;	/* The Phase Angle */
+	float nu_prev;	/* The previous Phase Angle */
 } GAPA_STATE_TYPE;
 
 

@@ -17,6 +17,7 @@
 #include "DSP_Config.h"
 #include "Common_Config.h"
 #include "WISE_Config.h"
+#include "GaPA_Config.h"
 
 /*******************************************************************
 ** Prototypes ******************************************************
@@ -48,10 +49,10 @@ void Estimate_Error ( void );
 void GaPA_Init( void );
 void GaPA_Reset( void );
 void GaPA_Update( void );
-void calc_SftPrmLeft( void );
-void calc_SftPrmRight( void );
-void calc_ScaleFactor( void );
-void calc_PhaseAngle( void );
+void calc_SftPrmLeft( float* GAMMA, float PHI_max, float PHI_min );
+void calc_SftPrmRight( float* gamma, float phi_max, float phi_min );
+void calc_ScaleFactor( float *z, float phi_max, float phi_min, float PHI_max, float PHI_min );
+void calc_PhaseAngle( float* nu, float PHI, float GAMMA, float phi, float gamma );
 
 /* Com_Functions */
 void Debug_LogOut( void );

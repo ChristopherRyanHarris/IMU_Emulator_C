@@ -49,13 +49,18 @@ extern GAPA_STATE_TYPE     g_gapa_state;
 */
 void GaPA_Init( void )
 {
-	g_gapa_state.phi_max = 0.0f; 
-	g_gapa_state.phi_min = 0.0f;
-	g_gapa_state.PHI_max = 0.0f;
-	g_gapa_state.PHI_min = 0.0f;
-	g_gapa_state.gamma   = 0.0f;
-	g_gapa_state.z       = 0.0f;
-	g_gapa_state.nu      = 0.0f;	
+	g_gapa_state.phi_max      = 0.0f; 
+	g_gapa_state.phi_min      = 0.0f;
+	g_gapa_state.PHI_max      = 0.0f;
+	g_gapa_state.PHI_min      = 0.0f;
+	g_gapa_state.phi_max_next = 0.0f;
+	g_gapa_state.phi_min_next = 0.0f;
+	g_gapa_state.PHI_max_next = 0.0f;
+	g_gapa_state.PHI_min_next = 0.0f;
+	g_gapa_state.gamma        = 0.0f;
+	g_gapa_state.GAMMA        = 0.0f;
+	g_gapa_state.z            = 0.0f;
+	g_gapa_state.nu           = 0.0f;	
 }/* End GaPA_Init */
 
 
@@ -65,13 +70,13 @@ void GaPA_Init( void )
 */
 void GaPA_Reset( void )
 {
-	g_gapa_state.phi_max = 0.0f;
-	g_gapa_state.phi_min = 0.0f;
-	g_gapa_state.PHI_max = 0.0f;
-	g_gapa_state.PHI_min = 0.0f;
-	g_gapa_state.gamma   = 0.0f;
-	g_gapa_state.z       = 0.0f;
-	g_gapa_state.nu      = 0.0f;	
+	g_gapa_state.phi_max_next = 0.0f;
+	g_gapa_state.phi_min_next = 0.0f;
+	g_gapa_state.PHI_max_next = 0.0f;
+	g_gapa_state.PHI_min_next = 0.0f;
+	g_gapa_state.gamma        = 0.0f;
+	g_gapa_state.GAMMA        = 0.0f;
+	g_gapa_state.z            = 0.0f;
 }/* End GaPA_Reset */
 
 
@@ -86,25 +91,44 @@ void GaPA_Reset( void )
 */
 void GaPA_Update( void )
 {
+	
+	/* Store previous nu */
+	g_gapa_state.nu_prev = g_gapa_state.nu;
+	
+	/* GAMMA = -( (PHI_max+PHI_min)/2 ) */
+	calc_SftPrmLeft( &g_gapa_state.GAMMA, g_gapa_state.PHI_max, g_gapa_state.PHI_min ); 
+	
+	/* gamma = -( (phi_max+phi_min)/2 ) */
+	calc_SftPrmRight( &g_gapa_state.gamma, g_gapa_state.phi_max, g_gapa_state.phi_min ); 
+	
+	/* z = abs(phi_max-phi_min)/abs(PHI_max-PHI_min) */
+	calc_ScaleFactor( &g_gapa_state.z, g_gapa_state.phi_max, g_gapa_state.phi_min, g_gapa_state.PHI_max, g_gapa_state.PHI_min ); 
+	
+	/* nu = atan2( -z*(PHI+GAMMA), -(phi+gamma) ) */
+	calc_PhaseAngle( &g_gapa_state.nu, g_gapa_state.z, g_gapa_state.PHI, g_gapa_state.GAMMA, g_gapa_state.phi, g_gapa_state.gamma  );  
+	
+	
 	/* Add check, 
 	** If (nu crosses 0) 
 	**  Update phi_min, phi_max, PHI_min, PHI_max
 	**    Given as, 
-	**    phi_min(t) = min{phi(t_hat) | t_hat E [t_phimax,t)}
-	**    phi_min(t) = min{phi(t_hat) | t_hat E [t_phimax,t)}
-	**    phi_min(t) = min{phi(t_hat) | t_hat E [t_phimax,t)}
-	**    phi_min(t) = min{phi(t_hat) | t_hat E [t_phimax,t)}
+	**    PHI_min(t) = min{ PHI(t_hat) | t_hat ∈ [t_phiM,t)}
+	**    phi_min(t) = min{ phi(t_hat) | t_hat ∈ [t_phiM,t)}
+	**    PHI_max(t) = max{ PHI(t_hat) | t_hat ∈ [t_phim,t)}
+	**    phi_max(t) = max{ phi(t_hat) | t_hat ∈ [t_phim,t)}
 	**	Reset GaPA state variables
-	**
 	*/
-	
-	
-	
-	calc_SftPrmLeft();
-	calc_SftPrmRight();
-	calc_ScaleFactor();
-	calc_PhaseAngle();
-	
+	if( fabs(g_gapa_state.nu-g_gapa_state.nu_prev)>PI )
+	{
+		/* Update min/max values */
+		g_gapa_state.phi_min = g_gapa_state.phi_min_next;
+		g_gapa_state.phi_max = g_gapa_state.phi_max_next;
+		g_gapa_state.PHI_min = g_gapa_state.PHI_min_next;
+		g_gapa_state.PHI_max = g_gapa_state.PHI_max_next;
+		
+		/* Reset our states */
+		GaPA_Reset();
+	}
 }/* End GaPA_Update */
 
 
@@ -114,9 +138,9 @@ void GaPA_Update( void )
 ** where, 
 **   GAMMA = -( (PHI_max+PHI_min)/2 )
 */
-void calc_SftPrmLeft( void )
+void calc_SftPrmLeft( float* GAMMA, float PHI_max, float PHI_min )
 {
-	
+	*(GAMMA) = -( (g_gapa_state.PHI_max+PHI_min)*0.5 );
 }/* End calc_SftPrmLeft */
 
 
@@ -126,9 +150,9 @@ void calc_SftPrmLeft( void )
 ** where, 
 **   gamma = -( (phi_max+phi_min)/2 )
 */
-void calc_SftPrmRight( void )
+void calc_SftPrmRight( float* gamma, float phi_max, float phi_min )
 {
-	
+	*(gamma) = -( (phi_max+phi_min)*0.5 );
 }/* End calc_SftPrmRight */
 
 
@@ -138,9 +162,9 @@ void calc_SftPrmRight( void )
 ** where, 
 **   z = abs(phi_max-phi_min)/abs(PHI_max-PHI_min)
 */
-void calc_ScaleFactor( void )
+void calc_ScaleFactor( float *z, float phi_max, float phi_min, float PHI_max, float PHI_min )
 {
-	
+		g_gapa_state.z = fabs( (g_gapa_state.phi_max-phi_min)/(g_gapa_state.PHI_max-PHI_min) );
 }/* End calc_ScaleFactor */
 
 
@@ -150,9 +174,10 @@ void calc_ScaleFactor( void )
 ** where, 
 **   nu = atan2( -z*(PHI+GAMMA), -(phi+gamma) )
 */
-void calc_PhaseAngle( void )
+void calc_PhaseAngle( float* nu, float PHI, float GAMMA, float phi, float gamma )
 {
-	
+	*(nu) = 
+		f_atan2( (-z*(PHI+GAMMA)) , (-phi+gamma) );
 }/* End calc_PhaseAngle */
 
 
