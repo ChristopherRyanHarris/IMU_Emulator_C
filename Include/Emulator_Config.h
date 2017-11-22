@@ -49,10 +49,11 @@ void Estimate_Error ( void );
 void GaPA_Init( void );
 void GaPA_Reset( void );
 void GaPA_Update( void );
+void TrackPhiVariables( GAPA_STATE_TYPE* l_gapa_state );
 void calc_SftPrmLeft( float* GAMMA, float PHI_max, float PHI_min );
 void calc_SftPrmRight( float* gamma, float phi_max, float phi_min );
 void calc_ScaleFactor( float *z, float phi_max, float phi_min, float PHI_max, float PHI_min );
-void calc_PhaseAngle( float* nu, float PHI, float GAMMA, float phi, float gamma );
+void calc_PhaseAngle( float* nu, float z, float PHI, float GAMMA, float phi, float gamma );
 
 /* Com_Functions */
 void Debug_LogOut( void );

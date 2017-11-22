@@ -30,6 +30,7 @@
 #endif
 
 #include "../Include/DSP_Config.h"
+#include "../Include/DCM_Config.h"
 #include "../Include/WISE_Config.h"
 #include "../Include/Emulator_Config.h"
 extern CAL_STATE_TYPE      g_calibration;

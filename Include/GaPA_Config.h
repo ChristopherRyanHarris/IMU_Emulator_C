@@ -27,11 +27,14 @@
 */
 typedef struct
 {
+	int version; /* Phase portrait version (PHI/PHV) */
+	
 	float phi; /* "thigh angle wrt vertical down (i.e. Pitch) */ 
 	float phi_max, phi_min; /* max/min pitch in previous gait */
 	float phi_max_next, phi_min_next; /* max/min pitch in this gait (for use in next cycle) */
 	float PHI; /* Time integral of the thigh angle (i.e. Integral of the Pitch) */ 
 	float PHI_max, PHI_min; /* max/min pitch integral in previous gait */ 
+	float PHI_max_next, PHI_min_next; /* max/min swing distance in this gait (for use in next cycle) */
 	
 	float gamma; /* "right shift variable" */
 	float GAMMA; /* "left shift variable" */
@@ -42,5 +45,17 @@ typedef struct
 } GAPA_STATE_TYPE;
 
 
+/* 
+** TYPE: ERNIE_STATE_TYPE
+** This holds the state variables for the so-called "ERNIE" algorithm
+** The "ERNIE" algorithm is a method of computing a fast moving phase 
+** variable. We will use this algorithm for the first few strides, or 
+** until the ernie phase matches the unified phase. The ERNIE 
+** algorithm is essentially a Piece-Wise algorithm of computing the 
+** phase variable */
+typedef struct
+{
+	float 
+}
 #endif // GAPA_H
 

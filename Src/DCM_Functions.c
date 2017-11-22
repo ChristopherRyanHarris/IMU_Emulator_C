@@ -27,6 +27,7 @@
 #include "../Include/IMU9250_Config.h"
 #endif
 
+#include "../Include/DCM_Config.h"
 #include "../Include/DSP_Config.h"
 #include "../Include/WISE_Config.h"
 #include "../Include/Math.h"
@@ -84,11 +85,12 @@ void DCM_Init( void )
   
   for(i=0;i<3;i++) g_dcm_state.Omega_I[i] = 0.0f;
   for(i=0;i<3;i++) g_dcm_state.Omega_P[i] = 0.0f;
-  for(i=0;i<3;i++) g_dcm_state.gyro_ave[i] = g_sensor_state.gyro[i];
-  for(i=0;i<3;i++) g_dcm_state.gyro_var[i] = 0.0f;
-  for(i=0;i<3;i++) g_dcm_state.gyro_std[i] = 0.0f;
+  
+  for(i=0;i<3;i++) g_sensor_state.gyro_ave[i] = g_sensor_state.gyro[i];
+  for(i=0;i<3;i++) g_sensor_state.gyro_var[i] = 0.0f;
+  for(i=0;i<3;i++) g_sensor_state.gyro_std[i] = 0.0f;
   g_dcm_state.SampleNumber=0;
-  g_dcm_state.std_time=0;
+  g_sensor_state.std_time=0;
 }
 
 /*************************************************
@@ -197,24 +199,24 @@ void DCM_Filter( void )
   
   /* Clear Rolling Std/Average after set time */
   #if( WISE_ON==1 )
-  g_dcm_state.std_time+=(g_control_state.G_Dt*TIME_RESOLUTION);
-  if( g_dcm_state.std_time>MOVE_RESET_RATE )
+  g_sensor_state.std_time+=(g_control_state.G_Dt*TIME_RESOLUTION);
+  if( g_sensor_state.std_time>MOVE_RESET_RATE )
  	{
-	  for(i=0;i<3;i++) g_dcm_state.gyro_ave[i] = g_sensor_state.gyro[i];
-	  for(i=0;i<3;i++) g_dcm_state.gyro_var[i] = 0.0f;
-	  for(i=0;i<3;i++) g_dcm_state.gyro_std[i] = 0.0f;
+	  for(i=0;i<3;i++) g_sensor_state.gyro_ave[i] = g_sensor_state.gyro[i];
+	  for(i=0;i<3;i++) g_sensor_state.gyro_var[i] = 0.0f;
+	  for(i=0;i<3;i++) g_sensor_state.gyro_std[i] = 0.0f;
+	  g_sensor_state.std_time=0;
 	  g_dcm_state.SampleNumber=0;
-	  g_dcm_state.std_time=0;
  	}
   
   /* Update Rolling Std */
   g_dcm_state.SampleNumber++;
   for( i=0;i<3;i++)
   {
-  	temp = Rolling_Mean( g_dcm_state.SampleNumber, g_dcm_state.gyro_ave[i], g_sensor_state.gyro[i] );
-  	g_dcm_state.gyro_var[i] = Rolling_Variance( g_dcm_state.gyro_ave[i], temp, g_sensor_state.gyro[i], g_dcm_state.gyro_var[i] );
-  	g_dcm_state.gyro_ave[i] = temp;
-  	g_dcm_state.gyro_std[i] = g_dcm_state.gyro_var[i]/g_dcm_state.SampleNumber;
+  	temp = Rolling_Mean( g_dcm_state.SampleNumber, g_sensor_state.gyro_ave[i], g_sensor_state.gyro[i] );
+  	g_sensor_state.gyro_var[i] = Rolling_Variance( g_sensor_state.gyro_ave[i], temp, g_sensor_state.gyro[i], g_sensor_state.gyro_var[i] );
+  	g_sensor_state.gyro_ave[i] = temp;
+  	g_sensor_state.gyro_std[i] = g_sensor_state.gyro_var[i]/g_dcm_state.SampleNumber;
   }
   #endif
   

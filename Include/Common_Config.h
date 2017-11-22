@@ -56,23 +56,6 @@ typedef struct
   float N;
 } CAL_STATE_TYPE;
 
-/*
-** TYPE: DCM_STATE_TYPE
-** This type is used to hold the DCM
-** specific arrays and variables */
-typedef struct
-{
-  float Omega_P[3];
-  float Omega_I[3];
-  float DCM_Matrix[3][3];
-
-  float gyro_ave[3];
-  float gyro_var[3];
-  float gyro_std[3];
-
-  long int SampleNumber;
-  float std_time;
-} DCM_STATE_TYPE;
 
 /*
 ** TYPE: SENSOR_STATE_TYPE
@@ -83,14 +66,38 @@ typedef struct
   float yaw;
   float pitch;
   float roll;
+  
+  float yaw_prev;
+  float pitch_prev;
+  float roll_prev;
 
   float mag[3]; /* not used */
 
   /* Accel x:Fore y:Port z:Zenith */
   float accel[3];
   float gyro[3];
+  
+  float gyro_ave[3];
+  float gyro_var[3];
+  float gyro_std[3];
+  
+  float std_time;
 
 } SENSOR_STATE_TYPE;
+
+/*
+** TYPE: DCM_STATE_TYPE
+** This type is used to hold the DCM
+** specific arrays and variables */
+typedef struct
+{
+  float Omega_P[3];
+  float Omega_I[3];
+  float DCM_Matrix[3][3];
+
+  long int SampleNumber;
+  
+} DCM_STATE_TYPE;
 
 /*
 ** TYPE: CONTROL_STATE_TYPE
@@ -98,7 +105,7 @@ typedef struct
 ** variables. */
 typedef struct
 {
-  int output_mode;// = 3;
+  int output_mode;
 
   unsigned long timestamp;
   unsigned long timestamp_old;

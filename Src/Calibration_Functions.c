@@ -12,6 +12,7 @@
 
 
 #include "../Include/Common_Config.h"
+#include "../Include/DCM_Config.h"
 
 #if EXE_MODE==1 /* Emulator Mode */
 #include "../Include/Emulator_Config.h"
