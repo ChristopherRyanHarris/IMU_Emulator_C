@@ -38,7 +38,13 @@ typedef struct
 	
 	float gamma; /* "right shift variable" */
 	float GAMMA; /* "left shift variable" */
-	float z; /* the "scale factor" */
+	float z_phi; /* the "scale factor" */
+	float z_PHI; /* the "scale factor" */
+	
+	float PErr_phi, IErr_phi;
+	float PErr_PHI, IErr_PHI;
+	
+	float phi_mw, PHI_mw;
 	
 	float nu;	/* The Phase Angle */
 	float nu_prev;	/* The previous Phase Angle */

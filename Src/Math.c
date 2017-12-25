@@ -127,6 +127,31 @@ float Rolling_Mean( const int n, float m, float x )
 
 
 /*************************************************
+** Windowed_Mean
+** Compute the approximate moving average of the 
+** data in a real-time method without storing 
+** previous samples.
+** m = m*(1-alpha) + (alpha)*x;
+** Input:
+**	m: Initial mean
+** 	x: New sample value
+**  n: Sample number
+**  a: Exponential factor
+*/
+float Windowed_Mean( float m, float x, int n, float a )
+{
+	/* Error checking */
+	if( n==0 )
+	{
+		m=0;
+		return(m);
+	}
+	
+	
+	
+}
+
+/*************************************************
 ** Rolling_Variance
 ** Compute the rolling standard deviation (xN) given
 ** the current mean, the previous mean, and a sample.

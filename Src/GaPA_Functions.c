@@ -66,7 +66,8 @@ void GaPA_Init( void )
 	g_gapa_state.PHI_min_next = 0.0f;
 	g_gapa_state.gamma        = 0.0f;
 	g_gapa_state.GAMMA        = 0.0f;
-	g_gapa_state.z            = 0.0f;
+	g_gapa_state.z_phi        = 0.0f;
+	g_gapa_state.z_PHI        = 0.0f;
 	g_gapa_state.nu           = 0.0f;	
 }/* End GaPA_Init */
 
@@ -83,7 +84,8 @@ void GaPA_Reset( void )
 	g_gapa_state.PHI_min_next = 0.0f;
 	g_gapa_state.gamma        = 0.0f;
 	g_gapa_state.GAMMA        = 0.0f;
-	g_gapa_state.z            = 0.0f;
+	g_gapa_state.z_phi        = 0.0f;
+	g_gapa_state.z_PHI        = 0.0f;
 }/* End GaPA_Reset */
 
 
@@ -117,8 +119,8 @@ void GaPA_Update( void )
 	switch( g_gapa_state.version )
 	{
 		case 1 : /* PHI */
-			g_gapa_state.phi =  g_sensor_state.pitch;
-			g_gapa_state.PHI += g_sensor_state.pitch*g_control_state.G_Dt;
+			g_gapa_state.phi =  g_sensor_state.pitch - g_gapa_state.PErr_phi - g_gapa_state.IErr_phi;
+			g_gapa_state.PHI += g_gapa_state.phi*g_control_state.G_Dt - g_gapa_state.PErr_PHI - g_gapa_state.IErr_PHI;
 			break;
 		case 2 : /* PHV */
 			//g_gapa_state.phi = (g_sensor_state.pitch - g_sensor_state.prev_pitch)*g_control_state.G_Dt;
@@ -130,33 +132,36 @@ void GaPA_Update( void )
 	} /* End version switch */
 	
 	
+	/* Compute the windowed moving average of each of the
+	** phase variables */
+	
 	/* Track phi min/max and PHI min/max
 	** These variables will be used in the next gait cycle to 
 	** scale the phase portrait to a constant radius within 
 	** each quadrandt to provide an approximately cirsular orbit. */
-	TrackPhiVariables( &g_gapa_state );
+//	TrackPhiVariables( &g_gapa_state );
 	
 	/* Calculate the new GAMMA variable
 	** GAMMA = -( (PHI_max+PHI_min)/2 ) */
-	calc_SftPrmLeft( &g_gapa_state.GAMMA, g_gapa_state.PHI_max, g_gapa_state.PHI_min ); 
+//	calc_SftPrmLeft( &g_gapa_state.GAMMA, g_gapa_state.PHI_max, g_gapa_state.PHI_min ); 
 	
 	/* calculate the new gamma variable 
 	** gamma = -( (phi_max+phi_min)/2 ) */
-	calc_SftPrmRight( &g_gapa_state.gamma, g_gapa_state.phi_max, g_gapa_state.phi_min ); 
+//	calc_SftPrmRight( &g_gapa_state.gamma, g_gapa_state.phi_max, g_gapa_state.phi_min ); 
 	
 	/* Calculate the new scaling factor "z"
 	** z = abs(phi_max-phi_min)/abs(PHI_max-PHI_min) */
-	calc_ScaleFactor( &g_gapa_state.z, 
-										 g_gapa_state.phi_max, g_gapa_state.phi_min, 
-										 g_gapa_state.PHI_max, g_gapa_state.PHI_min ); 
+//	calc_ScaleFactor( &g_gapa_state.z, 
+//										 g_gapa_state.phi_max, g_gapa_state.phi_min, 
+//										 g_gapa_state.PHI_max, g_gapa_state.PHI_min ); 
 	
 	/* Calculate nu
 	**   The phase angle is the angle between the two 
 	**   Phase variables phi and PHI.
 	** nu = atan2( -z*(PHI+GAMMA), -(phi+gamma) ) */
-	calc_PhaseAngle( &g_gapa_state.nu,  g_gapa_state.z, 
-										g_gapa_state.PHI, g_gapa_state.GAMMA, 
-										g_gapa_state.phi, g_gapa_state.gamma  );  
+//	calc_PhaseAngle( &g_gapa_state.nu,  g_gapa_state.z, 
+//										g_gapa_state.PHI, g_gapa_state.GAMMA, 
+//										g_gapa_state.phi, g_gapa_state.gamma  );  
 	
 	
 	/* The min/max values of the filtered angle and integral are 
@@ -172,17 +177,17 @@ void GaPA_Update( void )
 	**    PHI_max(t) = max{ PHI(t_hat) | t_hat ∈ [t_phim,t) }
 	**    phi_max(t) = max{ phi(t_hat) | t_hat ∈ [t_phim,t) }
 	**	Reset GaPA state variables */
-	if( fabs(g_gapa_state.nu-g_gapa_state.nu_prev)>PI )
-	{
-		/* Update min/max values */
-		g_gapa_state.phi_min = g_gapa_state.phi_min_next;
-		g_gapa_state.phi_max = g_gapa_state.phi_max_next;
-		g_gapa_state.PHI_min = g_gapa_state.PHI_min_next;
-		g_gapa_state.PHI_max = g_gapa_state.PHI_max_next;
-		
-		/* Reset our states at the beginning of each new gait cycle s*/
-		GaPA_Reset();
-	}
+//	if( fabs(g_gapa_state.nu-g_gapa_state.nu_prev)>PI )
+//	{
+//		/* Update min/max values */
+//		g_gapa_state.phi_min = g_gapa_state.phi_min_next;
+//		g_gapa_state.phi_max = g_gapa_state.phi_max_next;
+//		g_gapa_state.PHI_min = g_gapa_state.PHI_min_next;
+//		g_gapa_state.PHI_max = g_gapa_state.PHI_max_next;
+//		
+//		/* Reset our states at the beginning of each new gait cycle s*/
+//		GaPA_Reset();
+//	}
 }/* End GaPA_Update */
 
 /*****************************************************************
