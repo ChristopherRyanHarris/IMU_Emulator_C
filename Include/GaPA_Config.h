@@ -47,6 +47,7 @@ typedef struct
 	float PErr_PHI, IErr_PHI;
 	
 	float phi_mw, PHI_mw;
+	float phin, PHIn;
 	
 	float nu;	/* The Phase Angle */
 	float nu_prev;	/* The previous Phase Angle */

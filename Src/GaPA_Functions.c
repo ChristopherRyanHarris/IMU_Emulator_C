@@ -147,6 +147,24 @@ void GaPA_Update( void )
 	g_gapa_struct.phi_mw = Windowed_Mean( g_gapa_struct.phi_mw, g_gapa_struct.phi, n, 0.01 );
 	g_gapa_struct.PHI_mw = Windowed_Mean( g_gapa_struct.PHI_mw, g_gapa_struct.PHI, n, 0.01 );
 	
+	/* Compute phase variable feedback error */
+	g_gapa_state.PErr_phi =  g_gapa_struct.phi_mw * 0.01;
+	g_gapa_state.IErr_phi += g_gapa_struct.phi_mw * 0.01;
+	g_gapa_state.PErr_PHI =  g_gapa_struct.PHI_mw * 0.01;
+	g_gapa_state.IErr_PHI += g_gapa_struct.PHI_mw * 0;
+	
+	/* Record phase variable min and max */
+	g_gapa_state.phi_max = MAX( g_gapa_state.phi_max, g_gapa_state.phi );
+	g_gapa_state.PHI_max = MAX( g_gapa_state.PHI_max, g_gapa_state.PHI );
+	
+	/* Scale by z */
+	g_gapa_state.phin = g_gapa_state.phi/g_gapa_state.z_phi;
+	g_gapa_state.PHIn = g_gapa_state.PHI/g_gapa_state.z_PHI;
+	
+	/* Normalize to 1 */
+	
+	/* Get the shift variables by determining the phase portrait center */
+	
 	
 	
 }/* End GaPA_Update */
