@@ -56,6 +56,8 @@ void GaPA_Init( void )
 	** NOTE: Only PHI implemented at this time */
 	g_gapa_state.version      = 1;
 	
+	g_gapa_state.iteration    = 0;
+	
 	g_gapa_state.phi_max      = 0.0f; 
 	g_gapa_state.phi_min      = 0.0f;
 	g_gapa_state.PHI_max      = 0.0f;
@@ -100,6 +102,14 @@ void GaPA_Reset( void )
 */
 void GaPA_Update( void )
 {
+	/* Itaration Count */
+	g_gapa_state.iteration++;
+	
+	/* We can only get a phase angle ofter 3 iterations */
+	if( g_gapa_state.iteration<3 )
+	{
+		return;
+	}
 	
 	/* Store previous nu 
 	** NOTE: On the first cycle, this is meaningless since 
@@ -134,60 +144,11 @@ void GaPA_Update( void )
 	
 	/* Compute the windowed moving average of each of the
 	** phase variables */
-	
-	/* Track phi min/max and PHI min/max
-	** These variables will be used in the next gait cycle to 
-	** scale the phase portrait to a constant radius within 
-	** each quadrandt to provide an approximately cirsular orbit. */
-//	TrackPhiVariables( &g_gapa_state );
-	
-	/* Calculate the new GAMMA variable
-	** GAMMA = -( (PHI_max+PHI_min)/2 ) */
-//	calc_SftPrmLeft( &g_gapa_state.GAMMA, g_gapa_state.PHI_max, g_gapa_state.PHI_min ); 
-	
-	/* calculate the new gamma variable 
-	** gamma = -( (phi_max+phi_min)/2 ) */
-//	calc_SftPrmRight( &g_gapa_state.gamma, g_gapa_state.phi_max, g_gapa_state.phi_min ); 
-	
-	/* Calculate the new scaling factor "z"
-	** z = abs(phi_max-phi_min)/abs(PHI_max-PHI_min) */
-//	calc_ScaleFactor( &g_gapa_state.z, 
-//										 g_gapa_state.phi_max, g_gapa_state.phi_min, 
-//										 g_gapa_state.PHI_max, g_gapa_state.PHI_min ); 
-	
-	/* Calculate nu
-	**   The phase angle is the angle between the two 
-	**   Phase variables phi and PHI.
-	** nu = atan2( -z*(PHI+GAMMA), -(phi+gamma) ) */
-//	calc_PhaseAngle( &g_gapa_state.nu,  g_gapa_state.z, 
-//										g_gapa_state.PHI, g_gapa_state.GAMMA, 
-//										g_gapa_state.phi, g_gapa_state.gamma  );  
+	g_gapa_struct.phi_mw = Windowed_Mean( g_gapa_struct.phi_mw, g_gapa_struct.phi, n, 0.01 );
+	g_gapa_struct.PHI_mw = Windowed_Mean( g_gapa_struct.PHI_mw, g_gapa_struct.PHI, n, 0.01 );
 	
 	
-	/* The min/max values of the filtered angle and integral are 
-	** stored for computing the shift and scale. At the beginning 
-	** of each gait cycle (indicated by the phase variable crossing
-	** zero) we update the min/max values using the detected min/max
-	** from the previous cycle.
-	**
-	** If (nu crosses 0) { Update phi_min, phi_max, PHI_min, PHI_max  from the previous cycle }
-	**    Given as, 
-	**    PHI_min(t) = min{ PHI(t_hat) | t_hat ∈ [t_phiM,t) }
-	**    phi_min(t) = min{ phi(t_hat) | t_hat ∈ [t_phiM,t) }
-	**    PHI_max(t) = max{ PHI(t_hat) | t_hat ∈ [t_phim,t) }
-	**    phi_max(t) = max{ phi(t_hat) | t_hat ∈ [t_phim,t) }
-	**	Reset GaPA state variables */
-//	if( fabs(g_gapa_state.nu-g_gapa_state.nu_prev)>PI )
-//	{
-//		/* Update min/max values */
-//		g_gapa_state.phi_min = g_gapa_state.phi_min_next;
-//		g_gapa_state.phi_max = g_gapa_state.phi_max_next;
-//		g_gapa_state.PHI_min = g_gapa_state.PHI_min_next;
-//		g_gapa_state.PHI_max = g_gapa_state.PHI_max_next;
-//		
-//		/* Reset our states at the beginning of each new gait cycle s*/
-//		GaPA_Reset();
-//	}
+	
 }/* End GaPA_Update */
 
 /*****************************************************************

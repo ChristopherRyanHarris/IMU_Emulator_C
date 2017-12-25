@@ -147,8 +147,8 @@ float Windowed_Mean( float m, float x, int n, float a )
 		return(m);
 	}
 	
-	
-	
+	/* Compute and return the moving average */
+	return( m*(1-a) + x*(a) );
 }
 
 /*************************************************

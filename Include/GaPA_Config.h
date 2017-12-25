@@ -29,6 +29,8 @@ typedef struct
 {
 	int version; /* Phase portrait version (PHI/PHV) */
 	
+	int iteration;
+	
 	float phi; /* "thigh angle wrt vertical down (i.e. Pitch) */ 
 	float phi_max, phi_min; /* max/min pitch in previous gait */
 	float phi_max_next, phi_min_next; /* max/min pitch in this gait (for use in next cycle) */
