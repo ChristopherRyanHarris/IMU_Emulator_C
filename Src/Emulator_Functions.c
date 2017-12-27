@@ -69,10 +69,27 @@ void Read_Sensors( void )
     return;
   }
 
+  //Format:1
+  // Data Colleciton: 1
+  // Format:
+  //   14x[float32] 14x[float32] ....
+  //   [Timestamp][accel1][accel2][accel3][gyro1][gyro2][gyro3][yaw][pitch][roll][aest_ave1][aest_ave2][vest_ave1][vest_ave2]
+  //g_emu_data.timestamp = (unsigned long) temp;
+  //fread(&g_sensor_state.accel[0],sizeof(float),3,g_fid);
+  //fread(&g_sensor_state.gyro[0],sizeof(float),3,g_fid);
+  //fseek(g_fid,sizeof(float)*7,SEEK_CUR);
+
+
+  // Format: 2
+  // Data collecion: 2
+  //   10x[float32] 10x[float32] ...
+  //   [1]        [2]     [3]     [4]     [5]    [6]    [7]    [8]  [9]    [10]
+  //   [Timestamp][accel1][accel2][accel3][gyro1][gyro2][gyro3][yaw][pitch][roll]
   g_emu_data.timestamp = (unsigned long) temp;
   fread(&g_sensor_state.accel[0],sizeof(float),3,g_fid);
   fread(&g_sensor_state.gyro[0],sizeof(float),3,g_fid);
-  fseek(g_fid,sizeof(float)*7,SEEK_CUR);
+  fseek(g_fid,sizeof(float)*3,SEEK_CUR);
+
 } /* End Read_Sensors */
 
 

@@ -12,10 +12,16 @@
 ** Imcludes ********************************************************
 ********************************************************************/
 
-#include "IMU10736_Config.h"
+#include "Common_Config.h"
+
+//#ifdef _IMU10736_
+//#include "../Include/IMU10736_Config.h"
+//#endif
+//#ifdef _IMU9250_
+#include "../Include/IMU9250_Config.h"
+//#endif
 
 #include "DSP_Config.h"
-#include "Common_Config.h"
 #include "WISE_Config.h"
 #include "GaPA_Config.h"
 

@@ -37,15 +37,19 @@
 *******************************************************************/
 
 /* DCM gain */
-#define Kp_ROLLPITCH 0.1f
+//#define Kp_ROLLPITCH 0.1f
+#define Kp_ROLLPITCH 0.002f
 //#define Ki_ROLLPITCH 0.00005f
 //#define Ki_ROLLPITCH 0.00006f
-#define Ki_ROLLPITCH 0.00001f
+//#define Ki_ROLLPITCH 0.00001f
+#define Ki_ROLLPITCH 0.000001f
 
 //#define Kp_YAW 1.2f
-#define Kp_YAW 1.5f
+//#define Kp_YAW 1.5f
+#define Kp_YAW 0.0f
 //#define Ki_YAW 0.00002f
-#define Ki_YAW 0.00005f
+//#define Ki_YAW 0.00005f
+#define Ki_YAW 0.0f
 
 /*
 ** Notes on orientation for the 9250 IMU
@@ -74,13 +78,13 @@
 ** PITCH_O:1 - Pitch orientation #1. Angle x-axis w/ Horizontal Plane  +Rot:Aft-Down    0:Nadir0/Zenith down. +90:Aft down   -90:Fore down
 ** PITCH_O:2 - Pitch orientation #2. Angle y-axis w/ Horizontal Plane  +Rot:Port-Down   0:Fore/Aft down       +90:Port down  -90:Starboard down
 ** PITCH_O:3 - Pitch orientation #3. Angle z-axis w/ Horizontal Plane  +Rot:Nadir-Down  0:Fore/Aft down       +90:Nadir down -90:Zenith down */
-#define PITCH_O  1
+#define PITCH_O  2
 
 /* Pitch rotation convention
 ** This sets the sign of rotation for pitch
 **   1 :+Towards +axis
 **  -1 :+Towards -axis */
-#define PITCH_ROT_CONV 1
+#define PITCH_ROT_CONV -1
 
 /* NOTE:
 ** Since Pitch is -90:+90, there is no "PITCH_ZREF"
@@ -234,7 +238,7 @@
 #define ACCEL_Z_OFFSET ((ACCEL_Z_MIN + ACCEL_Z_MAX) / 2.0f)
 #define ACCEL_X_GAIN (GRAVITY/(ACCEL_X_MAX - ACCEL_X_OFFSET))
 #define ACCEL_Y_GAIN (GRAVITY/(ACCEL_Y_MAX - ACCEL_Y_OFFSET))
-#define ACCEL_Z_GAIN (GRAVITY/(ACCEL_Z_MAX-ACCEL_Z_OFFSET))
+#define ACCEL_Z_GAIN (GRAVITY/(ACCEL_Z_MAX - ACCEL_Z_OFFSET))
 #define ACCEL_X_SCALED(x) ( (x - ACCEL_X_OFFSET - (0))*ACCEL_X_GAIN )
 #define ACCEL_Y_SCALED(x) ( (x - ACCEL_Y_OFFSET - (0))*ACCEL_Y_GAIN )
 #define ACCEL_Z_SCALED(x) ( (x - ACCEL_Z_OFFSET)*ACCEL_Z_GAIN )

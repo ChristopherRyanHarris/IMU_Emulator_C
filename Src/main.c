@@ -42,7 +42,8 @@ EMULATE_TYPE        g_emu_data;
 // Order:
 // Timestamp, accel[0:2], gyro[0:2], yaw, pitch, roll, aest_ave[0:1], vest_ave[0:1]
 // Timestamp in micro seconds
-const char* g_EmuFile = ".\\Data\\BinaryData\\Subject1\\Subject1_2p7_0pct.bin";
+//const char* g_EmuFile = ".\\Data\\BinaryData\\Subject1\\Subject1_2p7_0pct.bin";
+const char* g_EmuFile = ".\\Data\\BinaryData\\Subject3_2\\F4_2.bin";
 FILE *      g_fid;
 
 
@@ -53,6 +54,8 @@ FILE *      g_fid;
 int main()
 {
   float count = 1.0;
+  int i,j;
+
   g_fid = fopen(g_EmuFile,"rb");
   g_emu_data.flag=1;
 
@@ -64,33 +67,88 @@ int main()
   GaPA_Init();
   DSP_Filter_Init();
 
+  fprintf(stdout, " accel:\t");
+    for(i=0;i<3;i++)
+    {
+    	fprintf(stdout," %f ",g_sensor_state.accel[i]);
+    }
+    fprintf(stdout,"\n");
+    fprintf(stdout, " gyro:\t");
+    for(i=0;i<3;i++)
+    {
+    	fprintf(stdout," %f ",g_sensor_state.gyro[i]);
+    }
+    fprintf(stdout,"\n");
+
+    for(i=0;i<3;i++)
+    {
+    	for(j=0;j<3;j++)
+    	{
+    		fprintf(stdout," %f ",g_dcm_state.DCM_Matrix[i][j]);
+    	}
+    	fprintf(stdout,"\n");
+    }
+    fprintf(stdout,"pitch:%f\n",g_sensor_state.pitch);
+
   while( g_emu_data.flag==1 )
   {
     Read_Sensors();
-    FIR_Filter();
-    IIR_Filter();
-    DSP_Shift();
     if (g_emu_data.flag==0)
       continue;
 
-    Update_Time();
-    DCM_Filter();
-    WISE_Update();
+    //FIR_Filter();
+    //IIR_Filter();
+    //DSP_Shift();
 
-		//*2.23694
+    Update_Time();
+    //DCM_Filter();
+    GaPA_Update();
+    //WISE_Update();
+
     fprintf(stdout,"\n");
     fprintf(stdout,"Count: %f\n",count);
     fprintf(stdout,"Time:%ld\t",g_control_state.timestamp);
+    fprintf(stdout,"dt:%f\n",g_control_state.G_Dt);
+
+    fprintf(stdout, " accel:\t");
+    for(i=0;i<3;i++)
+    {
+    	fprintf(stdout," %f ",g_sensor_state.accel[i]);
+    }
+    fprintf(stdout,"\n");
+    fprintf(stdout, " gyro:\t");
+    for(i=0;i<3;i++)
+    {
+    	fprintf(stdout," %f ",g_sensor_state.gyro[i]);
+    }
+    fprintf(stdout,"\n");
+
+    for(i=0;i<3;i++)
+    {
+    	for(j=0;j<3;j++)
+    	{
+    		fprintf(stdout," %f ",g_dcm_state.DCM_Matrix[i][j]);
+    	}
+    	fprintf(stdout,"\n");
+    }
+    fprintf(stdout,"pitch:%f\n",g_sensor_state.pitch);
+
+    fprintf(stdout,"nu:%f\n",g_gapa_state.nu);
+    fprintf(stdout,"phi:%f\t PHI:%f\n",g_gapa_state.phi, g_gapa_state.PHI);
+    fprintf(stdout,"phi_mw:%f\t PHI_mw:%f\n",g_gapa_state.phi, g_gapa_state.PHI);
+    fprintf(stdout,"phi_max:%f\t PHI_max:%f\n",g_gapa_state.phi_max, g_gapa_state.PHI_max);
+    fprintf(stdout,"phin:%f\t PHIn:%f\n",g_gapa_state.phin, g_gapa_state.PHIn);
+    fprintf(stdout,"z_phi:%f\t z_PHI:%f\t",g_gapa_state.z_phi, g_gapa_state.z_PHI);
     //fprintf(stdout,"Dt:%f\n",g_control_state.G_Dt);
     //fprintf(stdout,"yaw:%f\t pitch:%f\t roll:%f\n",TO_DEG(g_sensor_state.yaw),TO_DEG(g_sensor_state.pitch),TO_DEG(g_sensor_state.roll));
     //fprintf(stdout,"accel[0]:%f accel[1]:%f accel[2]:%f\n",g_sensor_state.accel[0],g_sensor_state.accel[1],g_sensor_state.accel[2]);
     //fprintf(stdout,"gyro[0]:%f gyro[1]:%f gyro[2]:%f\n",g_sensor_state.gyro[0],g_sensor_state.gyro[1],g_sensor_state.gyro[2]);
-    fprintf(stdout,"aveAcc[0]:%f aveAcc[1]:%f\n",g_wise_state.accel_ave[0],g_wise_state.accel_ave[1]);
-    fprintf(stdout,"Acc[0]:%f Acc[1]:%f\n",g_wise_state.accel[0],g_wise_state.accel[1]);
-    fprintf(stdout,"aveVel[0]:%f aveVel[1]:%f\n",g_wise_state.vel_ave[0],g_wise_state.vel_ave[1]);
-    fprintf(stdout,"vel[0]:%f vel[1]:%f\n",g_wise_state.vel[0],g_wise_state.vel[1]);
+    //fprintf(stdout,"aveAcc[0]:%f aveAcc[1]:%f\n",g_wise_state.accel_ave[0],g_wise_state.accel_ave[1]);
+    //fprintf(stdout,"Acc[0]:%f Acc[1]:%f\n",g_wise_state.accel[0],g_wise_state.accel[1]);
+    //fprintf(stdout,"aveVel[0]:%f aveVel[1]:%f\n",g_wise_state.vel_ave[0],g_wise_state.vel_ave[1]);
+    //fprintf(stdout,"vel[0]:%f vel[1]:%f\n",g_wise_state.vel[0],g_wise_state.vel[1]);
     fprintf(stdout,"\n");
-    getchar();
+    //getchar();
     count++;
   }
   fclose(g_fid);

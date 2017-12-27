@@ -49,6 +49,8 @@ typedef struct
 	float phi_mw, PHI_mw;
 	float phin, PHIn;
 	
+	float prev_phi[3], prev_PHI[3]; 
+	
 	float nu;	/* The Phase Angle */
 	float nu_prev;	/* The previous Phase Angle */
 } GAPA_STATE_TYPE;
@@ -62,9 +64,6 @@ typedef struct
 ** until the ernie phase matches the unified phase. The ERNIE 
 ** algorithm is essentially a Piece-Wise algorithm of computing the 
 ** phase variable */
-typedef struct
-{
-	float 
-}
+
 #endif // GAPA_H
 
