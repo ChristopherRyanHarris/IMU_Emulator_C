@@ -68,27 +68,27 @@ int main()
   DSP_Filter_Init();
 
   fprintf(stdout, " accel:\t");
-    for(i=0;i<3;i++)
-    {
-    	fprintf(stdout," %f ",g_sensor_state.accel[i]);
-    }
-    fprintf(stdout,"\n");
-    fprintf(stdout, " gyro:\t");
-    for(i=0;i<3;i++)
-    {
-    	fprintf(stdout," %f ",g_sensor_state.gyro[i]);
-    }
-    fprintf(stdout,"\n");
+  for(i=0;i<3;i++)
+  {
+  	fprintf(stdout," %f ",g_sensor_state.accel[i]);
+  }
+  fprintf(stdout,"\n");
+  fprintf(stdout, " gyro:\t");
+  for(i=0;i<3;i++)
+  {
+  	fprintf(stdout," %f ",g_sensor_state.gyro[i]);
+  }
+  fprintf(stdout,"\n");
 
-    for(i=0;i<3;i++)
-    {
-    	for(j=0;j<3;j++)
-    	{
-    		fprintf(stdout," %f ",g_dcm_state.DCM_Matrix[i][j]);
-    	}
-    	fprintf(stdout,"\n");
-    }
-    fprintf(stdout,"pitch:%f\n",g_sensor_state.pitch);
+  for(i=0;i<3;i++)
+  {
+  	for(j=0;j<3;j++)
+  	{
+  		fprintf(stdout," %f ",g_dcm_state.DCM_Matrix[i][j]);
+  	}
+  	fprintf(stdout,"\n");
+  }
+  fprintf(stdout,"pitch:%f\n",g_sensor_state.pitch);
 
   while( g_emu_data.flag==1 )
   {
@@ -101,7 +101,7 @@ int main()
     //DSP_Shift();
 
     Update_Time();
-    //DCM_Filter();
+    DCM_Filter();
     GaPA_Update();
     //WISE_Update();
 

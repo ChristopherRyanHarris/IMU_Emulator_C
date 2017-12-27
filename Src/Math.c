@@ -19,7 +19,6 @@
 #include "../Include/Emulator_Config.h"
 #endif /* End Emulator Mode */
 
-
 /*******************************************************************
 ** Functions *******************************************************
 ********************************************************************/
@@ -141,11 +140,7 @@ float Rolling_Mean( const int n, float m, float x )
 float Windowed_Mean( float m, float x, int n, float a )
 {
 	/* Error checking */
-	if( n==0 )
-	{
-		m=0;
-		return(m);
-	}
+	if( n==0 ){ return(0.0f); }
 
 	/* Compute and return the moving average */
 	return( m*(1-a) + x*(a) );
@@ -225,7 +220,7 @@ float f_atan2( float y, float x )
 ** calc_circle_center
 ** compute the center of a circle given 3 points
 */
-void calc_circle_center( float p1[2], float p2[2], float p3[2], float *xcyc )
+void calc_circle_center( float p1[2], float p2[2], float p3[2], float xcyc[2] )
 {
 
 	float x1, x2, x3;

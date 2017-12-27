@@ -99,8 +99,10 @@ void Matrix_Multiply( const float m1[3][3], const float m2[3][3], float out[3][3
 void Matrix_Vector_Multiply( const float m[3][3], const float v[3], float out[3] );
 float Rolling_Mean( const int n, float m, float x );
 float Rolling_Std( const float m_prev, const float m, float x, float S );
+float Windowed_Mean( float m, float x, int n, float a );
 float f_asin( float x );
 float f_atan2( float y, float x );
+void calc_circle_center( float p1[2], float p2[2], float p3[2], float xcyc[2] );
 
 /*********************************
 ** Dealing with junk

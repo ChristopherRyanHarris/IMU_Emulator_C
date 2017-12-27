@@ -124,12 +124,12 @@ void GaPA_Update( void )
 	/* Store previous nu, phi and PHI
 	** NOTE: On the first cycle, this is meaningless since
 	**       both nu and nu_prev are zero */
-	//g_gapa_state.nu_prev = g_gapa_state.nu;
-	//for( i=2;i>0; i-- ){ g_gapa_state.prev_phi[i-1]=g_gapa_state.prev_phi[i]; }
-	//for( i=2;i>0; i-- ){ g_gapa_state.prev_PHI[i-1]=g_gapa_state.prev_PHI[i]; }
-	//g_gapa_state.prev_phi[2] = g_gapa_state.phin;
-	//g_gapa_state.prev_PHI[2] = g_gapa_state.PHIn;
-	
+	g_gapa_state.nu_prev = g_gapa_state.nu;
+	for( i=2;i>0; i-- ){ g_gapa_state.prev_phi[i-1]=g_gapa_state.prev_phi[i]; }
+	for( i=2;i>0; i-- ){ g_gapa_state.prev_PHI[i-1]=g_gapa_state.prev_PHI[i]; }
+	g_gapa_state.prev_phi[2] = g_gapa_state.phin;
+	g_gapa_state.prev_PHI[2] = g_gapa_state.PHIn;
+
 
 	/* Set our phase variables phi and PHI
 	** NOTE: version [1,2]:
@@ -144,8 +144,8 @@ void GaPA_Update( void )
 	switch( g_gapa_state.version )
 	{
 		case 1 : /* PHI */
-			g_gapa_state.phi =  1;//g_sensor_state.pitch;// - g_gapa_state.PErr_phi - g_gapa_state.IErr_phi;
-			g_gapa_state.PHI += g_gapa_state.phi*g_control_state.G_Dt;// - g_gapa_state.PErr_PHI - g_gapa_state.IErr_PHI;
+			g_gapa_state.phi =  g_sensor_state.pitch - g_gapa_state.PErr_phi - g_gapa_state.IErr_phi;
+			g_gapa_state.PHI += g_gapa_state.phi*g_control_state.G_Dt - g_gapa_state.PErr_PHI - g_gapa_state.IErr_PHI;
 			break;
 		case 2 : /* PHV */
 			//g_gapa_state.phi = (g_sensor_state.pitch - g_sensor_state.prev_pitch)*g_control_state.G_Dt;
@@ -159,65 +159,65 @@ void GaPA_Update( void )
 
 	/* Compute the windowed moving average of each of the
 	** phase variables */
-	g_gapa_state.phi_mw = Windowed_Mean( g_gapa_state.phi_mw, g_gapa_state.phi, g_gapa_state.iteration, 0.01 );
-	//g_gapa_state.PHI_mw = Windowed_Mean( g_gapa_state.PHI_mw, g_gapa_state.PHI, g_gapa_state.iteration, 0.01 );
-//
-//	/* Compute phase variable feedback error */
-//	//g_gapa_state.PErr_phi =  g_gapa_state.phi_mw * 0.01;
-//	//g_gapa_state.IErr_phi += g_gapa_state.phi_mw * 0.01;
-//	//g_gapa_state.PErr_PHI =  g_gapa_state.PHI_mw * 0.01;
-//	//g_gapa_state.IErr_PHI += g_gapa_state.PHI_mw * 0;
-//
-//	/* Record phase variable min and max */
-//	g_gapa_state.phi_max = MAX( g_gapa_state.phi_max, g_gapa_state.phi );
-//	g_gapa_state.PHI_max = MAX( g_gapa_state.PHI_max, g_gapa_state.PHI );
-//
-//	/* Scale by z */
-//	if(g_gapa_state.z_phi==0){g_gapa_state.z_phi=1;}
-//	if(g_gapa_state.z_PHI==0){g_gapa_state.z_PHI=1;}
-//	//g_gapa_state.phin = g_gapa_state.phi/g_gapa_state.z_phi;
-//	//g_gapa_state.PHIn = g_gapa_state.PHI/g_gapa_state.z_PHI;
-//
-//	/* Normalize to 1 */
-//	R = sqrt( g_gapa_state.phin*g_gapa_state.phin + g_gapa_state.PHIn*g_gapa_state.PHIn );
-//	//g_gapa_state.phin = g_gapa_state.phin/R;
-//	//g_gapa_state.PHIn = g_gapa_state.PHIn/R;
-//	
-//	/* We can only get a phase angle ofter 3 iterations */
-//	if( g_gapa_state.iteration<10 )
-//	{
-//		return;
-//	}
+	g_gapa_state.phi_mw = Windowed_Mean( g_gapa_state.phi_mw, g_gapa_state.phi, g_gapa_state.iteration, (float)0.01 );
+	g_gapa_state.PHI_mw = Windowed_Mean( g_gapa_state.PHI_mw, g_gapa_state.PHI, g_gapa_state.iteration, (float)0.01 );
 
-//	/* Get the shift variables by determining the phase portrait center */
-//	p1[0] = g_gapa_state.prev_phi[1]; p1[1] = g_gapa_state.prev_PHI[1];
-//	p2[0] = g_gapa_state.prev_phi[2]; p2[1] = g_gapa_state.prev_PHI[2];
-//	p3[0] = g_gapa_state.phin; p3[1] = g_gapa_state.PHIn;
-//	calc_circle_center( p1, p2, p3, &center[0] );
-//	g_gapa_state.gamma = -center[0];
-//	g_gapa_state.GAMMA = -center[1];
-//
-//	/* Get the input to the atan2 calc */
-//	leftParam  = -1 * (g_gapa_state.PHIn+g_gapa_state.GAMMA);
-//	rightParam = -1 * (g_gapa_state.phin+g_gapa_state.gamma);
-//
-//	/* Get the phase angle */
-//	g_gapa_state.nu = f_atan2( leftParam, rightParam );
-//
-//	/* Detect the end of gait */
-//	if( abs(g_gapa_state.nu-g_gapa_state.nu_prev) > 0.25*PI )
-//	{
-//		g_gapa_state.z_phi = g_gapa_state.phi_max;
-//		if(g_gapa_state.z_phi==0){g_gapa_state.z_phi=1;}
-//		g_gapa_state.z_PHI = g_gapa_state.PHI_max;
-//		if(g_gapa_state.z_PHI==0){g_gapa_state.z_PHI=1;}
-//
-//		g_gapa_state.phi_max = abs( g_gapa_state.phi );
-//		g_gapa_state.PHI_max = abs( g_gapa_state.PHI );
-//	}
+	/* Compute phase variable feedback error */
+	g_gapa_state.PErr_phi =  g_gapa_state.phi_mw * 0.01;
+	g_gapa_state.IErr_phi += g_gapa_state.phi_mw * 0.01;
+	g_gapa_state.PErr_PHI =  g_gapa_state.PHI_mw * 0.01;
+	g_gapa_state.IErr_PHI += g_gapa_state.PHI_mw * 0;
+
+	/* Record phase variable min and max */
+	g_gapa_state.phi_max = MAX( g_gapa_state.phi_max, g_gapa_state.phi );
+	g_gapa_state.PHI_max = MAX( g_gapa_state.PHI_max, g_gapa_state.PHI );
+
+	/* Scale by z */
+	if(g_gapa_state.z_phi==0){g_gapa_state.z_phi=1;}
+	if(g_gapa_state.z_PHI==0){g_gapa_state.z_PHI=1;}
+	g_gapa_state.phin = g_gapa_state.phi/g_gapa_state.z_phi;
+	g_gapa_state.PHIn = g_gapa_state.PHI/g_gapa_state.z_PHI;
+
+	/* Normalize to 1 */
+	R = sqrt( g_gapa_state.phin*g_gapa_state.phin + g_gapa_state.PHIn*g_gapa_state.PHIn );
+	g_gapa_state.phin = g_gapa_state.phin/R;
+	g_gapa_state.PHIn = g_gapa_state.PHIn/R;
+
+	/* We can only get a phase angle ofter 3 iterations */
+	if( g_gapa_state.iteration<10 )
+	{
+		return;
+	}
+
+	/* Get the shift variables by determining the phase portrait center */
+	p1[0] = g_gapa_state.prev_phi[1]; p1[1] = g_gapa_state.prev_PHI[1];
+	p2[0] = g_gapa_state.prev_phi[2]; p2[1] = g_gapa_state.prev_PHI[2];
+	p3[0] = g_gapa_state.phin; p3[1] = g_gapa_state.PHIn;
+	calc_circle_center( p1, p2, p3, &center[0] );
+	g_gapa_state.gamma = -center[0];
+	g_gapa_state.GAMMA = -center[1];
+
+	/* Get the input to the atan2 calc */
+	leftParam  = -1 * (g_gapa_state.PHIn+g_gapa_state.GAMMA);
+	rightParam = -1 * (g_gapa_state.phin+g_gapa_state.gamma);
+
+	/* Get the phase angle */
+	g_gapa_state.nu = f_atan2( leftParam, rightParam );
+
+	/* Detect the end of gait */
+	if( fabs(g_gapa_state.nu-g_gapa_state.nu_prev) > 0.25*PI )
+	{
+		g_gapa_state.z_phi = g_gapa_state.phi_max;
+		if(g_gapa_state.z_phi==0){g_gapa_state.z_phi=1;}
+		g_gapa_state.z_PHI = g_gapa_state.PHI_max;
+		if(g_gapa_state.z_PHI==0){g_gapa_state.z_PHI=1;}
+
+		g_gapa_state.phi_max = fabs( g_gapa_state.phi );
+		g_gapa_state.PHI_max = fabs( g_gapa_state.PHI );
+	}
 
 	/* If no motion, reset phase variables */
-
+    fprintf(stdout," here \n");
 
 }/* End GaPA_Update */
 
