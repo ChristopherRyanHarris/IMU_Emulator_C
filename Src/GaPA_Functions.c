@@ -217,7 +217,6 @@ void GaPA_Update( void )
 	}
 
 	/* If no motion, reset phase variables */
-    fprintf(stdout," here \n");
 
 }/* End GaPA_Update */
 

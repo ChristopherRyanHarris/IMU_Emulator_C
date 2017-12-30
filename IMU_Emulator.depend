@@ -321,7 +321,7 @@
 	"../Include/WISE_Config.h"
 	"../Include/Emulator_Config.h"
 
-1514313927 d:\chris\documents\github\imu_emulator_c\include\imu9250_config.h
+1514671933 d:\chris\documents\github\imu_emulator_c\include\imu9250_config.h
 	"Common_Config.h"
 
 1514317310 source:d:\chris\documents\github\imu_emulator_c\src\dcm_functions.c
@@ -366,7 +366,7 @@
 	"../Include/WISE_Config.h"
 	"../Include/Emulator_Config.h"
 
-1514403954 source:d:\chris\documents\github\imu_emulator_c\src\main.c
+1514671343 source:d:\chris\documents\github\imu_emulator_c\src\main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -389,7 +389,7 @@
 	"../Include/WISE_Config.h"
 	"../Include/Emulator_Config.h"
 
-1514403791 source:d:\chris\documents\github\imu_emulator_c\src\gapa_functions.c
+1514405412 source:d:\chris\documents\github\imu_emulator_c\src\gapa_functions.c
 	"../Include/Common_Config.h"
 	<math.h>
 	<string.h>

@@ -53,42 +53,27 @@ FILE *      g_fid;
 
 int main()
 {
+	const char* filename = "C:\\Users\\chris\\Desktop\\test.txt";
+	FILE * fid;
+
   float count = 1.0;
   int i,j;
 
   g_fid = fopen(g_EmuFile,"rb");
+  fid = fopen(filename,"w");
   g_emu_data.flag=1;
 
   Read_Sensors();
   Reset_Sensor_Fusion();
   Common_Init();
   Init_Emulator();
-  WISE_Init();
+  //WISE_Init();
   GaPA_Init();
-  DSP_Filter_Init();
+  //DSP_Filter_Init();
 
-  fprintf(stdout, " accel:\t");
-  for(i=0;i<3;i++)
-  {
-  	fprintf(stdout," %f ",g_sensor_state.accel[i]);
-  }
-  fprintf(stdout,"\n");
-  fprintf(stdout, " gyro:\t");
-  for(i=0;i<3;i++)
-  {
-  	fprintf(stdout," %f ",g_sensor_state.gyro[i]);
-  }
-  fprintf(stdout,"\n");
-
-  for(i=0;i<3;i++)
-  {
-  	for(j=0;j<3;j++)
-  	{
-  		fprintf(stdout," %f ",g_dcm_state.DCM_Matrix[i][j]);
-  	}
-  	fprintf(stdout,"\n");
-  }
-  fprintf(stdout,"pitch:%f\n",g_sensor_state.pitch);
+  fprintf(fid,"pitch:%f\n",g_sensor_state.pitch);
+  fprintf(fid,"Time:%ld\n",g_control_state.timestamp);
+	fprintf(fid,"\n");
 
   while( g_emu_data.flag==1 )
   {
@@ -105,40 +90,20 @@ int main()
     GaPA_Update();
     //WISE_Update();
 
-    fprintf(stdout,"\n");
-    fprintf(stdout,"Count: %f\n",count);
-    fprintf(stdout,"Time:%ld\t",g_control_state.timestamp);
-    fprintf(stdout,"dt:%f\n",g_control_state.G_Dt);
+    fprintf(fid,"\n");
+    fprintf(fid,"Count: %f\n",count);
+    fprintf(fid,"Time:%ld\n",g_control_state.timestamp);
+    //fprintf(stdout,"dt:%f\n",g_control_state.G_Dt);
 
-    fprintf(stdout, " accel:\t");
-    for(i=0;i<3;i++)
-    {
-    	fprintf(stdout," %f ",g_sensor_state.accel[i]);
-    }
-    fprintf(stdout,"\n");
-    fprintf(stdout, " gyro:\t");
-    for(i=0;i<3;i++)
-    {
-    	fprintf(stdout," %f ",g_sensor_state.gyro[i]);
-    }
-    fprintf(stdout,"\n");
+    fprintf(fid,"pitch:%f\n",g_sensor_state.pitch);
 
-    for(i=0;i<3;i++)
-    {
-    	for(j=0;j<3;j++)
-    	{
-    		fprintf(stdout," %f ",g_dcm_state.DCM_Matrix[i][j]);
-    	}
-    	fprintf(stdout,"\n");
-    }
-    fprintf(stdout,"pitch:%f\n",g_sensor_state.pitch);
+    fprintf(fid,"nu:%f\n",g_gapa_state.nu);
+    fprintf(fid,"phi:%f\nPHI:%f\n",g_gapa_state.phi, g_gapa_state.PHI);
+    //fprintf(stdout,"phi_mw:%f\t PHI_mw:%f\n",g_gapa_state.phi, g_gapa_state.PHI);
+    //fprintf(stdout,"phi_max:%f\t PHI_max:%f\n",g_gapa_state.phi_max, g_gapa_state.PHI_max);
+    //fprintf(stdout,"phin:%f\t PHIn:%f\n",g_gapa_state.phin, g_gapa_state.PHIn);
+    //fprintf(stdout,"z_phi:%f\t z_PHI:%f\t",g_gapa_state.z_phi, g_gapa_state.z_PHI);
 
-    fprintf(stdout,"nu:%f\n",g_gapa_state.nu);
-    fprintf(stdout,"phi:%f\t PHI:%f\n",g_gapa_state.phi, g_gapa_state.PHI);
-    fprintf(stdout,"phi_mw:%f\t PHI_mw:%f\n",g_gapa_state.phi, g_gapa_state.PHI);
-    fprintf(stdout,"phi_max:%f\t PHI_max:%f\n",g_gapa_state.phi_max, g_gapa_state.PHI_max);
-    fprintf(stdout,"phin:%f\t PHIn:%f\n",g_gapa_state.phin, g_gapa_state.PHIn);
-    fprintf(stdout,"z_phi:%f\t z_PHI:%f\t",g_gapa_state.z_phi, g_gapa_state.z_PHI);
     //fprintf(stdout,"Dt:%f\n",g_control_state.G_Dt);
     //fprintf(stdout,"yaw:%f\t pitch:%f\t roll:%f\n",TO_DEG(g_sensor_state.yaw),TO_DEG(g_sensor_state.pitch),TO_DEG(g_sensor_state.roll));
     //fprintf(stdout,"accel[0]:%f accel[1]:%f accel[2]:%f\n",g_sensor_state.accel[0],g_sensor_state.accel[1],g_sensor_state.accel[2]);
@@ -147,12 +112,12 @@ int main()
     //fprintf(stdout,"Acc[0]:%f Acc[1]:%f\n",g_wise_state.accel[0],g_wise_state.accel[1]);
     //fprintf(stdout,"aveVel[0]:%f aveVel[1]:%f\n",g_wise_state.vel_ave[0],g_wise_state.vel_ave[1]);
     //fprintf(stdout,"vel[0]:%f vel[1]:%f\n",g_wise_state.vel[0],g_wise_state.vel[1]);
-    fprintf(stdout,"\n");
+    fprintf(fid,"\n");
     //getchar();
     count++;
   }
   fclose(g_fid);
-
+	fclose(fid);
 
   return 0;
 } /* End Main */

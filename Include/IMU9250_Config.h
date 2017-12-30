@@ -38,11 +38,11 @@
 
 /* DCM gain */
 //#define Kp_ROLLPITCH 0.1f
-#define Kp_ROLLPITCH 0.002f
+#define Kp_ROLLPITCH 0.0002f
 //#define Ki_ROLLPITCH 0.00005f
 //#define Ki_ROLLPITCH 0.00006f
 //#define Ki_ROLLPITCH 0.00001f
-#define Ki_ROLLPITCH 0.000001f
+#define Ki_ROLLPITCH 0.0000001f
 
 //#define Kp_YAW 1.2f
 //#define Kp_YAW 1.5f
