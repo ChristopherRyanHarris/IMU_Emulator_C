@@ -12,10 +12,16 @@
 ** Imcludes ********************************************************
 ********************************************************************/
 
-#include "IMU10736_Config.h"
+#include "Common_Config.h"
+
+//#ifdef _IMU10736_
+//#include "../Include/IMU10736_Config.h"
+//#endif
+//#ifdef _IMU9250_
+#include "../Include/IMU9250_Config.h"
+//#endif
 
 #include "DSP_Config.h"
-#include "Common_Config.h"
 #include "WISE_Config.h"
 #include "GaPA_Config.h"
 
@@ -93,8 +99,10 @@ void Matrix_Multiply( const float m1[3][3], const float m2[3][3], float out[3][3
 void Matrix_Vector_Multiply( const float m[3][3], const float v[3], float out[3] );
 float Rolling_Mean( const int n, float m, float x );
 float Rolling_Std( const float m_prev, const float m, float x, float S );
+float Windowed_Mean( float m, float x, int n, float a );
 float f_asin( float x );
 float f_atan2( float y, float x );
+void calc_circle_center( float p1[2], float p2[2], float p3[2], float xcyc[2] );
 
 /*********************************
 ** Dealing with junk

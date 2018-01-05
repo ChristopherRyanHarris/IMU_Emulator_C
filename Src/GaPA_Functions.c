@@ -55,8 +55,10 @@ void GaPA_Init( void )
 	**  2:PHV
 	** NOTE: Only PHI implemented at this time */
 	g_gapa_state.version      = 1;
-	
-	g_gapa_state.phi_max      = 0.0f; 
+
+	g_gapa_state.iteration    = 0;
+
+	g_gapa_state.phi_max      = 0.0f;
 	g_gapa_state.phi_min      = 0.0f;
 	g_gapa_state.PHI_max      = 0.0f;
 	g_gapa_state.PHI_min      = 0.0f;
@@ -66,14 +68,21 @@ void GaPA_Init( void )
 	g_gapa_state.PHI_min_next = 0.0f;
 	g_gapa_state.gamma        = 0.0f;
 	g_gapa_state.GAMMA        = 0.0f;
-	g_gapa_state.z            = 0.0f;
-	g_gapa_state.nu           = 0.0f;	
+	g_gapa_state.z_phi        = 1.0f;
+	g_gapa_state.z_PHI        = 1.0f;
+	g_gapa_state.phi_mw       = 0.0f;
+	g_gapa_state.PHI_mw       = 0.0f;
+	g_gapa_state.PErr_phi     = 0.0f;
+	g_gapa_state.IErr_phi     = 0.0f;
+	g_gapa_state.PErr_PHI     = 0.0f;
+	g_gapa_state.IErr_PHI     = 0.0f;
+	g_gapa_state.nu           = 0.0f;
 }/* End GaPA_Init */
 
 
 /*****************************************************************
 ** Function: GaPA_Reset
-** The GaPA state variables must be reset 
+** The GaPA state variables must be reset
 */
 void GaPA_Reset( void )
 {
@@ -83,7 +92,8 @@ void GaPA_Reset( void )
 	g_gapa_state.PHI_min_next = 0.0f;
 	g_gapa_state.gamma        = 0.0f;
 	g_gapa_state.GAMMA        = 0.0f;
-	g_gapa_state.z            = 0.0f;
+	g_gapa_state.z_phi        = 0.0f;
+	g_gapa_state.z_PHI        = 0.0f;
 }/* End GaPA_Reset */
 
 
@@ -91,20 +101,36 @@ void GaPA_Reset( void )
 /*****************************************************************
 ** Function: GaPA_Update
 ** This function runs the Gait Phase Angle (GaPA) estimator
-** This code will execute the code necessary to 
-** solve for the phasae variable "nu" 
-** where, 
+** This code will execute the code necessary to
+** solve for the phasae variable "nu"
+** where,
 **   nu = atan2( -z*(PHI+GAMMA), -(phi+gamma) )
 */
 void GaPA_Update( void )
 {
-	
-	/* Store previous nu 
-	** NOTE: On the first cycle, this is meaningless since 
+	/* Initialize temp variables */
+	int i;
+
+	float R;
+	float p1[3], p2[3], p3[3];
+	float center[2];
+
+	float leftParam, rightParam;
+
+
+	/* Itaration Count */
+	g_gapa_state.iteration++;
+
+	/* Store previous nu, phi and PHI
+	** NOTE: On the first cycle, this is meaningless since
 	**       both nu and nu_prev are zero */
 	g_gapa_state.nu_prev = g_gapa_state.nu;
-	
-	
+	for( i=2;i>0; i-- ){ g_gapa_state.prev_phi[i-1]=g_gapa_state.prev_phi[i]; }
+	for( i=2;i>0; i-- ){ g_gapa_state.prev_PHI[i-1]=g_gapa_state.prev_PHI[i]; }
+	g_gapa_state.prev_phi[2] = g_gapa_state.phin;
+	g_gapa_state.prev_PHI[2] = g_gapa_state.PHIn;
+
+
 	/* Set our phase variables phi and PHI
 	** NOTE: version [1,2]:
 	** 	1: PHI
@@ -114,11 +140,12 @@ void GaPA_Update( void )
 	**		 phi: The thigh angular velocity (swing angular velocity)
 	**		 PHI: The thigh angle (pitch)
 	*/
+	g_gapa_state.version=1;
 	switch( g_gapa_state.version )
 	{
 		case 1 : /* PHI */
-			g_gapa_state.phi =  g_sensor_state.pitch;
-			g_gapa_state.PHI += g_sensor_state.pitch*g_control_state.G_Dt;
+			g_gapa_state.phi =  g_sensor_state.pitch - g_gapa_state.PErr_phi - g_gapa_state.IErr_phi;
+			g_gapa_state.PHI += g_gapa_state.phi*g_control_state.G_Dt - g_gapa_state.PErr_PHI - g_gapa_state.IErr_PHI;
 			break;
 		case 2 : /* PHV */
 			//g_gapa_state.phi = (g_sensor_state.pitch - g_sensor_state.prev_pitch)*g_control_state.G_Dt;
@@ -128,68 +155,76 @@ void GaPA_Update( void )
 			// Need to add some catch statements
 			break;
 	} /* End version switch */
-	
-	
-	/* Track phi min/max and PHI min/max
-	** These variables will be used in the next gait cycle to 
-	** scale the phase portrait to a constant radius within 
-	** each quadrandt to provide an approximately cirsular orbit. */
-	TrackPhiVariables( &g_gapa_state );
-	
-	/* Calculate the new GAMMA variable
-	** GAMMA = -( (PHI_max+PHI_min)/2 ) */
-	calc_SftPrmLeft( &g_gapa_state.GAMMA, g_gapa_state.PHI_max, g_gapa_state.PHI_min ); 
-	
-	/* calculate the new gamma variable 
-	** gamma = -( (phi_max+phi_min)/2 ) */
-	calc_SftPrmRight( &g_gapa_state.gamma, g_gapa_state.phi_max, g_gapa_state.phi_min ); 
-	
-	/* Calculate the new scaling factor "z"
-	** z = abs(phi_max-phi_min)/abs(PHI_max-PHI_min) */
-	calc_ScaleFactor( &g_gapa_state.z, 
-										 g_gapa_state.phi_max, g_gapa_state.phi_min, 
-										 g_gapa_state.PHI_max, g_gapa_state.PHI_min ); 
-	
-	/* Calculate nu
-	**   The phase angle is the angle between the two 
-	**   Phase variables phi and PHI.
-	** nu = atan2( -z*(PHI+GAMMA), -(phi+gamma) ) */
-	calc_PhaseAngle( &g_gapa_state.nu,  g_gapa_state.z, 
-										g_gapa_state.PHI, g_gapa_state.GAMMA, 
-										g_gapa_state.phi, g_gapa_state.gamma  );  
-	
-	
-	/* The min/max values of the filtered angle and integral are 
-	** stored for computing the shift and scale. At the beginning 
-	** of each gait cycle (indicated by the phase variable crossing
-	** zero) we update the min/max values using the detected min/max
-	** from the previous cycle.
-	**
-	** If (nu crosses 0) { Update phi_min, phi_max, PHI_min, PHI_max  from the previous cycle }
-	**    Given as, 
-	**    PHI_min(t) = min{ PHI(t_hat) | t_hat ∈ [t_phiM,t) }
-	**    phi_min(t) = min{ phi(t_hat) | t_hat ∈ [t_phiM,t) }
-	**    PHI_max(t) = max{ PHI(t_hat) | t_hat ∈ [t_phim,t) }
-	**    phi_max(t) = max{ phi(t_hat) | t_hat ∈ [t_phim,t) }
-	**	Reset GaPA state variables */
-	if( fabs(g_gapa_state.nu-g_gapa_state.nu_prev)>PI )
+
+
+	/* Compute the windowed moving average of each of the
+	** phase variables */
+	g_gapa_state.phi_mw = Windowed_Mean( g_gapa_state.phi_mw, g_gapa_state.phi, g_gapa_state.iteration, (float)0.01 );
+	g_gapa_state.PHI_mw = Windowed_Mean( g_gapa_state.PHI_mw, g_gapa_state.PHI, g_gapa_state.iteration, (float)0.01 );
+
+	/* Compute phase variable feedback error */
+	g_gapa_state.PErr_phi =  g_gapa_state.phi_mw * 0.01;
+	g_gapa_state.IErr_phi += g_gapa_state.phi_mw * 0.01;
+	g_gapa_state.PErr_PHI =  g_gapa_state.PHI_mw * 0.01;
+	g_gapa_state.IErr_PHI += g_gapa_state.PHI_mw * 0;
+
+	/* Record phase variable min and max */
+	g_gapa_state.phi_max = MAX( g_gapa_state.phi_max, g_gapa_state.phi );
+	g_gapa_state.PHI_max = MAX( g_gapa_state.PHI_max, g_gapa_state.PHI );
+
+	/* Scale by z */
+	if(g_gapa_state.z_phi==0){g_gapa_state.z_phi=1;}
+	if(g_gapa_state.z_PHI==0){g_gapa_state.z_PHI=1;}
+	g_gapa_state.phin = g_gapa_state.phi/g_gapa_state.z_phi;
+	g_gapa_state.PHIn = g_gapa_state.PHI/g_gapa_state.z_PHI;
+
+	/* Normalize to 1 */
+	R = sqrt( g_gapa_state.phin*g_gapa_state.phin + g_gapa_state.PHIn*g_gapa_state.PHIn );
+	g_gapa_state.phin = g_gapa_state.phin/R;
+	g_gapa_state.PHIn = g_gapa_state.PHIn/R;
+
+	/* We can only get a phase angle ofter 3 iterations */
+	if( g_gapa_state.iteration<10 )
 	{
-		/* Update min/max values */
-		g_gapa_state.phi_min = g_gapa_state.phi_min_next;
-		g_gapa_state.phi_max = g_gapa_state.phi_max_next;
-		g_gapa_state.PHI_min = g_gapa_state.PHI_min_next;
-		g_gapa_state.PHI_max = g_gapa_state.PHI_max_next;
-		
-		/* Reset our states at the beginning of each new gait cycle s*/
-		GaPA_Reset();
+		return;
 	}
+
+	/* Get the shift variables by determining the phase portrait center */
+	p1[0] = g_gapa_state.prev_phi[1]; p1[1] = g_gapa_state.prev_PHI[1];
+	p2[0] = g_gapa_state.prev_phi[2]; p2[1] = g_gapa_state.prev_PHI[2];
+	p3[0] = g_gapa_state.phin; p3[1] = g_gapa_state.PHIn;
+	calc_circle_center( p1, p2, p3, &center[0] );
+	g_gapa_state.gamma = -center[0];
+	g_gapa_state.GAMMA = -center[1];
+
+	/* Get the input to the atan2 calc */
+	leftParam  = -1 * (g_gapa_state.PHIn+g_gapa_state.GAMMA);
+	rightParam = -1 * (g_gapa_state.phin+g_gapa_state.gamma);
+
+	/* Get the phase angle */
+	g_gapa_state.nu = f_atan2( leftParam, rightParam );
+
+	/* Detect the end of gait */
+	if( fabs(g_gapa_state.nu-g_gapa_state.nu_prev) > 0.25*PI )
+	{
+		g_gapa_state.z_phi = g_gapa_state.phi_max;
+		if(g_gapa_state.z_phi==0){g_gapa_state.z_phi=1;}
+		g_gapa_state.z_PHI = g_gapa_state.PHI_max;
+		if(g_gapa_state.z_PHI==0){g_gapa_state.z_PHI=1;}
+
+		g_gapa_state.phi_max = fabs( g_gapa_state.phi );
+		g_gapa_state.PHI_max = fabs( g_gapa_state.PHI );
+	}
+
+	/* If no motion, reset phase variables */
+
 }/* End GaPA_Update */
 
 /*****************************************************************
 ** Function: TrackPhiVariables
-** Keep track of the min/max of the phase variables phi and PHI. 
+** Keep track of the min/max of the phase variables phi and PHI.
 ** These will be used to scale the phase portrait to force it to
-** Be close to a constant radius. 
+** Be close to a constant radius.
 */
 void TrackPhiVariables( GAPA_STATE_TYPE* l_gapa_state )
 {
@@ -202,7 +237,7 @@ void TrackPhiVariables( GAPA_STATE_TYPE* l_gapa_state )
 	{
 		l_gapa_state->phi_min_next = l_gapa_state->phi;
 	}
-	
+
 	/* Update PHI min/max */
 	if( l_gapa_state->PHI > l_gapa_state->PHI_max_next )
 	{
@@ -218,7 +253,7 @@ void TrackPhiVariables( GAPA_STATE_TYPE* l_gapa_state )
 /*****************************************************************
 ** Function: calc_SftPrmLeft
 ** Calculate the left side shift parameter "GAMMA"
-** where, 
+** where,
 **   GAMMA = -( (PHI_max+PHI_min)/2 )
 */
 void calc_SftPrmLeft( float* GAMMA, float PHI_max, float PHI_min )
@@ -230,7 +265,7 @@ void calc_SftPrmLeft( float* GAMMA, float PHI_max, float PHI_min )
 /*****************************************************************
 ** Function: calc_SftPrmRight
 ** Calculate the right side shift parameter "gamma"
-** where, 
+** where,
 **   gamma = -( (phi_max+phi_min)/2 )
 */
 void calc_SftPrmRight( float* gamma, float phi_max, float phi_min )
@@ -242,19 +277,19 @@ void calc_SftPrmRight( float* gamma, float phi_max, float phi_min )
 /*****************************************************************
 ** Function: calc_ScaleFactor
 ** Calculate the shift parameter "z"
-** where, 
+** where,
 **   z = abs(phi_max-phi_min)/abs(PHI_max-PHI_min)
 */
 void calc_ScaleFactor( float *z, float phi_max, float phi_min, float PHI_max, float PHI_min )
 {
-		g_gapa_state.z = fabs( (g_gapa_state.phi_max-phi_min)/(g_gapa_state.PHI_max-PHI_min) );
+    *z = fabs( (g_gapa_state.phi_max-phi_min)/(g_gapa_state.PHI_max-PHI_min) );
 }/* End calc_ScaleFactor */
 
 
 /*****************************************************************
 ** Function: calc_PhaseAngle
 ** Calculate the phase angle "nu"
-** where, 
+** where,
 **   nu = atan2( -z*(PHI+GAMMA), -(phi+gamma) )
 */
 void calc_PhaseAngle( float* nu, float z, float PHI, float GAMMA, float phi, float gamma )

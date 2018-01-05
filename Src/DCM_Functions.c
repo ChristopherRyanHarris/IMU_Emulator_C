@@ -187,6 +187,7 @@ void DCM_Filter( void )
   float renorm = 0;
 
   float TempM[3][3];
+  float TempM2[3][3];
 
   float Accel_Vector[3];
   float Accel_magnitude;
@@ -233,9 +234,12 @@ void DCM_Filter( void )
 
   /* Convert the acceleration values
   ** Note: Values read from sensor are fixed point */
-  Accel_Vector[0] = ACCEL_X_SCALED( g_sensor_state.accel[0] );
-  Accel_Vector[1] = ACCEL_Y_SCALED( g_sensor_state.accel[1] );
-  Accel_Vector[2] = ACCEL_Z_SCALED( g_sensor_state.accel[2] );
+  //Accel_Vector[0] = ACCEL_X_SCALED( g_sensor_state.accel[0] );
+  //Accel_Vector[1] = ACCEL_Y_SCALED( g_sensor_state.accel[1] );
+  //Accel_Vector[2] = ACCEL_Z_SCALED( g_sensor_state.accel[2] );
+  Accel_Vector[0] = ( g_sensor_state.accel[0] );
+  Accel_Vector[1] = ( g_sensor_state.accel[1] );
+  Accel_Vector[2] = ( g_sensor_state.accel[2] );
 
   /* Apply prop and int gain to rotation
   ** Need to convert the Gyro values to radians
@@ -246,17 +250,26 @@ void DCM_Filter( void )
   Omega_Vector[0] = GYRO_X_SCALED( g_sensor_state.gyro[0] ) + g_dcm_state.Omega_I[0] + g_dcm_state.Omega_P[0];
   Omega_Vector[1] = GYRO_Y_SCALED( g_sensor_state.gyro[1] ) + g_dcm_state.Omega_I[1] + g_dcm_state.Omega_P[1];
   Omega_Vector[2] = GYRO_Z_SCALED( g_sensor_state.gyro[2] ) + g_dcm_state.Omega_I[2] + g_dcm_state.Omega_P[2];
+  //Omega_Vector[0] = 0.001214 * ( g_sensor_state.gyro[0] );// + g_dcm_state.Omega_I[0] + g_dcm_state.Omega_P[0];
+  //Omega_Vector[1] = 0.001214 * ( g_sensor_state.gyro[1] );// + g_dcm_state.Omega_I[1] + g_dcm_state.Omega_P[1];
+  //Omega_Vector[2] = 0.001214 * ( g_sensor_state.gyro[2] );// + g_dcm_state.Omega_I[2] + g_dcm_state.Omega_P[2];
 
   /* Update the state matrix
   ** We are essentially applying a rotation 
   ** from the new gyro data. This is an estimate 
   of the current orientation */
-  g_dcm_state.DCM_Matrix[0][0] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[0][1]*Omega_Vector[2] - g_dcm_state.DCM_Matrix[0][2]*Omega_Vector[1]) + g_dcm_state.DCM_Matrix[0][0];
-  g_dcm_state.DCM_Matrix[0][1] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[0][2]*Omega_Vector[0] - g_dcm_state.DCM_Matrix[0][0]*Omega_Vector[2]) + g_dcm_state.DCM_Matrix[0][1];
-  g_dcm_state.DCM_Matrix[0][2] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[0][0]*Omega_Vector[1] - g_dcm_state.DCM_Matrix[0][1]*Omega_Vector[0]) + g_dcm_state.DCM_Matrix[0][2];
-  g_dcm_state.DCM_Matrix[1][0] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[1][1]*Omega_Vector[2] - g_dcm_state.DCM_Matrix[1][2]*Omega_Vector[1]) + g_dcm_state.DCM_Matrix[1][0];
-  g_dcm_state.DCM_Matrix[1][1] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[1][2]*Omega_Vector[0] - g_dcm_state.DCM_Matrix[1][0]*Omega_Vector[2]) + g_dcm_state.DCM_Matrix[1][1];
-  g_dcm_state.DCM_Matrix[1][2] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[1][0]*Omega_Vector[1] - g_dcm_state.DCM_Matrix[1][1]*Omega_Vector[0]) + g_dcm_state.DCM_Matrix[1][2];
+  //g_dcm_state.DCM_Matrix[0][0] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[0][1]*Omega_Vector[2] - g_dcm_state.DCM_Matrix[0][2]*Omega_Vector[1]) + g_dcm_state.DCM_Matrix[0][0];
+  //g_dcm_state.DCM_Matrix[0][1] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[0][2]*Omega_Vector[0] - g_dcm_state.DCM_Matrix[0][0]*Omega_Vector[2]) + g_dcm_state.DCM_Matrix[0][1];
+  //g_dcm_state.DCM_Matrix[0][2] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[0][0]*Omega_Vector[1] - g_dcm_state.DCM_Matrix[0][1]*Omega_Vector[0]) + g_dcm_state.DCM_Matrix[0][2];
+  //g_dcm_state.DCM_Matrix[1][0] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[1][1]*Omega_Vector[2] - g_dcm_state.DCM_Matrix[1][2]*Omega_Vector[1]) + g_dcm_state.DCM_Matrix[1][0];
+  //g_dcm_state.DCM_Matrix[1][1] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[1][2]*Omega_Vector[0] - g_dcm_state.DCM_Matrix[1][0]*Omega_Vector[2]) + g_dcm_state.DCM_Matrix[1][1];
+  //g_dcm_state.DCM_Matrix[1][2] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[1][0]*Omega_Vector[1] - g_dcm_state.DCM_Matrix[1][1]*Omega_Vector[0]) + g_dcm_state.DCM_Matrix[1][2];
+  TempM2[0][0] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[0][1]*Omega_Vector[2] - g_dcm_state.DCM_Matrix[0][2]*Omega_Vector[1]) + g_dcm_state.DCM_Matrix[0][0];
+  TempM2[0][1] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[0][2]*Omega_Vector[0] - g_dcm_state.DCM_Matrix[0][0]*Omega_Vector[2]) + g_dcm_state.DCM_Matrix[0][1];
+  TempM2[0][2] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[0][0]*Omega_Vector[1] - g_dcm_state.DCM_Matrix[0][1]*Omega_Vector[0]) + g_dcm_state.DCM_Matrix[0][2];
+  TempM2[1][0] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[1][1]*Omega_Vector[2] - g_dcm_state.DCM_Matrix[1][2]*Omega_Vector[1]) + g_dcm_state.DCM_Matrix[1][0];
+  TempM2[1][1] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[1][2]*Omega_Vector[0] - g_dcm_state.DCM_Matrix[1][0]*Omega_Vector[2]) + g_dcm_state.DCM_Matrix[1][1];
+  TempM2[1][2] = g_control_state.G_Dt * (g_dcm_state.DCM_Matrix[1][0]*Omega_Vector[1] - g_dcm_state.DCM_Matrix[1][1]*Omega_Vector[0]) + g_dcm_state.DCM_Matrix[1][2];
 
   /******************************************************************
   ** DCM 2. Normalize DCM
@@ -267,15 +280,15 @@ void DCM_Filter( void )
 
   /* Determine vector overlap
   ** Each vector should be orthogonal */
-  error = -Vector_Dot_Product(&g_dcm_state.DCM_Matrix[0][0],&g_dcm_state.DCM_Matrix[1][0]) * 0.5;
+  error = -Vector_Dot_Product(&TempM2[0][0],&TempM2[1][0]) * 0.5;
 
   /* temp = V .* e */
-  Vector_Scale( &g_dcm_state.DCM_Matrix[1][0], error, &TempM[0][0] );
-  Vector_Scale( &g_dcm_state.DCM_Matrix[0][0], error, &TempM[1][0] );
+  Vector_Scale( &TempM2[1][0], error, &TempM[0][0] );
+  Vector_Scale( &TempM2[0][0], error, &TempM[1][0] );
 
   /* temp = temp .* DCM[0][:] */
-  Vector_Add( &TempM[0][0], &g_dcm_state.DCM_Matrix[0][0], &TempM[0][0] );
-  Vector_Add( &TempM[1][0], &g_dcm_state.DCM_Matrix[1][0], &TempM[1][0] );
+  Vector_Add( &TempM[0][0], &TempM2[0][0], &TempM[0][0] );
+  Vector_Add( &TempM[1][0], &TempM2[1][0], &TempM[1][0] );
 
   /* Force orthogonality */
   Vector_Cross_Product( &TempM[0][0], &TempM[1][0], &TempM[2][0] );

@@ -29,6 +29,8 @@ typedef struct
 {
 	int version; /* Phase portrait version (PHI/PHV) */
 	
+	int iteration;
+	
 	float phi; /* "thigh angle wrt vertical down (i.e. Pitch) */ 
 	float phi_max, phi_min; /* max/min pitch in previous gait */
 	float phi_max_next, phi_min_next; /* max/min pitch in this gait (for use in next cycle) */
@@ -38,7 +40,16 @@ typedef struct
 	
 	float gamma; /* "right shift variable" */
 	float GAMMA; /* "left shift variable" */
-	float z; /* the "scale factor" */
+	float z_phi; /* the "scale factor" */
+	float z_PHI; /* the "scale factor" */
+	
+	float PErr_phi, IErr_phi;
+	float PErr_PHI, IErr_PHI;
+	
+	float phi_mw, PHI_mw;
+	float phin, PHIn;
+	
+	float prev_phi[3], prev_PHI[3]; 
 	
 	float nu;	/* The Phase Angle */
 	float nu_prev;	/* The previous Phase Angle */
@@ -53,9 +64,6 @@ typedef struct
 ** until the ernie phase matches the unified phase. The ERNIE 
 ** algorithm is essentially a Piece-Wise algorithm of computing the 
 ** phase variable */
-typedef struct
-{
-	float 
-}
+
 #endif // GAPA_H
 
