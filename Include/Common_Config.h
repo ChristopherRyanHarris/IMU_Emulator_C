@@ -56,6 +56,23 @@ typedef struct
   float N;
 } CAL_STATE_TYPE;
 
+/*
+** TYPE: DCM_STATE_TYPE
+** This type is used to hold the DCM
+** specific arrays and variables */
+typedef struct
+{
+  float Omega_P[3];
+  float Omega_I[3];
+  float DCM_Matrix[3][3];
+  
+  float gyro_ave[3];
+  float gyro_var[3];
+  float gyro_std[3];
+  
+  long int SampleNumber;
+  float std_time;
+} DCM_STATE_TYPE;
 
 /*
 ** TYPE: SENSOR_STATE_TYPE
