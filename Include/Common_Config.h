@@ -5,46 +5,54 @@
 ** Definitions in this file should be independent of IMU version.
 ******************************************************************/
 
+
+#ifndef COMMON_H
+#define COMMON_H
+
 /* 0: IMU
 ** 1: Emulator */
 #define EXE_MODE 1
 
 
-#ifndef IMU_COMMON_H
-#define IMU_COMMON_H
-
-#if EXE_MODE /* Emulator mode */
-#include <stdbool.h>
-#include <inttypes.h>
-#include <stdio.h>
+#if EXE_MODE==1
+	/* Emulator mode */
+	#include <stdbool.h>
+	#include <inttypes.h>
+	#include <stdio.h>
+	#include "../Include/Emulator_Config.h"
 #else
-//#define _IMU10736_ /* Using IMU10736 */
-#define _IMU9250_ /* Using IMU9250 */
+	/* Real-time mode *&/
+	//#define _IMU10736_ /* Using IMU10736 */
+	#define _IMU9250_ /* Using IMU9250 */
 #endif
 
 #define DEBUG 1
 
-/* IO params */
+/* I/O params */
 #define OUTPUT_MODE 4
 #define NUM_COM_MODES 6
 
 /* Calibration params  */
-#define CALIBRATE_MODE  0
+#define CALIBRATION_MODE  0 /* 0|1 */
 #define CAL_OUTPUT_MODE 0
 #define NUM_CALCOM_MODES 2
+
+
+#define DSP_ON 0
+#define GAPA_ON 1
+#define WISE_ON 0
+
 
 /*******************************************************************
 ** Tyedefs *********************************************************
 ********************************************************************/
 
 /*
-** TYPE: CAL_STATE_TYPE
+** TYPE: CALIBRATION_TYPE
 ** This type is used to hold
 ** data useful for calibration */
 typedef struct
 {
-  int output_mode;
-
   float accel_total[3];
   float accel_max[3];
   float accel_min[3];
@@ -54,25 +62,55 @@ typedef struct
   float gyro_min[3];
 
   float N;
-} CAL_STATE_TYPE;
+} CALIBRATION_TYPE;
 
-/*
-** TYPE: DCM_STATE_TYPE
-** This type is used to hold the DCM
-** specific arrays and variables */
+/* TYPE: CALIBRATION_PRMS_TYPE
+** This type is used to hold the calibration 
+** control parameters. */
 typedef struct
 {
-  float Omega_P[3];
-  float Omega_I[3];
-  float DCM_Matrix[3][3];
+  int output_mode;
+} CALIBRATION_PRMS_TYPE
+
+/* 
+** TYPE: CONTROL_TYPE
+** This type is used to hold all the execution
+** parameters. It allows for a more dynamic 
+** execution. */
+typedef struct
+{
+	int output_mode;
+
+  unsigned long timestamp;
+  unsigned long timestamp_old;
+  float G_Dt;
+
+  /* Serial communication variables */
+  bool     BaudLock;    /* Used to set baud rate */
+  uint32_t LastLogTime; /* Sets the UART LOG Rate */
+
+  /* LED state globals */
+  bool      g_LedState; /* Used to set LED state */
+  uint32_t  g_LastBlinkTime; /* Used to set LED state */
+
+	
+  /* If calibration mode, 
+  ** include calibration struct */
+  #if CALIBRATION_MODE==1
+  	CALIBRATION_PRMS_TYPE calibration_prms;
+  #endif
   
-  float gyro_ave[3];
-  float gyro_var[3];
-  float gyro_std[3];
+  /* If in Emulation mode,
+  ** include the emulation structure */
+  #if EXE_MODE==1 
+  	EMULATION_TYPE emu_data;
+  #endif 
   
-  long int SampleNumber;
-  float std_time;
-} DCM_STATE_TYPE;
+} CONTROL_TYPE;
+
+
+
+
 
 /*
 ** TYPE: SENSOR_STATE_TYPE
@@ -122,20 +160,6 @@ typedef struct
 ** variables. */
 typedef struct
 {
-  int output_mode;
-
-  unsigned long timestamp;
-  unsigned long timestamp_old;
-  float G_Dt;
-
-  /* Serial communication globals */
-  bool g_BaudLock; /* Used to set baud rate */
-  uint32_t  g_LastLogTime; /* Sets the UART LOG Rate */
-
-  /* LED state globals */
-  bool      g_LedState; /* Used to set LED state */
-  uint32_t  g_LastBlinkTime; /* Used to set LED state */
-
 
 } CONTROL_STATE_TYPE;
 

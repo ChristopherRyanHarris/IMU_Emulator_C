@@ -1,39 +1,20 @@
 
-/*************************************************
+/*******************************************************************
 ** FILE: Common_Functions
-** This file contains some MPU 9250 (HW specific)
-** functions. Specifically, for initializing and
-** reading the sensor registeres
-**************************************************/
+** This file contains several setup and initialization functions
+** which are common accross all execution platforms.
+*/
 
 
 /*******************************************************************
 ** Includes ********************************************************
 ********************************************************************/
 
-
-#include "../Include/Common_Config.h"
-
+#ifndef EXE_MODE==1
+	#include "../Include/Common_Config.h"
+#endif
 #if EXE_MODE==1 /* Emulator Mode */
-
-#ifdef _IMU10736_
-#include "../Include/IMU10736_Config.h"
-#endif
-#ifdef _IMU9250_
-#include <SparkFunMPU9250-DMP.h>
-#include "../Include/IMU9250_Config.h"
-#endif
-
-#include "../Include/DCM_Config.h"
-#include "../Include/DSP_Config.h"
-#include "../Include/WISE_Config.h"
-#include "../Include/Emulator_Config.h"
-extern CAL_STATE_TYPE      g_calibration;
-extern DCM_STATE_TYPE      g_dcm_state;
-extern DSP_COMMON_TYPE     g_dsp;
-extern SENSOR_STATE_TYPE   g_sensor_state;
-extern CONTROL_STATE_TYPE  g_control_state;
-extern WISE_STATE_TYPE     g_wise_state;
+	#include "../Include/Emulator_Config.h"
 #endif  /* End Emulator Mode */
 
 
@@ -41,26 +22,78 @@ extern WISE_STATE_TYPE     g_wise_state;
 ** Functions *******************************************************
 ********************************************************************/
 
-/* Common_Init
-** This function initializes variables and constants which
-** are the same across all platforms and which are common
-** across all agorithm variants
+
+/*************************************************
+** FUNCTION: Common_Init
+** VARIABLES:
+**		[IO]	CONTROL_TYPE	*p_control
+** RETURN:
+**		NONE
+** DESCRIPTION: 
+** 		This function initializes variables and constants which
+** 		are the same across all platforms and which are common
+** 		across all agorithm variants
 */
-void Common_Init( void )
+void Common_Init ( CONTROL_TYPE *p_control )
 {
   LOG_PRINT("> Initializing Common\n");
 
 	/* Set default IO mode */
-	g_control_state.output_mode = OUTPUT_MODE;
-  g_calibration.output_mode   = CAL_OUTPUT_MODE;
-  //g_calibration.calibrate_flag = 0;
+	p_control->output_mode = OUTPUT_MODE;
 
-  g_control_state.timestamp      = 0;
-  g_control_state.timestamp_old  = 0;
-  g_control_state.G_Dt           = 0.0;
-
-  g_control_state.g_BaudLock       = true;
-  g_control_state.g_LedState       = false;
-  g_control_state.g_LastBlinkTime  = 0;
+  p_control->timestamp      = 0;
+  p_control->timestamp_old  = 0;
+  p_control->G_Dt           = 0.0;
+  
+  
+	#if EXE_MODE==1 /* Emulator Mode */
+		p_control->emu_data.timestamp = 0;
+	#endif
+  
+  /* If in calibration mode,
+	** set default calibration parameters */
+	#if CALIBRATION_MODE==1
+  	p_control->calibration_prms.output_mode = CAL_OUTPUT_MODE;
+  #endif
+  
 } /* End Common_Init*/
+
+
+/*************************************************
+** FUNCTION: UpdateTime
+** VARIABLES:
+**		[IO]	CONTROL_TYPE	*p_control
+** RETURN:
+**		NONE
+** DESCRIPTION:
+** 		Update the time state
+** 		Delta time (s) is used to determine the state
+** 		estimate in the filter.
+*/
+void Update_Time( CONTROL_TYPE *p_control )
+{
+  #if EXE_MODE==1 /* Emulator Mode */
+  	/* Timestamp is read from file */
+  	p_control->timestamp_old = p_control->timestamp;
+  	p_control->timestamp     = p_control->emu_data.timestamp;
+
+  #else /* Real Time mode */
+  	float minTime = (float) (TIME_RESOLUTION / (TIME_SR+1.0) ); /* Set Sampling Rate */
+  	while( (TIME_FUPDATE - p_control->timestamp) < (minTime) ) {}
+  	/* Update delta T */
+  	p_control->timestamp_old = p_control->timestamp;
+  	p_control->timestamp     = TIME_FUPDATE;
+  
+  #endif /* End Emulator Mode */
+
+	/* Get delta t */
+  if( g_control_state->timestamp_old > 0 ) 
+	{ 
+		p_control->G_Dt = (float) ( (p_control->timestamp - p_control->timestamp_old) / TIME_RESOLUTION ) ; 
+	}
+  else 
+  { 
+  	p_control->G_Dt = 0.0f; 
+  }
+} /* End Update_Time */
 

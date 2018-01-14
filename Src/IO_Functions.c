@@ -12,15 +12,12 @@
 ** Includes ********************************************************
 ********************************************************************/
 
-
+#ifndef EXE_MODE==1
+	#include "../Include/Common_Config.h"
+#endif
 #if EXE_MODE==1 /* Emulator Mode */
-#include "../Include/Emulator_Config.h"
-extern CAL_STATE_TYPE      g_calibration;
-extern DCM_STATE_TYPE      g_dcm_state;
-extern DSP_COMMON_TYPE     g_dsp;
-extern SENSOR_STATE_TYPE   g_sensor_state;
-extern CONTROL_STATE_TYPE  g_control_state;
-extern WISE_STATE_TYPE     g_wise_state;
+	#include "../Include/Emulator_Config.h"
+	#include "../Include/WISE_Config.h"
 #endif /* End Emulator Mode */
 
 
@@ -30,53 +27,62 @@ extern WISE_STATE_TYPE     g_wise_state;
 
 
 /*************************************************
-** Debug_LogOut
-** This function just prints a standard string
-** to the log_port serial port.
-** It prints the rpy as well as the timestamp and
-** and estimate of the sample rate
+** FUNCTION: Debug_LogOut
+** VARIABLES:
+**		[I ]	CONTROL_TYPE			*p_control
+**		[I ]	SENSOR_STATE_TYPE	*p_sensor_state
+**		[I ]	WISE_STATE_TYPE		*p_wise_state
+** RETURN:
+**		NONE
+** DESCRIPTION: 
+** 		This function just prints a standard string
+** 		to the log_port serial port.
+** 		It prints the rpy as well as the timestamp and
+** 		and estimate of the sample rate
 */
-void Debug_LogOut( void )
+void Debug_LogOut( CONTROL_TYPE				*p_control, 
+									 SENSOR_STATE_TYPE	*p_sensor_state,
+									 WISE_STATE_TYPE		*p_wise_state )
 {
   String imuLog = ""; 
   char fastlog[500];
 
-  switch ( g_control_state.output_mode )
+  switch ( p_control->output_mode )
   {
     case 0:
     	sprintf(fastlog,"T:%09d, DT:%.4f, SR:% 07.4f, R:% 09.4f, P:% 09.4f, Y:% 09.4f, A:% 05.0f,% 05.0f,% 05.0f, G:% 05.0f,% 05.0f,% 05.0f\n",
-    		g_control_state.timestamp,g_control_state.G_Dt,(1/g_control_state.G_Dt),
-	    	TO_DEG(g_sensor_state.roll),TO_DEG(g_sensor_state.pitch),TO_DEG(g_sensor_state.yaw),
-	    	g_sensor_state.accel[0],g_sensor_state.accel[1],g_sensor_state.accel[2],
-	    	g_sensor_state.gyro[0],g_sensor_state.gyro[1],g_sensor_state.gyro[2]);
+    		p_control->timestamp,p_control->G_Dt,(1/p_control->G_Dt),
+	    	TO_DEG(p_sensor_state->roll),TO_DEG(p_sensor_state->pitch),TO_DEG(p_sensor_state->yaw),
+	    	p_sensor_state->accel[0],p_sensor_state->accel[1],p_sensor_state->accel[2],
+	    	p_sensor_state->gyro[0],p_sensor_state->gyro[1],p_sensor_state->gyro[2]);
       break;
     case 1:
     	sprintf(fastlog,"WISE: v:%.4f %.4f vave: %.4f %.4f Igait: %.4f Iave: %.4f I: %.4f\n",
-    		g_wise_state.vel[0],g_wise_state.vel[1],g_wise_state.vel_ave[0],g_wise_state.vel_ave[1],
-    		g_wise_state.Incline_gait,g_wise_state.Incline_ave,g_wise_state.Incline );
+    		p_wise_state->vel[0],p_wise_state->vel[1],p_wise_state->vel_ave[0],p_wise_state->vel_ave[1],
+    		p_wise_state->Incline_gait,p_wise_state->Incline_ave,p_wise_state->Incline );
       break;
     case 2:
     	sprintf(fastlog,"WISE(v) (v/av/d/od/op): 1:%.4f/%.4f/%.4f/%.4f 2:%.4f/%.4f/%.4f/%.4f\n",
-    		g_wise_state.vel[0],g_wise_state.vel_ave[0],g_wise_state.vel_delta[0],g_wise_state.omega_vd[0],g_wise_state.omega_vp[0],
-    		g_wise_state.vel[1],g_wise_state.vel_ave[1],g_wise_state.vel_delta[1],g_wise_state.omega_vd[1],g_wise_state.omega_vp[1] );
+    		p_wise_state->vel[0],p_wise_state->vel_ave[0],p_wise_state->vel_delta[0],p_wise_state->omega_vd[0],p_wise_state->omega_vp[0],
+    		p_wise_state->vel[1],p_wise_state->vel_ave[1],p_wise_state->vel_delta[1],p_wise_state->omega_vd[1],p_wise_state->omega_vp[1] );
       break;
     case 3:
     	sprintf(fastlog,"WISE(a) (a/aa/d/od/op): 1:%.4f/%.4f/%.4f/%.4f 2:%.4f/%.4f/%.4f/%.4f\n",
-    		g_wise_state.accel[0],g_wise_state.accel_ave[0],g_wise_state.accel_delta[0],g_wise_state.omega_ad[0],g_wise_state.omega_ap[0],
-    		g_wise_state.accel[1],g_wise_state.accel_ave[1],g_wise_state.accel_delta[1],g_wise_state.omega_ad[1],g_wise_state.omega_ap[1]);
+    		p_wise_state->accel[0],p_wise_state->accel_ave[0],p_wise_state->accel_delta[0],p_wise_state->omega_ad[0],p_wise_state->omega_ap[0],
+    		p_wise_state->accel[1],p_wise_state->accel_ave[1],p_wise_state->accel_delta[1],p_wise_state->omega_ad[1],p_wise_state->omega_ap[1]);
       break;
     case 4:
     	sprintf(fastlog,"%d,%.0f,%.0f,%.0f,%.0f,%.0f,%.0f,%.4f,%.4f,%.4f\n",
-    		g_control_state.timestamp,
-	    	g_sensor_state.accel[0],g_sensor_state.accel[1],g_sensor_state.accel[2],
-	    	g_sensor_state.gyro[0],g_sensor_state.gyro[1],g_sensor_state.gyro[2],
-	    	TO_DEG(g_sensor_state.yaw),TO_DEG(g_sensor_state.pitch),TO_DEG(g_sensor_state.roll) );
+    		p_control->timestamp,
+	    	p_sensor_state->accel[0],p_sensor_state->accel[1],p_sensor_state->accel[2],
+	    	p_sensor_state->gyro[0],p_sensor_state->gyro[1],p_sensor_state->gyro[2],
+	    	TO_DEG(p_sensor_state->yaw),TO_DEG(p_sensor_state->pitch),TO_DEG(p_sensor_state->roll) );
 	    LOG_PRINT( fastlog ); 
       break;
     case 5:
     	sprintf(fastlog,"G_ave: %.4f %.4f %.4f G_std: %.4f %.4f %.4f\n",
-    		g_dcm_state.gyro_ave[0],g_dcm_state.gyro_ave[1],g_dcm_state.gyro_ave[2],
-    		g_dcm_state.gyro_std[0],g_dcm_state.gyro_std[1],g_dcm_state.gyro_std[2]  );
+    		p_dcm_state->gyro_ave[0],p_dcm_state->gyro_ave[1],p_dcm_state->gyro_ave[2],
+    		p_dcm_state->gyro_std[0],p_dcm_state->gyro_std[1],p_dcm_state->gyro_std[2]  );
     default:
     	break;
   }
@@ -93,23 +99,23 @@ void Debug_LogOut( void )
 void Cal_LogOut(void)
 {
   String imuLog = ""; 
-  imuLog += "Time:" + String( g_control_state.timestamp ) + ", "; 
-  imuLog += "DT:" + String( g_control_state.G_Dt,3 ) + ", ";
-  imuLog += "SR:" + String( (1/g_control_state.G_Dt) ) + ", "; 
+  imuLog += "Time:" + String( p_control->timestamp ) + ", "; 
+  imuLog += "DT:" + String( p_control->G_Dt,3 ) + ", ";
+  imuLog += "SR:" + String( (1/p_control->G_Dt) ) + ", "; 
 
-  switch ( g_calibration.output_mode )
+  switch ( p_calibration->output_mode )
   {
     case 0:
       imuLog += "accel (min/ave/max): ";
-      imuLog += String(g_calibration.accel_min[0],3) + "/" + String(g_calibration.accel_total[0]/g_calibration.N,3) + "/" + String(g_calibration.accel_max[0],3) + ", ";
-      imuLog += String(g_calibration.accel_min[1],3) + "/" + String(g_calibration.accel_total[1]/g_calibration.N,3) + "/" + String(g_calibration.accel_max[1],3) + ", ";
-      imuLog += String(g_calibration.accel_min[2],3) + "/" + String(g_calibration.accel_total[2]/g_calibration.N,3) + "/" + String(g_calibration.accel_max[2],3);
+      imuLog += String(p_calibration->accel_min[0],3) + "/" + String(p_calibration->accel_total[0]/p_calibration->N,3) + "/" + String(p_calibration->accel_max[0],3) + ", ";
+      imuLog += String(p_calibration->accel_min[1],3) + "/" + String(p_calibration->accel_total[1]/p_calibration->N,3) + "/" + String(p_calibration->accel_max[1],3) + ", ";
+      imuLog += String(p_calibration->accel_min[2],3) + "/" + String(p_calibration->accel_total[2]/p_calibration->N,3) + "/" + String(p_calibration->accel_max[2],3);
       break;
     case 1:
       imuLog += "gyro (ave/current): ";
-      imuLog += String(g_calibration.gyro_total[0]/g_calibration.N,3)  + "/" + String( g_sensor_state.gyro[0],3 ) + ", ";
-      imuLog += String(g_calibration.gyro_total[1]/g_calibration.N,3)  + "/" + String( g_sensor_state.gyro[1],3 ) + ", ";
-      imuLog += String(g_calibration.gyro_total[2]/g_calibration.N,3)  + "/" + String( g_sensor_state.gyro[2],3 );
+      imuLog += String(p_calibration->gyro_total[0]/p_calibration->N,3)  + "/" + String( p_sensor_state->gyro[0],3 ) + ", ";
+      imuLog += String(p_calibration->gyro_total[1]/p_calibration->N,3)  + "/" + String( p_sensor_state->gyro[1],3 ) + ", ";
+      imuLog += String(p_calibration->gyro_total[2]/p_calibration->N,3)  + "/" + String( p_sensor_state->gyro[2],3 );
       break;
   }
   imuLog += "\r\n";
@@ -210,9 +216,9 @@ void f_RespondToInput( int nBytesIn )
         Response.PacketType     = 1;
         Response.Buffer_nBytes  = sizeof(uint8_t)*2*3;
         Response.Packet_nBytes  = sizeof(uint16_t)*2 + sizeof(uint8_t)*(1 + Response.Buffer_nBytes);
-        f_WriteFToPacket_u16( &Response.Buffer[sizeof(uint16_t)*0], TO_DEG(g_sensor_state.roll) );
-        f_WriteFToPacket_u16( &Response.Buffer[sizeof(uint16_t)*1], TO_DEG(g_sensor_state.pitch) );
-        f_WriteFToPacket_u16( &Response.Buffer[sizeof(uint16_t)*2], TO_DEG(g_sensor_state.yaw) );
+        f_WriteFToPacket_u16( &Response.Buffer[sizeof(uint16_t)*0], TO_DEG(p_sensor_state->roll) );
+        f_WriteFToPacket_u16( &Response.Buffer[sizeof(uint16_t)*1], TO_DEG(p_sensor_state->pitch) );
+        f_WriteFToPacket_u16( &Response.Buffer[sizeof(uint16_t)*2], TO_DEG(p_sensor_state->yaw) );
         Response.CheckSum       = f_CheckSum( &Response.Buffer[0], Response.Buffer_nBytes );
         f_SendPacket( Response );
         break;
@@ -229,9 +235,9 @@ void f_RespondToInput( int nBytesIn )
         Response.PacketType     = 2;
         Response.Buffer_nBytes  = sizeof(uint8_t)*4*3;
         Response.Packet_nBytes  = sizeof(uint16_t)*2 + sizeof(uint8_t)*(1 + Response.Buffer_nBytes);
-        f_WriteFToPacket_s32( &Response.Buffer[sizeof(uint32_t)*0], TO_DEG(g_sensor_state.roll) );
-        f_WriteFToPacket_s32( &Response.Buffer[sizeof(uint32_t)*1], TO_DEG(g_sensor_state.pitch) );
-        f_WriteFToPacket_s32( &Response.Buffer[sizeof(uint32_t)*2], TO_DEG(g_sensor_state.yaw) );
+        f_WriteFToPacket_s32( &Response.Buffer[sizeof(uint32_t)*0], TO_DEG(p_sensor_state->roll) );
+        f_WriteFToPacket_s32( &Response.Buffer[sizeof(uint32_t)*1], TO_DEG(p_sensor_state->pitch) );
+        f_WriteFToPacket_s32( &Response.Buffer[sizeof(uint32_t)*2], TO_DEG(p_sensor_state->yaw) );
         Response.CheckSum       = f_CheckSum( &Response.Buffer[0], Response.Buffer_nBytes );
         f_SendPacket( Response );
         break;
@@ -245,8 +251,8 @@ void f_RespondToInput( int nBytesIn )
         ** 1:Gyro  (current/ave) in text */
         LOG_PRINT("\t> Recieved Output Toggle Request ... Case : ");
         LOG_PRINTLN(RequestByte, DEC);
-        if( CALIBRATE_MODE ) { g_calibration.output_mode = (g_calibration.output_mode+1)%NUM_CALCOM_MODES; }
-        else { g_control_state.output_mode = (g_control_state.output_mode+1)%NUM_COM_MODES; }
+        if( CALIBRATE_MODE ) { p_calibration->output_mode = (p_calibration->output_mode+1)%NUM_CALCOM_MODES; }
+        else { p_control->output_mode = (p_control->output_mode+1)%NUM_COM_MODES; }
         break;
 
       case 0x63:
@@ -410,7 +416,7 @@ void f_Handshake( void )
 
   /* We continue to attempt a handshake
   ** until there is a lock */
-  while( g_control_state.g_BaudLock==false )
+  while( p_control->BaudLock==FALSE )
   {
     /* Some Log Output (usb) */
     LOG_PRINTLN("> Beginning Handshake");
@@ -467,7 +473,7 @@ void f_Handshake( void )
       LOG_PRINTLN("> Baud Lock Successful");
 
       /* Toggle Boud lock */
-      g_control_state.g_BaudLock = true;
+      p_control->BaudLock = TRUE;
 
       /* Reply with confimation char to
       ** complete the handshake with the master */

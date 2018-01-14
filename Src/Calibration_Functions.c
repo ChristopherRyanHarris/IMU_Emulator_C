@@ -3,7 +3,7 @@
 ** FILE: CAL_Functions
 ** This file contains the functions which will help
 ** calibration the sensors
-**************************************************/
+*/
 
 
 /*******************************************************************
@@ -11,17 +11,11 @@
 ********************************************************************/
 
 
-#include "../Include/Common_Config.h"
-#include "../Include/DCM_Config.h"
-
+#ifndef EXE_MODE==1
+	#include "../Include/Common_Config.h"
+#endif
 #if EXE_MODE==1 /* Emulator Mode */
-#include "../Include/Emulator_Config.h"
-extern CAL_STATE_TYPE      g_calibration;
-extern DCM_STATE_TYPE      g_dcm_state;
-extern DSP_COMMON_TYPE     g_dsp;
-extern SENSOR_STATE_TYPE   g_sensor_state;
-extern CONTROL_STATE_TYPE  g_control_state;
-extern WISE_STATE_TYPE     g_wise_state;
+	#include "../Include/Emulator_Config.h"
 #endif /* End Emulator Mode */
 
 
@@ -29,12 +23,19 @@ extern WISE_STATE_TYPE     g_wise_state;
 ** Functions *******************************************************
 ********************************************************************/
 
-/*
-** Function: Calibration_Init
-** This function initializes the calibration state
-** variables.
+/*************************************************
+** FUNCTION: Calibration_Init
+** VARIABLES:
+**		[I ]	CONTROL_TYPE			*p_control	
+**		[IO]	CALIBRATION_TYPE	*p_calibration
+** RETURN:
+**		NONE
+** DESCRIPTION: 
+** 		This function initializes the calibration state
+** 		variables.
 */
-void Calibration_Init ( void )
+void Calibration_Init ( CONTROL_TYPE			*p_control,
+												CALIBRATION_TYPE 	*p_calibration )
 {
   int i;
   
@@ -42,37 +43,47 @@ void Calibration_Init ( void )
   
   for( i=0; i<3; i++ )
   {
-    g_calibration.accel_total[i] = 0.0f;
-    g_calibration.accel_max[i]   = -9999.0f;
-    g_calibration.accel_min[i]   = 9999.0f;
+    p_calibration->accel_total[i] = 0.0f;
+    p_calibration->accel_max[i]   = -9999.0f;
+    p_calibration->accel_min[i]   = 9999.0f;
 
-    g_calibration.gyro_total[i] = 0.0f;
-    g_calibration.gyro_max[i]   = -9999.0f;
-    g_calibration.gyro_min[i]   = 9999.0f;
+    p_calibration->gyro_total[i]  = 0.0f;
+    p_calibration->gyro_max[i]    = -9999.0f;
+    p_calibration->gyro_min[i]    = 9999.0f;
   }
-  g_calibration.N = 0;
+  p_calibration->N = 0;
 } /* End Calibration_Init */
 
 
-
-/*
-** Function: Calibrate
+/*************************************************
+** FUNCTION: Calibrate
+** VARIABLES:
+**		[I ]	CONTROL_TYPE			*p_control
+**		[IO]	CALIBRATION_TYPE	*p_calibration
+**		[I ]	SENSOR_STATE_TYPE	*p_sensor_state
+** RETURN:
+**		NONE
+** DESCRIPTION: 
+** 		This function initializes the calibration state
+** 		variables.
 */
-void Calibrate ( void )
+void Calibrate ( CONTROL_TYPE				*p_control,
+								 CALIBRATION_TYPE		*p_calibration,
+								 SENSOR_STATE_TYPE	*p_sensor_state )
 {
   int i;
   for( i=0; i<3; i++ )
   {
-    g_calibration.accel_total[i] += g_sensor_state.accel[i];
-    if( g_sensor_state.accel[i] > g_calibration.accel_max[i] ) { g_calibration.accel_max[i] = g_sensor_state.accel[i]; }
-    if( g_sensor_state.accel[i] < g_calibration.accel_min[i] ) { g_calibration.accel_min[i] = g_sensor_state.accel[i]; }
+    p_calibration->accel_total[i] += g_sensor_state.accel[i];
+    if( p_sensor_state->accel[i] > p_calibration->accel_max[i] ) { p_calibration->accel_max[i] = p_sensor_state->accel[i]; }
+    if( p_sensor_state->accel[i] < p_calibration->accel_min[i] ) { p_calibration->accel_min[i] = p_sensor_state->accel[i]; }
 
-    g_calibration.gyro_total[i] += g_sensor_state.gyro[i];
-    if( g_sensor_state.gyro[i] > g_calibration.gyro_max[i] ) { g_calibration.gyro_max[i] = g_sensor_state.gyro[i]; }
-    if( g_sensor_state.gyro[i] < g_calibration.gyro_min[i] ) { g_calibration.gyro_min[i] = g_sensor_state.gyro[i]; }
+    p_calibration->gyro_total[i] += p_sensor_state->gyro[i];
+    if( p_sensor_state->gyro[i] > p_calibration->gyro_max[i] ) { p_calibration->gyro_max[i] = p_sensor_state->gyro[i]; }
+    if( p_sensor_state->gyro[i] < p_calibration->gyro_min[i] ) { p_calibration->gyro_min[i] = p_sensor_state->gyro[i]; }
   }
-
-  g_calibration.N++;
+  p_calibration->N++;
+  
 } /* End Calibrate */
 
 

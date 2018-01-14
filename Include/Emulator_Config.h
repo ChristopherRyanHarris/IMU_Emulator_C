@@ -8,22 +8,39 @@
 #ifndef EMULATOR_H
 #define EMULATOR_H
 
+
 /*******************************************************************
 ** Imcludes ********************************************************
 ********************************************************************/
 
-#include "Common_Config.h"
+//#include "Common_Config.h"
 
 //#ifdef _IMU10736_
 //#include "../Include/IMU10736_Config.h"
 //#endif
 //#ifdef _IMU9250_
-#include "../Include/IMU9250_Config.h"
+//#include "../Include/IMU9250_Config.h"
 //#endif
 
-#include "DSP_Config.h"
-#include "WISE_Config.h"
-#include "GaPA_Config.h"
+//#include "DSP_Config.h"
+//#include "WISE_Config.h"
+//#include "GaPA_Config.h"
+
+/*******************************************************************
+** Tyedefs *********************************************************
+********************************************************************/
+
+typedef struct
+{
+    unsigned long timestamp;
+    float accel[3];
+    float gyro[3];
+    
+    bool flag;
+    
+    FILE*       InputFID;
+    FILE*       OutputFID;
+} EMULATION_TYPE;
 
 /*******************************************************************
 ** Prototypes ******************************************************
@@ -104,22 +121,8 @@ float f_asin( float x );
 float f_atan2( float y, float x );
 void calc_circle_center( float p1[2], float p2[2], float p3[2], float xcyc[2] );
 
-/*********************************
-** Dealing with junk
-********************************/
 
-// Order:
-// Timestamp, accel[0:2], gyro[0:2], yaw, pitch, roll, aest_ave[0:1], vest_ave[0:1]
-// Timestamp in micro seconds
-typedef struct
-{
-    unsigned long timestamp;
-    float accel[3];
-    float gyro[3];
-    bool flag;
-} EMULATE_TYPE;
-
-#endif // EMULATOR
+#endif /* EMULATOR */
 
 
 
