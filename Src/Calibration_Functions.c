@@ -26,11 +26,11 @@
 /*************************************************
 ** FUNCTION: Calibration_Init
 ** VARIABLES:
-**		[I ]	CONTROL_TYPE			*p_control	
+**		[I ]	CONTROL_TYPE			*p_control
 **		[IO]	CALIBRATION_TYPE	*p_calibration
 ** RETURN:
 **		NONE
-** DESCRIPTION: 
+** DESCRIPTION:
 ** 		This function initializes the calibration state
 ** 		variables.
 */
@@ -38,9 +38,9 @@ void Calibration_Init ( CONTROL_TYPE			*p_control,
 												CALIBRATION_TYPE 	*p_calibration )
 {
   int i;
-  
+
   LOG_PRINTLN("> Initializing Calibration");
-  
+
   for( i=0; i<3; i++ )
   {
     p_calibration->accel_total[i] = 0.0f;
@@ -63,7 +63,7 @@ void Calibration_Init ( CONTROL_TYPE			*p_control,
 **		[I ]	SENSOR_STATE_TYPE	*p_sensor_state
 ** RETURN:
 **		NONE
-** DESCRIPTION: 
+** DESCRIPTION:
 ** 		This function initializes the calibration state
 ** 		variables.
 */
@@ -74,7 +74,7 @@ void Calibrate ( CONTROL_TYPE				*p_control,
   int i;
   for( i=0; i<3; i++ )
   {
-    p_calibration->accel_total[i] += g_sensor_state.accel[i];
+    p_calibration->accel_total[i] += p_sensor_state->accel[i];
     if( p_sensor_state->accel[i] > p_calibration->accel_max[i] ) { p_calibration->accel_max[i] = p_sensor_state->accel[i]; }
     if( p_sensor_state->accel[i] < p_calibration->accel_min[i] ) { p_calibration->accel_min[i] = p_sensor_state->accel[i]; }
 
@@ -83,7 +83,7 @@ void Calibrate ( CONTROL_TYPE				*p_control,
     if( p_sensor_state->gyro[i] < p_calibration->gyro_min[i] ) { p_calibration->gyro_min[i] = p_sensor_state->gyro[i]; }
   }
   p_calibration->N++;
-  
+
 } /* End Calibrate */
 
 

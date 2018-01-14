@@ -149,19 +149,19 @@ void WISE_Update ( CONTROL_TYPE				*p_control,
   p_wise_state->swing_state = 1;
 
   /* Map acceleration to normal/tangent */
-  Map_Accel_2D();
+  Map_Accel_2D( p_control, p_sensor_state, p_wise_state );
   
   /* Integrate accel to get vel */
-  Integrate_Accel_2D();
+  Integrate_Accel_2D( p_control, p_sensor_state, p_wise_state );
   
   /* Velocity Adjustment */
-  Adjust_Velocity();
+  Adjust_Velocity( p_control, p_sensor_state, p_wise_state );
   
   /* Get distance traveled and compute incline */
-  Adjust_Incline();
+  Adjust_Incline( p_control, p_sensor_state, p_wise_state );
   
   /* Reset at toeoff */
-  if( p_wise_state->toe_off==TRUE ) { WISE_Reset(); }
+  if( p_wise_state->toe_off==TRUE ) { WISE_Reset( p_control, p_wise_state ); }
 
   p_wise_state->pitch_mem = p_sensor_state->pitch;
 } /* End WISE_Update */
@@ -170,12 +170,19 @@ void WISE_Update ( CONTROL_TYPE				*p_control,
 
 
 /*****************************************************************
-** Function: WISE_Reset
-** This function resets the WISE
-** state variables. In particular,
-** the integrated variables.
+** FUNCTION: WISE_Reset
+** VARIABLES:
+**		[I ]	CONTROL_TYPE			*p_control
+**		[IO]	WISE_STATE_TYPE		*p_wise_state
+** RETURN:
+**		NONE
+** DESCRIPTION:
+** 		This function resets the WISE
+** 		state variables. In particular,
+** 		the integrated variables.
 */
-void WISE_Reset ( void )
+void WISE_Reset ( CONTROL_TYPE			*p_control, 
+									WISE_STATE_TYPE		*p_wise_state )
 {
   int i;
 
@@ -212,14 +219,22 @@ void WISE_Reset ( void )
 
 
 /*****************************************************************
-** Function: Map_Accel_2D
-** This function maps a_t and a_n to a_x and a_y
-** using the filtered pitch assuming 2D motion.
-** This Does not account for roll.
-** NOTE: There may be a better way of extracting
-**       this from the mid-filter DCM
+** FUNCTION: Map_Accel_2D
+** VARIABLES:
+**		[I ]	CONTROL_TYPE			*p_control
+**		[IO]	WISE_STATE_TYPE		*p_wise_state
+** RETURN:
+**		NONE
+** DESCRIPTION:
+** 		This function maps a_t and a_n to a_x and a_y
+** 		using the filtered pitch assuming 2D motion.
+** 		This Does not account for roll.
+** 		NOTE: There may be a better way of extracting
+**       		this from the mid-filter DCM
 */
-void Map_Accel_2D ( void )
+void Map_Accel_2D ( CONTROL_TYPE				*p_control,
+								    SENSOR_STATE_TYPE		*p_sensor_state,
+									  WISE_STATE_TYPE			*p_wise_state )
 {
 
   /*
@@ -323,12 +338,21 @@ void Map_Accel_2D ( void )
 
 
 /*****************************************************************
-** Function: Integrate_Accel_2D
-** Integrate acceleration (wrt leg ref coordinates)
-** to get velocity (wrt leg ref coordinates)
-** Assumes 2D motion
+** FUNCTION: Integrate_Accel_2D
+** VARIABLES:
+**		[I ]	CONTROL_TYPE			*p_control
+**		[I ]	SENSOR_STATE_TYPE	*p_sensor_state
+**		[IO]	WISE_STATE_TYPE		*p_wise_state
+** RETURN:
+**		NONE
+** DESCRIPTION:
+**		Integrate acceleration (wrt leg ref coordinates)
+** 		to get velocity (wrt leg ref coordinates)
+** 		Assumes 2D motion
 */
-void Integrate_Accel_2D ( void )
+void Integrate_Accel_2D ( CONTROL_TYPE				*p_control,
+								   				SENSOR_STATE_TYPE		*p_sensor_state,
+									 				WISE_STATE_TYPE			*p_wise_state )
 {
   int i;
   for( i=0; i<=2; i++)
@@ -366,13 +390,22 @@ void Integrate_Accel_2D ( void )
 
 
 /*****************************************************************
-** Function: Adjust_Velocity
-** This function adjusts for velocity drift.
-** We detect toe-off events, from there we
-** can determine an estimated drift over the previous
-** gait cycle. Then we can adjust the average velocity.
+** FUNCTION: Adjust_Velocity
+** VARIABLES:
+**		[I ]	CONTROL_TYPE			*p_control
+**		[I ]	SENSOR_STATE_TYPE	*p_sensor_state
+**		[IO]	WISE_STATE_TYPE		*p_wise_state
+** RETURN:
+**		NONE
+** DESCRIPTION:
+** 		This function adjusts for velocity drift.
+** 		We detect toe-off events, from there we
+** 		can determine an estimated drift over the previous
+** 		gait cycle. Then we can adjust the average velocity.
 */
-void Adjust_Velocity( void )
+void Adjust_Velocity( CONTROL_TYPE				*p_control,
+								   		SENSOR_STATE_TYPE		*p_sensor_state,
+									 		WISE_STATE_TYPE			*p_wise_state )
 {
   float NGaitSamples = 0.0f;
 
@@ -459,7 +492,7 @@ void Adjust_Velocity( void )
     /* Reset gait parameters
     ** for next cycle */
     p_wise_state->toe_off = TRUE; /* Signal reset */
-    //WISE_Reset();
+    //WISE_Reset( p_control, p_wise_state );
   }
 
 //  /* Part II : Record minima
@@ -495,13 +528,22 @@ void Adjust_Velocity( void )
 
 
 /*****************************************************************
-** Function: Adjust_Incline
-** From our latest velocity estimate (from Adjust_Velocity)``
-** we can determine our distance traveled along each dimension.
-** Distance can be computed as dist += vel*dt
-** Incline can be computed as (dy/dx)*100
+** FUNCTION: Adjust_Incline
+** VARIABLES:
+**		[I ]	CONTROL_TYPE			*p_control
+**		[I ]	SENSOR_STATE_TYPE	*p_sensor_state
+**		[IO]	WISE_STATE_TYPE		*p_wise_state
+** RETURN:
+**		NONE
+** DESCRIPTION:
+** 		From our latest velocity estimate (from Adjust_Velocity)``
+** 		we can determine our distance traveled along each dimension.
+** 		Distance can be computed as dist += vel*dt
+** 		Incline can be computed as (dy/dx)*100
 */
-void Adjust_Incline( void )
+void Adjust_Incline( CONTROL_TYPE				*p_control,
+								   	 SENSOR_STATE_TYPE	*p_sensor_state,
+									 	 WISE_STATE_TYPE		*p_wise_state )
 {
 	int i;
 	float tempi;
@@ -534,21 +576,31 @@ void Adjust_Incline( void )
 
 /*****************************************************************
 ** Function: Estimate_Error
-** This function is inteded to estimate the
-** error in the intitial velocity estimates.
-** There are several ways we can estimate the
-** error in the velocity:
-**  1. We assume there is a relationship between the
-**     velocity error and the pitch delta. I.e. at
-**     small theta_dot, there is a high probability
-**     of error in the estimate
-**  2. We can take the value of the velocity feedback
-**     intergation term as an approximation of the error.
-**  3. We can take the difference between the final velocity and
-**     the average velocity. This assumes that the
-**     velocity should be a constant. Therefore, a large
-**     difference may indicate that the velocity has error. */
-void Estimate_Error ( void )
+** FUNCTION: Estimate_Error
+** VARIABLES:
+**		[I ]	CONTROL_TYPE			*p_control
+**		[I ]	SENSOR_STATE_TYPE	*p_sensor_state
+**		[IO]	WISE_STATE_TYPE		*p_wise_state
+** RETURN:
+**		NONE
+** DESCRIPTION:
+** 		This function is inteded to estimate the
+** 		error in the intitial velocity estimates.
+** 		There are several ways we can estimate the
+** 		error in the velocity:
+**  		1. We assume there is a relationship between the
+**     		 velocity error and the pitch delta. I.e. at
+**     		 small theta_dot, there is a high probability
+**     		 of error in the estimate
+**  		2. We can take the value of the velocity feedback
+**     		 intergation term as an approximation of the error.
+**  		3. We can take the difference between the final velocity and
+**     		 the average velocity. This assumes that the
+**     		 velocity should be a constant. Therefore, a large
+**     		 difference may indicate that the velocity has error. */
+void Estimate_Error( 	CONTROL_TYPE				*p_control,
+								   		SENSOR_STATE_TYPE		*p_sensor_state,
+									 		WISE_STATE_TYPE			*p_wise_state )
 {
 //  int i;
 //  float pave,pe1,pe2,pe3;

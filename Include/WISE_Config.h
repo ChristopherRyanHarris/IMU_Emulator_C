@@ -9,7 +9,6 @@
 #ifndef WISE_COMMON_H
 #define WISE_COMMON_H
 
-#define WISE_ON 0
 
 //#define WISE_GAIN_AD 0.025f
 #define WISE_GAIN_AD 0.05f

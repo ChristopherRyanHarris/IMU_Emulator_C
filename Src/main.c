@@ -20,6 +20,7 @@
 #include <stdbool.h>
 
 #include "../Include/Emulator_Config.h"
+#include "../Include/Emulator_Protos.h"
 
 
 /*******************************************************************
