@@ -9,9 +9,7 @@
 ** Includes ********************************************************
 ********************************************************************/
 
-#ifndef EXE_MODE==1
-	#include "../Include/Common_Config.h"
-#endif
+#include "../Include/Common_Config.h"
 #if EXE_MODE /* Emulator mode */
 	#include <math.h>
 	#include <string.h>
@@ -20,13 +18,13 @@
 		#include "../Include/IMU10736_Config.h"
 	#endif
 	#ifdef _IMU9250_
-		#include <SparkFunMPU9250-DMP.h>
 		#include "../Include/IMU9250_Config.h"
 	#endif
 
 	#include "../Include/Math.h"
 	#include "../Include/GaPA_Config.h"
 	#include "../Include/Emulator_Config.h"
+	#include "../Include/Emulator_Protos.h"
 #endif /* End Emulator mode */
 
 /*******************************************************************
@@ -160,10 +158,10 @@ void GaPA_Update( CONTROL_TYPE			*p_control,
 	{
 		case 1 : /* PHI */
 			p_gapa_state->phi =  p_sensor_state->pitch - p_gapa_state->PErr_phi - p_gapa_state->IErr_phi;
-			p_gapa_state->PHI += p_gapa_state->phi*p_control_state->G_Dt - p_gapa_state->PErr_PHI - p_gapa_state->IErr_PHI;
+			p_gapa_state->PHI += p_gapa_state->phi*p_control->G_Dt - p_gapa_state->PErr_PHI - p_gapa_state->IErr_PHI;
 			break;
 		case 2 : /* PHV */
-			//p_gapa_state->phi = (p_sensor_state->pitch - p_sensor_state->prev_pitch)*p_control_state->G_Dt;
+			//p_gapa_state->phi = (p_sensor_state->pitch - p_sensor_state->prev_pitch)*p_control->G_Dt;
 			//p_gapa_state->PHI = p_sensor_state->pitch;
 			break;
 		default :
@@ -274,7 +272,7 @@ void TrackPhiVariables( GAPA_STATE_TYPE* p_gapa_state )
 ** FUNCTION: calc_SftPrmLeft
 ** VARIABLES:
 **		[IO]	float	*GAMMA
-**		[I ]	float	PHI_max 
+**		[I ]	float	PHI_max
 **		[I ]	float	PHI_min
 ** RETURN:
 **		NONE
@@ -285,7 +283,7 @@ void TrackPhiVariables( GAPA_STATE_TYPE* p_gapa_state )
 */
 void calc_SftPrmLeft( float* GAMMA, float PHI_max, float PHI_min )
 {
-	(*GAMMA) = -( (p_gapa_state->PHI_max+PHI_min)*0.5 );
+	(*GAMMA) = -( (PHI_max+PHI_min)*0.5 );
 }/* End calc_SftPrmLeft */
 
 
@@ -293,7 +291,7 @@ void calc_SftPrmLeft( float* GAMMA, float PHI_max, float PHI_min )
 ** FUNCTION: calc_SftPrmRight
 ** VARIABLES:
 **		[IO]	float	*gamma
-**		[I ]	float	phi_max 
+**		[I ]	float	phi_max
 **		[I ]	float	phi_min
 ** RETURN:
 **		NONE
@@ -314,7 +312,7 @@ void calc_SftPrmRight( float* gamma, float phi_max, float phi_min )
 **		[IO]	float	*z
 **		[I ]	float	phi_max
 **		[I ]	float	phi_min
-**		[I ]	float	PHI_max 
+**		[I ]	float	PHI_max
 **		[I ]	float	PHI_min
 ** RETURN:
 **		NONE
@@ -335,7 +333,7 @@ void calc_ScaleFactor( float *z, float phi_max, float phi_min, float PHI_max, fl
 **		[IO]	float	*nu
 **		[I ]	float	z
 **		[I ]	float	PHI
-**		[I ]	float	GAMMA 
+**		[I ]	float	GAMMA
 **		[I ]	float	phi
 **		[I ]	float	gamma
 ** RETURN:

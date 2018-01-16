@@ -10,21 +10,27 @@
 
 
 /*******************************************************************
-** Imcludes ********************************************************
+** Includes ********************************************************
 ********************************************************************/
 
 #include "../Include/Common_Config.h"
+#if EXE_MODE==1 /* Emulator mode */
+	#include <math.h>
+	#include <string.h>
 
-//#ifdef _IMU10736_
-//#include "../Include/IMU10736_Config.h"
-//#endif
-//#ifdef _IMU9250_
-//#include "../Include/IMU9250_Config.h"
-//#endif
+	#ifdef _IMU10736_
+		#include "../Include/IMU10736_Config.h"
+	#endif
+	#ifdef _IMU9250_
+		#include "../Include/IMU9250_Config.h"
+	#endif
 
-//#include "DSP_Config.h"
-//#include "WISE_Config.h"
-//#include "GaPA_Config.h"
+	#include "../Include/DSP_Config.h"
+	#include "../Include/DCM_Config.h"
+	#include "../Include/GaPA_Config.h"
+	#include "../Include/WISE_Config.h"
+	#include "../Include/Emulator_Config.h"
+#endif /* End Emulator mode */
 
 /*******************************************************************
 ** Prototypes ******************************************************
@@ -51,7 +57,7 @@ void Calibrate ( CONTROL_TYPE				*p_control,
 void WISE_Init ( CONTROL_TYPE				*p_control,
 								 SENSOR_STATE_TYPE	*p_sensor_state,
 								 WISE_STATE_TYPE		*p_wise_state );
-void WISE_Reset ( CONTROL_TYPE			*p_control, 
+void WISE_Reset ( CONTROL_TYPE			*p_control,
 									WISE_STATE_TYPE		*p_wise_state );
 void WISE_Update ( CONTROL_TYPE				*p_control,
 								   SENSOR_STATE_TYPE	*p_sensor_state,
@@ -80,14 +86,14 @@ void GaPA_Reset( CONTROL_TYPE			*p_control,
 void GaPA_Update( CONTROL_TYPE			*p_control,
 									SENSOR_STATE_TYPE *p_sensor_state,
 								 	GAPA_STATE_TYPE		*p_gapa_state );
-void TrackPhiVariables( GAPA_STATE_TYPE* p_gapa_state )
+void TrackPhiVariables( GAPA_STATE_TYPE* p_gapa_state );
 void calc_SftPrmLeft( float* GAMMA, float PHI_max, float PHI_min );
 void calc_SftPrmRight( float* gamma, float phi_max, float phi_min );
 void calc_ScaleFactor( float *z, float phi_max, float phi_min, float PHI_max, float PHI_min );
 void calc_PhaseAngle( float* nu, float z, float PHI, float GAMMA, float phi, float gamma );
 
 /* Com_Functions */
-void Debug_LogOut( CONTROL_TYPE				*p_control, 
+void Debug_LogOut( CONTROL_TYPE				*p_control,
 									 SENSOR_STATE_TYPE	*p_sensor_state,
 									 WISE_STATE_TYPE		*p_wise_state );
 void Cal_LogOut( void );
@@ -100,30 +106,33 @@ void f_Handshake( void );
 uint8_t f_CheckSum( unsigned char *p_Buffer, uint16_t nBytes );
 
 /* DCM_Functions */
+void DCM_Init( CONTROL_TYPE				*p_control,
+							 DCM_STATE_TYPE 		*p_dcm_state,
+							 SENSOR_STATE_TYPE	*p_sensor_state );
 void Init_Rotation_Matrix( CONTROL_TYPE				*p_control,
 													 DCM_STATE_TYPE			*p_dcm_state,
 													 SENSOR_STATE_TYPE	*p_sensor_state );
 void DCM_Filter( CONTROL_TYPE				*p_control,
-								 DCM_STATE_TYPE			*p_dcm_state, 
+								 DCM_STATE_TYPE			*p_dcm_state,
 								 SENSOR_STATE_TYPE	*p_sensor_state );
 void Reset_Sensor_Fusion( CONTROL_TYPE			*p_control,
 													DCM_STATE_TYPE		*p_dcm_state,
 													SENSOR_STATE_TYPE	*p_sensor_state );
-void Set_Sensor_Fusion( CONTROL_TYPE			*p_control, 
+void Set_Sensor_Fusion( CONTROL_TYPE			*p_control,
 												SENSOR_STATE_TYPE	*p_sensor_state );
 
 /* DSP_Functions */
-void DSP_Filter_Init ( CONTROL_TYPE			*p_control, 
+void DSP_Filter_Init ( CONTROL_TYPE			*p_control,
 											 DSP_COMMON_TYPE	*p_dsp_state );
-void DSP_Update ( CONTROL_TYPE			*p_control, 
+void DSP_Update ( CONTROL_TYPE			*p_control,
 									DSP_COMMON_TYPE		*p_dsp_state,
 									SENSOR_STATE_TYPE *p_sensor_state );
-void DSP_Shift ( CONTROL_TYPE				*p_control, 
+void DSP_Shift ( CONTROL_TYPE				*p_control,
 								 DSP_COMMON_TYPE		*p_dsp_state );
-void IIR_Filter ( CONTROL_TYPE				*p_control, 
+void IIR_Filter ( CONTROL_TYPE				*p_control,
 								  DSP_COMMON_TYPE			*p_dsp_state,
 									SENSOR_STATE_TYPE 	*p_sensor_state );
-void FIR_Filter ( CONTROL_TYPE				*p_control, 
+void FIR_Filter ( CONTROL_TYPE				*p_control,
 								  DSP_COMMON_TYPE			*p_dsp_state,
 									SENSOR_STATE_TYPE 	*p_sensor_state );
 

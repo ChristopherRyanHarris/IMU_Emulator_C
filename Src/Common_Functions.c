@@ -10,11 +10,19 @@
 ** Includes ********************************************************
 ********************************************************************/
 
-#ifndef EXE_MODE==1
-	#include "../Include/Common_Config.h"
-#endif
+
+#include "../Include/Common_Config.h"
 #if EXE_MODE==1 /* Emulator Mode */
 	#include "../Include/Emulator_Config.h"
+	#include "../Include/Emulator_Protos.h"
+
+	#ifdef _IMU10736_
+		#include "../Include/IMU10736_Config.h"
+	#endif
+	#ifdef _IMU9250_
+		#include "../Include/IMU9250_Config.h"
+	#endif
+
 #endif  /* End Emulator Mode */
 
 
@@ -29,7 +37,7 @@
 **		[IO]	CONTROL_TYPE	*p_control
 ** RETURN:
 **		NONE
-** DESCRIPTION: 
+** DESCRIPTION:
 ** 		This function initializes variables and constants which
 ** 		are the same across all platforms and which are common
 ** 		across all agorithm variants
@@ -44,18 +52,18 @@ void Common_Init ( CONTROL_TYPE *p_control )
   p_control->timestamp      = 0;
   p_control->timestamp_old  = 0;
   p_control->G_Dt           = 0.0;
-  
-  
+
+
 	#if EXE_MODE==1 /* Emulator Mode */
 		p_control->emu_data.timestamp = 0;
 	#endif
-  
+
   /* If in calibration mode,
 	** set default calibration parameters */
 	#if CALIBRATION_MODE==1
   	p_control->calibration_prms.output_mode = CAL_OUTPUT_MODE;
   #endif
-  
+
 } /* End Common_Init*/
 
 
@@ -83,17 +91,17 @@ void Update_Time( CONTROL_TYPE *p_control )
   	/* Update delta T */
   	p_control->timestamp_old = p_control->timestamp;
   	p_control->timestamp     = TIME_FUPDATE;
-  
+
   #endif /* End Emulator Mode */
 
 	/* Get delta t */
-  if( g_control_state->timestamp_old > 0 ) 
-	{ 
-		p_control->G_Dt = (float) ( (p_control->timestamp - p_control->timestamp_old) / TIME_RESOLUTION ) ; 
+  if( p_control->timestamp_old > 0 )
+	{
+		p_control->G_Dt = (float) ( (p_control->timestamp - p_control->timestamp_old) / TIME_RESOLUTION ) ;
 	}
-  else 
-  { 
-  	p_control->G_Dt = 0.0f; 
+  else
+  {
+  	p_control->G_Dt = 0.0f;
   }
 } /* End Update_Time */
 

@@ -139,11 +139,11 @@
 #define COMM_PORT Serial
 
 #if EXE_MODE==0 /* IMU Mode */
-#define LOG_PRINTLN LOG_PORT.println
-#define LOG_PRINT LOG_PORT.print
+	#define LOG_PRINTLN LOG_PORT.println
+	#define LOG_PRINT LOG_PORT.print
 #else /* Emulator Mode */
-#define LOG_PRINTLN(x) fprintf(stdout,x);fprintf(stdout,"\n")
-#define LOG_PRINT(x) fprintf(stdout,x)
+	#define LOG_PRINTLN(x) fprintf(stdout,x);fprintf(stdout,"\n")
+	#define LOG_PRINT(x) fprintf(stdout,x)
 #endif
 
 /* Sampling resolution

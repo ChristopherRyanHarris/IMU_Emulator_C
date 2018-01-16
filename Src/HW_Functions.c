@@ -13,13 +13,10 @@
 ** Includes ********************************************************
 ********************************************************************/
 
+#include "../Include/Common_Config.h"
+#if EXE_MODE==0 /* Real-Time Mode */
 
-#ifndef EXE_MODE==1
-	#include "../Include/Common_Config.h"
-#endif
-#if EXE_MODE==1 /* Emulator Mode */
-	#include "../Include/Emulator_Config.h"
-#endif  /* End Emulator Mode */
+
 
 
 /*******************************************************************
@@ -27,7 +24,7 @@
 ********************************************************************/
 
 
- 
+
 /*************************************************
 ** FUNCTION: Init_Hardware
 ** VARIABLES:
@@ -42,17 +39,17 @@ void Init_Hardware( CONTROL_TYPE	*p_control )
 {
   /* Initiate the LOG_PORT */
   LOG_PORT.begin(LOG_PORT_BAUD);
-  
+
   LOG_PRINTLN("> Initializing Hardware");
 
   /* Set up LED pin (active-high, default to off) */
   pinMode(HW_LED_PIN, OUTPUT);
 	digitalWrite(HW_LED_PIN, LOW);
-  
+
   p_control->BaudLock       = TRUE;
   p_control->LedState       = FALSE;
   p_control->LastBlinkTime  = 0;
-  
+
 } /* End Init_Hardware */
 
 /*************************************************
@@ -78,9 +75,9 @@ void Blink_LED( CONTROL_TYPE	*p_control )
     	p_control->LastBlinkTime = millis();
   	}
   #endif /* EXE_MODE */
-  
+
 } /* End Blink_LED */
 
 
-
+#endif  /* End Emulator Mode */
 

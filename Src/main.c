@@ -46,9 +46,13 @@ int main()
 	/* DCM variables */
 	DCM_STATE_TYPE      g_dcm_state;
 
+	#if( GAPA_ON==1 )
+		GAPA_STATE_TYPE   g_gapa_state;
+	#endif
+
 	#if( WISE_ON==1 )
 		WISE_STATE_TYPE   g_wise_state;
-	#endif 
+	#endif
 
 	#if( DSP_ON==1 )
 		DSP_COMMON_TYPE   g_dsp;
@@ -58,7 +62,6 @@ int main()
 	const char* OutputFile = "C:\\Users\\chris\\Desktop\\test.txt";
 
   float count = 1.0;
-  int i,j;
 	bool ret;
 
   g_control.emu_data.InputFID  = fopen(InputFile,"rb");
@@ -67,44 +70,46 @@ int main()
 
 	/* Initilize the control structure */
   Common_Init( &g_control );
-  
-  /* Set the initial roll/pitch/yaw from 
+
+  /* Set the initial roll/pitch/yaw from
   ** initial accel/gyro */
-  
+
   /* Read all active sensors */
   Read_Sensors( &g_control, &g_sensor_state );
-  
+
   /* Initialize Freq. Filter */
   #if( DSP_ON==1 )
   	DSP_Filter_Init( &g_control, &g_dsp );
   #endif
-  
+
   #if CALIBRATE_MODE==1
   	Calibration_Init( &g_calibration );
   #endif
 
-	GaPA_Init();
+  #if GAPA_ON==1
+    GaPA_Init( &g_control, &g_gapa_state );
+  #endif
 
 	/* Initialize the Directional Cosine Matrix Filter */
   DCM_Init( &g_control, &g_dcm_state, &g_sensor_state );
-  
+
   /* Initialize Walking Incline and Speed Estimator */
   #if( WISE_ON==1 )
   	WISE_Init( &g_control, &g_sensor_state, &g_wise_state );
   #endif
 
   fprintf(stdout,"pitch:%f\n",g_sensor_state.pitch);
-  fprintf(stdout,"Time:%ld\n",g_control_state.timestamp);
+  fprintf(stdout,"Time:%ld\n",g_control.timestamp);
 	fprintf(stdout,"\n");
 
-  while( g_emu_data.flag==1 )
+  while( g_control.emu_data.flag==1 )
   {
     /* Update sensor readings */
   	Read_Sensors( &g_control, &g_sensor_state );
-  	
+
   	/* Update the timestamp */
   	Update_Time( &g_control );
-  	
+
   	/* If no data, end */
     if (g_control.emu_data.flag==0); continue;
 
@@ -115,19 +120,19 @@ int main()
 	  	DSP_Shift( &g_control, &g_dsp );
 	  #endif
 
-    
-    /* If in calibration mode, 
+
+    /* If in calibration mode,
 		** call calibration function */
 	  #if( CALIBRATE_MODE==1 )
 	  	Calibrate( &g_control, &g_calibration, &g_sensor_state );
 	  #endif
-	  
+
 	  /* Apply the DCM Filter */
 	  DCM_Filter( &g_control, &g_dcm_state, &g_sensor_state );
-	  
+
 	  /* Estimate the Gait Phase Angle */
-    GaPA_Update();
-    
+    GaPA_Update( &g_control, &g_sensor_state, &g_gapa_state );
+
 	  /* Estimate Walking Speed and Incline */
 	  #if( WISE_ON==1 )
 	  	if( ((g_dcm_state.gyro_std[0]+g_dcm_state.gyro_std[1]+g_dcm_state.gyro_std[2])/3 > MOVE_MIN_GYRO_STD) )
@@ -135,11 +140,11 @@ int main()
 				WISE_Update(&g_control, &g_sensor_state, &g_wise_state );
 			}
 		#endif
-	
+
 
     fprintf(stdout,"\n");
     fprintf(stdout,"Count: %f\n",count);
-    fprintf(stdout,"Time:%ld\n",g_control_state.timestamp);
+    fprintf(stdout,"Time:%ld\n",g_control.timestamp);
 
     fprintf(stdout,"pitch:%f\n",g_sensor_state.pitch);
 
@@ -150,7 +155,7 @@ int main()
     //getchar();
     count++;
   }
-  
+
   /* Close the file handles */
   fclose(g_control.emu_data.InputFID);
 	//fclose(g_control.emu_data.OutputFID);

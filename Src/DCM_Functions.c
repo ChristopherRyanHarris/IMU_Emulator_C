@@ -12,9 +12,7 @@
 ********************************************************************/
 
 
-#ifndef EXE_MODE==1
-	#include "../Include/Common_Config.h"
-#endif
+#include "../Include/Common_Config.h"
 #if EXE_MODE==1 /* Emulator Mode */
 	#include <math.h>
 	#include <stdio.h>
@@ -22,6 +20,15 @@
 	#include "../Include/DCM_Config.h"
 	#include "../Include/Math.h"
 	#include "../Include/Emulator_Config.h"
+	#include "../Include/Emulator_Protos.h"
+
+	#ifdef _IMU10736_
+		#include "../Include/IMU10736_Config.h"
+	#endif
+	#ifdef _IMU9250_
+		#include "../Include/IMU9250_Config.h"
+	#endif
+
 #endif  /* End Emulator Mode */
 
 
@@ -41,20 +48,20 @@
 ** DESCRIPTION:
 ** 		Initialize DCM varaibles
 */
-void DCM_Init( CONTROL_TYPE				*p_control, 
+void DCM_Init( CONTROL_TYPE				*p_control,
 							 DCM_STATE_TYPE 		*p_dcm_state,
 							 SENSOR_STATE_TYPE	*p_sensor_state )
 {
   int i;
-  
+
   LOG_PRINTLN("> Initializing DCM Filter");
-  
+
   for(i=0;i<3;i++) p_dcm_state->Omega_I[i] = 0.0f;
   for(i=0;i<3;i++) p_dcm_state->Omega_P[i] = 0.0f;
   p_dcm_state->SampleNumber=0;
-  
-  Reset_Sensor_Fusion( p_control, p_dcm_state, p_sensor_state ); 
-  
+
+  Reset_Sensor_Fusion( p_control, p_dcm_state, p_sensor_state );
+
   for(i=0;i<3;i++) p_sensor_state->gyro_ave[i] = p_sensor_state->gyro[i];
   for(i=0;i<3;i++) p_sensor_state->gyro_var[i] = 0.0f;
   for(i=0;i<3;i++) p_sensor_state->gyro_std[i] = 0.0f;
@@ -97,12 +104,12 @@ void Reset_Sensor_Fusion( CONTROL_TYPE			*p_control,
 ** RETURN:
 **		NONE
 ** DESCRIPTION:
-** 		Similar to Reset_Sensor_Fusion, except we do not 
+** 		Similar to Reset_Sensor_Fusion, except we do not
 ** 		re-initialize the DCM arrays. This is used to
 ** 		reset the roll/pitch values without touching the
 ** 		DCM matrix state.
 */
-void Set_Sensor_Fusion( CONTROL_TYPE			*p_control, 
+void Set_Sensor_Fusion( CONTROL_TYPE			*p_control,
 												SENSOR_STATE_TYPE	*p_sensor_state )
 {
   float temp1[3];
@@ -144,11 +151,11 @@ void Init_Rotation_Matrix( CONTROL_TYPE				*p_control,
 													 DCM_STATE_TYPE			*p_dcm_state,
 													 SENSOR_STATE_TYPE	*p_sensor_state )
 {
-	float	*m		= &(p_dcm_state->DCM_Matrix)
+	float	*m		= &(p_dcm_state->DCM_Matrix[0][0]);
 	float roll 	= p_sensor_state->roll;
 	float pitch = p_sensor_state->pitch;
 	float yaw 	= p_sensor_state->yaw;
-	
+
   float c1 = cos(roll);
   float s1 = sin(roll);
   float c2 = cos(pitch);
@@ -158,17 +165,17 @@ void Init_Rotation_Matrix( CONTROL_TYPE				*p_control,
 
   /* Euler angles, right-handed, intrinsic, XYZ convention
   ** (which means: rotate around body axes Z, Y', X'')  */
-  m[0][0] = c2 * c3;
-  m[0][1] = c3 * s1 * s2 - c1 * s3;
-  m[0][2] = s1 * s3 + c1 * c3 * s2;
+  m[0 + 0*3] = c2 * c3;
+  m[0 + 1*3] = c3 * s1 * s2 - c1 * s3;
+  m[0 + 2*3] = s1 * s3 + c1 * c3 * s2;
 
-  m[1][0] = c2 * s3;
-  m[1][1] = c1 * c3 + s1 * s2 * s3;
-  m[1][2] = c1 * s2 * s3 - c3 * s1;
+  m[1 + 0*3] = c2 * s3;
+  m[1 + 1*3] = c1 * c3 + s1 * s2 * s3;
+  m[1 + 2*3] = c1 * s2 * s3 - c3 * s1;
 
-  m[2][0] = -s2;
-  m[2][1] = c2 * s1;
-  m[2][2] = c1 * c2;
+  m[2 + 0*3] = -s2;
+  m[2 + 1*3] = c2 * s1;
+  m[2 + 2*3] = c1 * c2;
 } /* End Init_Rotation_Matrix */
 
 
@@ -185,14 +192,12 @@ void Init_Rotation_Matrix( CONTROL_TYPE				*p_control,
 **   1. Matrix_Update    - Update the DCM
 **   2. Normalize        - Normalize the DCM
 **   3. Drift_Correction - Correct for drift in orientation
-**   4. Get_Euler_Angles - Extract Euler angles from DCM 
+**   4. Get_Euler_Angles - Extract Euler angles from DCM
 */
 void DCM_Filter( CONTROL_TYPE				*p_control,
-								 DCM_STATE_TYPE			*p_dcm_state, 
+								 DCM_STATE_TYPE			*p_dcm_state,
 								 SENSOR_STATE_TYPE	*p_sensor_state )
 {
-  int i;
-  float temp;
   float error = 0;
   float renorm = 0;
 
@@ -207,7 +212,7 @@ void DCM_Filter( CONTROL_TYPE				*p_control,
   float ErrorGain[3];
   float errorRollPitch[3];
   float errorYaw[3];
-  
+
   /* Clear Rolling Std/Average after set time */
   #if( WISE_ON==1 )
   	p_sensor_state->std_time+=(p_control->G_Dt*TIME_RESOLUTION);
@@ -219,7 +224,7 @@ void DCM_Filter( CONTROL_TYPE				*p_control,
 	  	p_sensor_state->std_time=0;
 	  	p_dcm_state->SampleNumber=0;
  		}
-  
+
   	/* Update Rolling Std */
   	p_dcm_state->SampleNumber++;
   	for( i=0;i<3;i++)
@@ -230,7 +235,7 @@ void DCM_Filter( CONTROL_TYPE				*p_control,
   		p_sensor_state->gyro_std[i] = p_sensor_state->gyro_var[i]/p_dcm_state->SampleNumber;
   	}
   #endif
-  
+
 
   /******************************************************************
   ** DCM 1. Update the Direction Cosine Matrix
@@ -262,8 +267,8 @@ void DCM_Filter( CONTROL_TYPE				*p_control,
   Omega_Vector[2] = GYRO_Z_SCALED( p_sensor_state->gyro[2] ) + p_dcm_state->Omega_I[2] + p_dcm_state->Omega_P[2];
 
   /* Update the state matrix
-  ** We are essentially applying a rotation 
-  ** from the new gyro data. This is an estimate 
+  ** We are essentially applying a rotation
+  ** from the new gyro data. This is an estimate
   ** of the current orientation */
   TempM2[0][0] = p_control->G_Dt * (p_dcm_state->DCM_Matrix[0][1]*Omega_Vector[2] - p_dcm_state->DCM_Matrix[0][2]*Omega_Vector[1]) + p_dcm_state->DCM_Matrix[0][0];
   TempM2[0][1] = p_control->G_Dt * (p_dcm_state->DCM_Matrix[0][2]*Omega_Vector[0] - p_dcm_state->DCM_Matrix[0][0]*Omega_Vector[2]) + p_dcm_state->DCM_Matrix[0][1];
@@ -359,7 +364,7 @@ void DCM_Filter( CONTROL_TYPE				*p_control,
   ** particular direction, this should be ok */
 
   Vector_Scale( &p_dcm_state->DCM_Matrix[2][0], p_dcm_state->DCM_Matrix[0][0], errorYaw ); /* Applys the yaw correction to the XYZ rotation of the aircraft, depeding the position. */
-  
+
   /* Update the proportional and integral gains per yaw error */
   Vector_Scale( &errorYaw[0], Kp_YAW, &ErrorGain[0] ); /* proportional of YAW. */
   Vector_Add( p_dcm_state->Omega_P, ErrorGain, p_dcm_state->Omega_P ); /* Adding  Proportional. */
@@ -426,7 +431,7 @@ void DCM_Filter( CONTROL_TYPE				*p_control,
       p_sensor_state->roll =  ROLL_ROT_CONV*f_atan2( p_dcm_state->DCM_Matrix[2][2], -ROLL_ZREF*p_dcm_state->DCM_Matrix[2][1] );
       break;
   }
-  
+
   p_sensor_state->yaw   =  f_atan2( p_dcm_state->DCM_Matrix[1][0], p_dcm_state->DCM_Matrix[0][0] ); // A faster atan2
 } /* End DCM_Filter */
 

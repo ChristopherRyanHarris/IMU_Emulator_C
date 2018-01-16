@@ -12,12 +12,19 @@
 ********************************************************************/
 
 
-#ifndef EXE_MODE==1
-	#include "../Include/Common_Config.h"
-#endif
+#include "../Include/Common_Config.h"
 #if EXE_MODE==1 /* Emulator Mode */
 	#include <math.h>
 	#include "../Include/Emulator_Config.h"
+	#include "../Include/Emulator_Protos.h"
+
+	#ifdef _IMU10736_
+		#include "../Include/IMU10736_Config.h"
+	#endif
+	#ifdef _IMU9250_
+		#include "../Include/IMU9250_Config.h"
+	#endif
+
 #endif /* End Emulator Mode */
 
 /*******************************************************************
@@ -28,8 +35,8 @@
 /*************************************************
 ** FUNCTION: Vector_Dot_Product
 ** VARIABLES:
-**		[I ]	const float v1	:	
-**		[I ]	const float v2	:	
+**		[I ]	const float v1	:
+**		[I ]	const float v2	:
 ** RETURN:
 **		float	result
 ** DESCRIPTION:
@@ -320,11 +327,11 @@ void calc_circle_center( float p1[2], float p2[2], float p3[2], float xcyc[2] )
 	/* More checking */
 	if( mr==mt ){ return; }
 	if( mr==0 ){ return; }
-		
+
 	/* Compute center */
 	xcyc[0] = (mr*mt*(y3-y1) + mr*(x2+x3) - mt*(x1+x2)) / (2*(mr-mt));
 	xcyc[1] = -1/mr * (xcyc[0]-(x1+x2)/2) + (y1+y2)/2;
-	
+
 }
 
 

@@ -16,15 +16,22 @@
 ********************************************************************/
 
 
-#ifndef EXE_MODE==1
-	#include "../Include/Common_Config.h"
-#endif
+#include "../Include/Common_Config.h"
 #if EXE_MODE==1 /* Emulator Mode */
 	#include <string.h>
 
 	#include "../Include/DSP_Config.h"
 	#include "../Include/DCM_Config.h"
 	#include "../Include/Emulator_Config.h"
+	#include "../Include/Emulator_Protos.h"
+
+	#ifdef _IMU10736_
+		#include "../Include/IMU10736_Config.h"
+	#endif
+	#ifdef _IMU9250_
+		#include "../Include/IMU9250_Config.h"
+	#endif
+
 #endif  /* End Emulator Mode */
 
 
@@ -44,9 +51,9 @@
 ** RETURN:
 **		NONE
 ** DESCRIPTION:
-** 		This function initializes the state memory 
+** 		This function initializes the state memory
 */
-void DSP_Filter_Init ( CONTROL_TYPE			*p_control, 
+void DSP_Filter_Init ( CONTROL_TYPE			*p_control,
 											 DSP_COMMON_TYPE	*p_dsp_state )
 {
 	int i,j;
@@ -89,9 +96,9 @@ void DSP_Filter_Init ( CONTROL_TYPE			*p_control,
 ** DESCRIPTION:
 ** 		This function updates the necessary
 ** 		DSP state variabls. This includes
-** 		the memory arrays 
+** 		the memory arrays
 */
-void DSP_Update ( CONTROL_TYPE			*p_control, 
+void DSP_Update ( CONTROL_TYPE			*p_control,
 									DSP_COMMON_TYPE		*p_dsp_state,
 									SENSOR_STATE_TYPE *p_sensor_state )
 {
@@ -115,9 +122,9 @@ void DSP_Update ( CONTROL_TYPE			*p_control,
 ** DESCRIPTION:
 ** 		This function shifts the memory
 ** 		arrays in preparation for the next
-** 		iteration 
+** 		iteration
 */
-void DSP_Shift ( CONTROL_TYPE				*p_control, 
+void DSP_Shift ( CONTROL_TYPE				*p_control,
 								 DSP_COMMON_TYPE		*p_dsp_state )
 {
 	int i,j;
@@ -145,9 +152,9 @@ void DSP_Shift ( CONTROL_TYPE				*p_control,
 ** 		This function applies a IIR filter
 ** 		to the input sensor data.
 ** 		Equation:
-**			y[n] = (1/a[0]) * ( b[0]*x[n] + ... + b[P]*x[n-P] - a[1]*y[n-1] - ... - a[Q]*y[n-Q] ) 
+**			y[n] = (1/a[0]) * ( b[0]*x[n] + ... + b[P]*x[n-P] - a[1]*y[n-1] - ... - a[Q]*y[n-Q] )
 */
-void IIR_Filter ( CONTROL_TYPE				*p_control, 
+void IIR_Filter ( CONTROL_TYPE				*p_control,
 								  DSP_COMMON_TYPE			*p_dsp_state,
 									SENSOR_STATE_TYPE 	*p_sensor_state )
 {
@@ -188,9 +195,9 @@ void IIR_Filter ( CONTROL_TYPE				*p_control,
 ** 		This function applies a FIR filter
 ** 		to the input sensor data.
 ** 		Equation:
-**			y[n] = b[0]*x[n] + b[1]*x[n-1] + ... + b[N]*x[n-N] 
+**			y[n] = b[0]*x[n] + b[1]*x[n-1] + ... + b[N]*x[n-N]
 */
-void FIR_Filter ( CONTROL_TYPE				*p_control, 
+void FIR_Filter ( CONTROL_TYPE				*p_control,
 								  DSP_COMMON_TYPE			*p_dsp_state,
 									SENSOR_STATE_TYPE 	*p_sensor_state )
 {

@@ -13,7 +13,7 @@
 ** Imcludes ********************************************************
 ********************************************************************/
 
-#include "Common_Config.h"
+//#include "Common_Config.h"
 
 //#ifdef _IMU10736_
 //#include "../Include/IMU10736_Config.h"
@@ -35,9 +35,9 @@ typedef struct
     unsigned long timestamp;
     float accel[3];
     float gyro[3];
-    
+
     bool flag;
-    
+
     FILE*       InputFID;
     FILE*       OutputFID;
 } EMULATION_TYPE;

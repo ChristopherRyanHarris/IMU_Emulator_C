@@ -11,11 +11,18 @@
 ********************************************************************/
 
 
-#ifndef EXE_MODE==1
-	#include "../Include/Common_Config.h"
-#endif
+#include "../Include/Common_Config.h"
 #if EXE_MODE==1 /* Emulator Mode */
 	#include "../Include/Emulator_Config.h"
+	#include "../Include/Emulator_Protos.h"
+
+	#ifdef _IMU10736_
+		#include "../Include/IMU10736_Config.h"
+	#endif
+	#ifdef _IMU9250_
+		#include "../Include/IMU9250_Config.h"
+	#endif
+
 #endif /* End Emulator Mode */
 
 

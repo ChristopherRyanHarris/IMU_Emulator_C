@@ -20,8 +20,12 @@
 	#include <inttypes.h>
 	#include <stdio.h>
 	#include "../Include/Emulator_Config.h"
+	#include "../Include/DCM_Config.h"
+
+	//#define _IMU10736_ /* Using IMU10736 */
+	#define _IMU9250_ /* Using IMU9250 */
 #else
-	/* Real-time mode *&/
+	/* Real-time mode */
 	//#define _IMU10736_ /* Using IMU10736 */
 	#define _IMU9250_ /* Using IMU9250 */
 #endif
@@ -41,6 +45,7 @@
 #define DSP_ON 0
 #define GAPA_ON 1
 #define WISE_ON 0
+
 
 
 /*******************************************************************
@@ -65,17 +70,17 @@ typedef struct
 } CALIBRATION_TYPE;
 
 /* TYPE: CALIBRATION_PRMS_TYPE
-** This type is used to hold the calibration 
+** This type is used to hold the calibration
 ** control parameters. */
 typedef struct
 {
   int output_mode;
-} CALIBRATION_PRMS_TYPE
+} CALIBRATION_PRMS_TYPE;
 
-/* 
+/*
 ** TYPE: CONTROL_TYPE
 ** This type is used to hold all the execution
-** parameters. It allows for a more dynamic 
+** parameters. It allows for a more dynamic
 ** execution. */
 typedef struct
 {
@@ -90,22 +95,22 @@ typedef struct
   uint32_t LastLogTime; /* Sets the UART LOG Rate */
 
   /* LED state globals */
-  bool      g_LedState; /* Used to set LED state */
-  uint32_t  g_LastBlinkTime; /* Used to set LED state */
+  bool      LedState; /* Used to set LED state */
+  uint32_t  LastBlinkTime; /* Used to set LED state */
 
-	
-  /* If calibration mode, 
+
+  /* If calibration mode,
   ** include calibration struct */
   #if CALIBRATION_MODE==1
   	CALIBRATION_PRMS_TYPE calibration_prms;
   #endif
-  
+
   /* If in Emulation mode,
   ** include the emulation structure */
-  #if EXE_MODE==1 
+  #if EXE_MODE==1
   	EMULATION_TYPE emu_data;
-  #endif 
-  
+  #endif
+
 } CONTROL_TYPE;
 
 
@@ -121,7 +126,7 @@ typedef struct
   float yaw;
   float pitch;
   float roll;
-  
+
   float yaw_prev;
   float pitch_prev;
   float roll_prev;
@@ -131,28 +136,14 @@ typedef struct
   /* Accel x:Fore y:Port z:Zenith */
   float accel[3];
   float gyro[3];
-  
+
   float gyro_ave[3];
   float gyro_var[3];
   float gyro_std[3];
-  
+
   float std_time;
 
 } SENSOR_STATE_TYPE;
-
-/*
-** TYPE: DCM_STATE_TYPE
-** This type is used to hold the DCM
-** specific arrays and variables */
-typedef struct
-{
-  float Omega_P[3];
-  float Omega_I[3];
-  float DCM_Matrix[3][3];
-
-  long int SampleNumber;
-  
-} DCM_STATE_TYPE;
 
 /*
 ** TYPE: CONTROL_STATE_TYPE

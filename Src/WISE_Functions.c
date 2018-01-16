@@ -10,9 +10,7 @@
 ** Includes ********************************************************
 ********************************************************************/
 
-#ifndef EXE_MODE==1
-	#include "../Include/Common_Config.h"
-#endif
+#include "../Include/Common_Config.h"
 #if EXE_MODE==1 /* Emulator mode */
 	#include <math.h>
 	#include <string.h>
@@ -21,13 +19,13 @@
 		#include "../Include/IMU10736_Config.h"
 	#endif
 	#ifdef _IMU9250_
-		#include <SparkFunMPU9250-DMP.h>
 		#include "../Include/IMU9250_Config.h"
 	#endif
 
 	#include "../Include/Math.h"
 	#include "../Include/WISE_Config.h"
 	#include "../Include/Emulator_Config.h"
+	#include "../Include/Emulator_Protos.h"
 #endif /* End Emulator mode */
 
 
@@ -56,7 +54,7 @@ void WISE_Init ( CONTROL_TYPE				*p_control,
 								 WISE_STATE_TYPE		*p_wise_state )
 {
   int i;
-  
+
   LOG_PRINTLN("> Initializing WISE");
 
   p_wise_state->swing_state = FALSE; /* Bool */
@@ -78,7 +76,7 @@ void WISE_Init ( CONTROL_TYPE				*p_control,
   p_wise_state->GaitStart.drift[0]     = 0.0f;
   p_wise_state->GaitStart.drift[1]     = 0.0f;
   p_wise_state->GaitStart.drift[2]     = 0.0f;
-  
+
   p_wise_state->GaitEnd.vel[0]       = 999;
   p_wise_state->GaitEnd.vel[1]       = 999;
   p_wise_state->GaitEnd.vel_total[0] = 999;
@@ -87,7 +85,7 @@ void WISE_Init ( CONTROL_TYPE				*p_control,
   p_wise_state->GaitEnd.drift[0]     = 0.0f;
   p_wise_state->GaitEnd.drift[1]     = 0.0f;
   p_wise_state->GaitEnd.drift[2]     = 0.0f;
-  
+
   p_wise_state->CrossingP.vel[0] = 999;
 
   for( i=0;i<3;i++ )
@@ -103,21 +101,21 @@ void WISE_Init ( CONTROL_TYPE				*p_control,
     p_wise_state->vel_ave[i]     = 1.0f;
     //p_wise_state->vel_total[i]   = 0.0f;
     p_wise_state->vel_delta[i]   =  0.0f;
-    
+
     /* Initialize WISE rotation state vector */
     p_wise_state->gyr[i]       = 0.0f;
     p_wise_state->rot[i]       = 0.0f;
     p_wise_state->rot_ave[i]   = 1.0f;
     p_wise_state->rot_total[i] = 0.0f;
     p_wise_state->rot_delta[i] = 0.0f;
-    
+
     p_wise_state->CrossingP.vel[0] = 0.0f;
     p_wise_state->CrossingP.vel[1] = 0.0f;
 
     p_wise_state->vel_delta[i] = 0.0f;
     p_wise_state->omega_vd[i]  = 0.0f;
     p_wise_state->omega_vp[i]  = 0.0f;
-    
+
     p_wise_state->dist[i]      = 0.0f;
   }
   p_wise_state->Nsamples++;
@@ -150,16 +148,16 @@ void WISE_Update ( CONTROL_TYPE				*p_control,
 
   /* Map acceleration to normal/tangent */
   Map_Accel_2D( p_control, p_sensor_state, p_wise_state );
-  
+
   /* Integrate accel to get vel */
   Integrate_Accel_2D( p_control, p_sensor_state, p_wise_state );
-  
+
   /* Velocity Adjustment */
   Adjust_Velocity( p_control, p_sensor_state, p_wise_state );
-  
+
   /* Get distance traveled and compute incline */
   Adjust_Incline( p_control, p_sensor_state, p_wise_state );
-  
+
   /* Reset at toeoff */
   if( p_wise_state->toe_off==TRUE ) { WISE_Reset( p_control, p_wise_state ); }
 
@@ -181,7 +179,7 @@ void WISE_Update ( CONTROL_TYPE				*p_control,
 ** 		state variables. In particular,
 ** 		the integrated variables.
 */
-void WISE_Reset ( CONTROL_TYPE			*p_control, 
+void WISE_Reset ( CONTROL_TYPE			*p_control,
 									WISE_STATE_TYPE		*p_wise_state )
 {
   int i;
@@ -203,14 +201,14 @@ void WISE_Reset ( CONTROL_TYPE			*p_control,
     p_wise_state->vel_delta[i] = 0.0f;
     p_wise_state->omega_vd[i]  = 0.0f;
     p_wise_state->omega_vp[i]  = 0.0f;
-    
+
     /* Initialize WISE Rotation state vector */
     p_wise_state->gyr[i]       = 0.0f;
     p_wise_state->rot[i]       = 0.0f;
     p_wise_state->rot_ave[i]   = 0.0f;
     p_wise_state->rot_total[i] = 0.0f;
     p_wise_state->rot_delta[i] = 0.0f;
-    
+
     p_wise_state->dist[i]      = 0.0f;
   }
 } /* End WISE_Reset */
@@ -275,7 +273,6 @@ void Map_Accel_2D ( CONTROL_TYPE				*p_control,
   ** Note: IMU coordinate ref. frame definced in IMU#_Config.h
   **       Rotation will need to be accounted for
   */
-	float accel_w[3];
   float Ax, Az, R;
 
   switch( PITCH_O )
@@ -359,8 +356,8 @@ void Integrate_Accel_2D ( CONTROL_TYPE				*p_control,
   {
     p_wise_state->vel_delta[i] = p_wise_state->vel[i];
 
-    //p_wise_state->vel[i]  = p_wise_state->vel[i] + p_wise_state->accel_ave[i]*p_control_state->G_Dt;
-    p_wise_state->vel[i]  = p_wise_state->vel[i] + p_wise_state->accel[i]*p_control_state->G_Dt;
+    //p_wise_state->vel[i]  = p_wise_state->vel[i] + p_wise_state->accel_ave[i]*p_control->G_Dt;
+    p_wise_state->vel[i]  = p_wise_state->vel[i] + p_wise_state->accel[i]*p_control->G_Dt;
 
     //p_wise_state->vel[i] -= (p_wise_state->omega_vd[i] + p_wise_state->omega_vp[i]);
     //p_wise_state->vel_delta[i] = p_wise_state->vel[i] - p_wise_state->vel_delta[i];
@@ -374,16 +371,16 @@ void Integrate_Accel_2D ( CONTROL_TYPE				*p_control,
 		}
 
     p_wise_state->vel_total[i] += p_wise_state->vel[i];
-    //p_wise_state->vel_ave[i]  = p_wise_state->vel_total[i]/p_wise_state->Nsample; 
+    //p_wise_state->vel_ave[i]  = p_wise_state->vel_total[i]/p_wise_state->Nsample;
   }
-  
-  
+
+
   /*********************************
   ** Rotational Part ***************
   **********************************/
-  p_wise_state->rot[0] = p_wise_state->rot[i] + p_wise_state->gyr[i]*p_control_state->G_Dt;
-  
-  
+  p_wise_state->rot[0] = p_wise_state->rot[i] + p_wise_state->gyr[i]*p_control->G_Dt;
+
+
 } /* End Integrate_Accel_2D */
 
 
@@ -416,24 +413,24 @@ void Adjust_Velocity( CONTROL_TYPE				*p_control,
     p_wise_state->GaitStart.vel[1]       = p_wise_state->vel[1];
     p_wise_state->GaitStart.vel_total[0] = p_wise_state->vel_total[0];
     p_wise_state->GaitStart.vel_total[1] = p_wise_state->vel_total[1];
-    p_wise_state->GaitStart.Time         = p_control_state->timestamp;
+    p_wise_state->GaitStart.Time         = p_control->timestamp;
     p_wise_state->GaitStart.Nsamples     = p_wise_state->Nsamples;
-    
+
     p_wise_state->CrossingP.vel[0]       = p_wise_state->rot[0];
     p_wise_state->CrossingP.vel[1]       = p_wise_state->rot[0];
   }
-  
-  
+
+
   /* In Testing */
   if( p_wise_state->rot[0]>p_wise_state->CrossingP.vel[0] )
 	{
 		/* Record rotational maximum */
 		p_wise_state->CrossingP.vel[0] = p_wise_state->rot[0];
-		
-		/* Record velocity minimum 
+
+		/* Record velocity minimum
 		** GaitStart[0] = { vel tangent at minima }
 		** GaitStart[1] = { vel normal at minima  } */
-		p_wise_state->GaitEnd.Time         = p_control_state->timestamp;
+		p_wise_state->GaitEnd.Time         = p_control->timestamp;
 		p_wise_state->GaitEnd.vel[0]       = p_wise_state->vel[0];
 		p_wise_state->GaitEnd.vel[1]       = p_wise_state->vel[1];
 		p_wise_state->GaitEnd.vel_total[0] = p_wise_state->vel_total[0];
@@ -477,16 +474,16 @@ void Adjust_Velocity( CONTROL_TYPE				*p_control,
 
     /* Reset saved minima and increment cycle counter */
     p_wise_state->Ncycles++;
-    
+
     memcpy( &(p_wise_state->GaitStart), &(p_wise_state->GaitEnd), sizeof(WISE_GATE_TYPE) );
     p_wise_state->GaitStart.Nsamples   = 1.0f;
-    
+
     p_wise_state->GaitEnd.vel[0]       = (999);
     p_wise_state->GaitEnd.vel[1]       = (999);
     p_wise_state->GaitEnd.vel_total[0] = (999);
     p_wise_state->GaitEnd.vel_total[1] = (999);
     p_wise_state->GaitEnd.Nsamples     = (999);
-    
+
     p_wise_state->CrossingP.vel[0] = p_wise_state->rot[0];
 
     /* Reset gait parameters
@@ -507,7 +504,7 @@ void Adjust_Velocity( CONTROL_TYPE				*p_control,
 //    {
 //      /* GaitStart[0] = { vel tangent at minima }
 //      ** GaitStart[1] = { vel normal at minima  } */
-//    	p_wise_state->GaitEnd.Time         = p_control_state->timestamp;
+//    	p_wise_state->GaitEnd.Time         = p_control->timestamp;
 //      p_wise_state->GaitEnd.vel[0]       = p_wise_state->vel[0];
 //      p_wise_state->GaitEnd.vel[1]       = p_wise_state->vel[1];
 //      p_wise_state->GaitEnd.vel_total[0] = p_wise_state->vel_total[0];
@@ -545,27 +542,26 @@ void Adjust_Incline( CONTROL_TYPE				*p_control,
 								   	 SENSOR_STATE_TYPE	*p_sensor_state,
 									 	 WISE_STATE_TYPE		*p_wise_state )
 {
-	int i;
 	float tempi;
-	float tempx,tempy;
-	
+	float tempx=0,tempy=0;
+
 	/* Compute distance traveled in each direction */
-	p_wise_state->dist[0] += p_wise_state->vel[0]*(p_control_state->G_Dt);
-	p_wise_state->dist[1] += p_wise_state->vel[1]*(p_control_state->G_Dt);
-	
-	
+	p_wise_state->dist[0] += p_wise_state->vel[0]*(p_control->G_Dt);
+	p_wise_state->dist[1] += p_wise_state->vel[1]*(p_control->G_Dt);
+
+
 	/* Compute incline estimate */
 	tempi = (p_wise_state->dist[1]/p_wise_state->dist[0])*100;
 	p_wise_state->Incline_ave = Rolling_Mean( p_wise_state->Nsamples, p_wise_state->Incline_ave, tempi );
-	
+
 	/* Compute an average incline estimate using the final velocity estimate */
 	if( (p_wise_state->Ncycles>3) )
 	{
-		tempx = p_wise_state->vel_ave[0]*(p_control_state->timestamp-p_wise_state->GaitStart.Time)/TIME_RESOLUTION;
-		tempx = p_wise_state->vel_ave[1]*(p_control_state->timestamp-p_wise_state->GaitStart.Time)/TIME_RESOLUTION;
+		tempx = p_wise_state->vel_ave[0]*(p_control->timestamp-p_wise_state->GaitStart.Time)/TIME_RESOLUTION;
+		tempx = p_wise_state->vel_ave[1]*(p_control->timestamp-p_wise_state->GaitStart.Time)/TIME_RESOLUTION;
 		p_wise_state->Incline_gait = (tempy/tempx)*100;
 	}
-	
+
 } /* End Get_WISE */
 
 
@@ -642,7 +638,7 @@ void Estimate_Error( 	CONTROL_TYPE				*p_control,
 //  p_wise_state->pave = (p_wise_state->pe[0] + p_wise_state->pe[1] + p_wise_state->pe[2])/3;
 //
 //  /*
-//  if ( millis() > (p_control_state->g_LastBlinkTime + UART_BLINK_RATE) )
+//  if ( millis() > (p_control->g_LastBlinkTime + UART_BLINK_RATE) )
 //  {
 //    imuLog = "\t\t err est (p1/p2/p3/pave): ";
 //    imuLog += String( pe1,7 ) + "/" + String( pe2,7 ) + "/" + String( pe3,7 ) + "/" +String( pave,7 );
