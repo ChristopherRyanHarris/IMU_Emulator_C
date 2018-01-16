@@ -17,10 +17,10 @@
 
 #define PI (3.14159265359)
 
-#if EXE_MODE /* Emulator mode */
-#define FCONSTRAIN(x,m,M) (fmin(fmax(x,m),M))
+#if EXE_MODE==1 /* Emulator mode */
+	#define FCONSTRAIN(x,m,M) (fmin(fmax(x,m),M))
 #else
-#define FCONSTRAIN constrain
+	#define FCONSTRAIN constrain
 #endif /* EXE_MODE */
 
 #define SIGN(x) ( (0<x)-(x<0)+(x==0) )
