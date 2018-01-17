@@ -53,10 +53,10 @@ void Common_Init ( CONTROL_TYPE *p_control )
   p_control->timestamp_old  = 0;
   p_control->G_Dt           = 0.0;
 
-	/* An emu timestamp is needed 
+	/* An emu timestamp is needed  */
 	#if EXE_MODE==1 /* Emulator Mode */
 		p_control->emu_data.timestamp = 0;
-		
+
 		p_control->emu_data.InputFID  = NULL;
 		p_control->emu_data.OutputFID = NULL;
 	#endif

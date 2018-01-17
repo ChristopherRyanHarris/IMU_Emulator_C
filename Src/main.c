@@ -37,41 +37,41 @@ int main( void )
 	/************************************************************
 	** ------------- Declare Data Structures --------------------
 	** In the first block we must do quite a bit of trickery in
-	** in order to cleanly initialize all the structures in a 
-	** way which both allows room for easy modification and 
+	** in order to cleanly initialize all the structures in a
+	** way which both allows room for easy modification and
 	** properly prepares for the execution.
-	** Since the desire is to have this code be used to develop 
-	** potentially many algorithms, I decided to initially use 
+	** Since the desire is to have this code be used to develop
+	** potentially many algorithms, I decided to initially use
 	** a control architecture to turn the various programs on
-	** or off.  
+	** or off.
 	** Furhter, since this code is eventually ported to an
-	** arduino implementation, I wanted to be sure not to fill 
+	** arduino implementation, I wanted to be sure not to fill
 	** up the memory with unused code.
-	** This method could be easily changed later to allow for 
+	** This method could be easily changed later to allow for
 	** the various streams to be hot-swaped.
 	************************************************************/
-	
-	/* Control Structure 
+
+	/* Control Structure
 	** This will contain all the various settings */
 	CONTROL_TYPE        g_control;
-	
+
 	/* Input data structure
 	** This will contain the input data
 	** In emulation mode, this is read from a binary file
 	** In real-time mode, this will be from the sensors. */
 	SENSOR_STATE_TYPE   g_sensor_state;
 
-	/* Calibration Structure 
-	** This structure is used to aid in calibrating the sensor 
+	/* Calibration Structure
+	** This structure is used to aid in calibrating the sensor
 	** This is not used in normal processing */
 	#if CALIBRATION_MODE==1
 		CALIBRATION_TYPE  g_calibration;
 	#endif
 
-	
+
 	/* DSP state
 	** The Digitial Signal Processing algorithms
-	** are filters which are applied to the individual 
+	** are filters which are applied to the individual
 	** data feeds. This structure holds the state variables
 	** for the algorithm.
 	** NOTE: At the moment, this is a very simple FIR and IIR
@@ -80,8 +80,8 @@ int main( void )
 		DSP_COMMON_TYPE   g_dsp;
 	#endif
 
-	/* DCM variables 
-	** The Directional cosine matrix is one 
+	/* DCM variables
+	** The Directional cosine matrix is one
 	** method of determining the orientation of the
 	** IMU. This matrix holds the state information of
 	** the DCM algorihtm. */
@@ -90,28 +90,28 @@ int main( void )
 	/* GaPA state
 	** The Gait Phase Angle estimator is an aglorithm
 	** (or set of algorithms) which will determine the
-	** current gait phase angle of the user. This 
+	** current gait phase angle of the user. This
 	** structure holds the state variables of the algorithm */
 	#if( GAPA_ON==1 )
 		GAPA_STATE_TYPE   g_gapa_state;
 	#endif
 
 	/* WISE state
-	** The Walking Incline and Speed Estimator is 
-	** an algorithm (or set of algorithms) which 
-	** estimates the walking speed and the incline 
-	** of motion of the user. This structure holds 
+	** The Walking Incline and Speed Estimator is
+	** an algorithm (or set of algorithms) which
+	** estimates the walking speed and the incline
+	** of motion of the user. This structure holds
 	** the state variables for the algorithm. */
 	#if( WISE_ON==1 )
 		WISE_STATE_TYPE   g_wise_state;
 	#endif
 
 
-	
+
 	/************************************************************
 	** ---------------- Initialize Variables --------------------
-	** Note that we must get an intial read of all the active 
-	** sensors before we initialize the data structures. 
+	** Note that we must get an intial read of all the active
+	** sensors before we initialize the data structures.
 	************************************************************/
 
 	/* Set input data file and (optional) output file */
@@ -128,15 +128,15 @@ int main( void )
 	/* Open input file */
   g_control.emu_data.InputFID = fopen(InputFile,"rb");
   if( g_control.emu_data.InputFID==NULL )
-  {	
+  {
   	fprintf(stderr,"ERROR : Opening Input Data file %s : File Handle Null",InputFile);
   }
-  
-  /* If desired, open output file to write debug data 
+
+  /* If desired, open output file to write debug data
   ** TODO: This could easily be expanded to be an execution log file */
   //g_control.emu_data.OutputFID 	= fopen(OutputFile,"w");
 	//if( g_control.emu_data.InputFID==NULL )
-  //{	
+  //{
   //	fprintf(stderr,"ERROR : Opening Input Data file %s : File Handle Null",InputFile);
   //}
 
@@ -180,7 +180,7 @@ int main( void )
   {
   	/* Rewind getc */
   	fseek(g_control.emu_data.InputFID,-1L,SEEK_CUR);
-  	
+
     /* Update sensor readings */
   	Read_Sensors( &g_control, &g_sensor_state );
 
@@ -192,7 +192,7 @@ int main( void )
 	  #if( CALIBRATE_MODE==1 )
 	  	Calibrate( &g_control, &g_calibration, &g_sensor_state );
 	  #endif
-	  
+
 	  /* Apply Freq Filter to Input */
 	  #if( DSP_ON==1 )
 	  	FIR_Filter( &g_control, &g_dsp, &g_sensor_state );
@@ -225,14 +225,23 @@ int main( void )
     fprintf(stdout,"phi:%f\nPHI:%f\n",g_gapa_state.phi, g_gapa_state.PHI);
 
     fprintf(stdout,"\n");
-    //getchar();
-    
+
+    getchar();
+
     count++;
   }
 
   /* Close the file handles */
-  fclose(g_control.emu_data.InputFID);
-	//fclose(g_control.emu_data.OutputFID);
+  if( g_control.emu_data.InputFID!=NULL )
+  {
+    fclose(g_control.emu_data.InputFID);
+  }
+
+  if( g_control.emu_data.OutputFID!=NULL )
+  {
+    fclose(g_control.emu_data.OutputFID);
+  }
+
 
   return 0;
 } /* End Main */
