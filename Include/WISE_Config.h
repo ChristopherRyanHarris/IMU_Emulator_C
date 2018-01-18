@@ -116,6 +116,9 @@ typedef struct
 } WISE_STATE_TYPE;
 
 
+
+
+
 #endif // WISE_COMMON_H
 
 

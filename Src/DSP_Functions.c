@@ -47,14 +47,14 @@
 ** FUNCTION: DSP_Filter_Init
 ** VARIABLES:
 **		[I ]	CONTROL_TYPE		*p_control
-**		[IO]	DSP_COMMON_TYPE	*p_dsp_state
+**		[IO]	DSP_STATE_TYPE	*p_dsp_state
 ** RETURN:
 **		NONE
 ** DESCRIPTION:
 ** 		This function initializes the state memory
 */
 void DSP_Filter_Init ( CONTROL_TYPE			*p_control,
-											 DSP_COMMON_TYPE	*p_dsp_state )
+											 DSP_STATE_TYPE		*p_dsp_state )
 {
 	int i,j;
 
@@ -89,7 +89,7 @@ void DSP_Filter_Init ( CONTROL_TYPE			*p_control,
 ** FUNCTION: DSP_Update
 ** VARIABLES:
 **		[I ]	CONTROL_TYPE			*p_control
-**		[IO]	DSP_COMMON_TYPE		*p_dsp_state
+**		[IO]	DSP_STATE_TYPE		*p_dsp_state
 **		[IO]	SENSOR_STATE_TYPE *p_sensor_state
 ** RETURN:
 **		NONE
@@ -99,7 +99,7 @@ void DSP_Filter_Init ( CONTROL_TYPE			*p_control,
 ** 		the memory arrays
 */
 void DSP_Update ( CONTROL_TYPE			*p_control,
-									DSP_COMMON_TYPE		*p_dsp_state,
+									DSP_STATE_TYPE		*p_dsp_state,
 									SENSOR_STATE_TYPE *p_sensor_state )
 {
 	int i;
@@ -116,7 +116,7 @@ void DSP_Update ( CONTROL_TYPE			*p_control,
 ** FUNCTION: DSP_Shift
 ** VARIABLES:
 **		[I ]	CONTROL_TYPE			*p_control
-**		[IO]	DSP_COMMON_TYPE		*p_dsp_state
+**		[IO]	DSP_STATE_TYPE		*p_dsp_state
 ** RETURN:
 **		NONE
 ** DESCRIPTION:
@@ -125,7 +125,7 @@ void DSP_Update ( CONTROL_TYPE			*p_control,
 ** 		iteration
 */
 void DSP_Shift ( CONTROL_TYPE				*p_control,
-								 DSP_COMMON_TYPE		*p_dsp_state )
+								 DSP_STATE_TYPE		*p_dsp_state )
 {
 	int i,j;
 	/* Shift sesor values */
@@ -144,7 +144,7 @@ void DSP_Shift ( CONTROL_TYPE				*p_control,
 ** FUNCTION: IIR_Filter
 ** VARIABLES:
 **		[I ]	CONTROL_TYPE			*p_control
-**		[IO]	DSP_COMMON_TYPE		*p_dsp_state
+**		[IO]	DSP_STATE_TYPE		*p_dsp_state
 **		[IO]	SENSOR_STATE_TYPE *p_sensor_state
 ** RETURN:
 **		NONE
@@ -155,7 +155,7 @@ void DSP_Shift ( CONTROL_TYPE				*p_control,
 **			y[n] = (1/a[0]) * ( b[0]*x[n] + ... + b[P]*x[n-P] - a[1]*y[n-1] - ... - a[Q]*y[n-Q] )
 */
 void IIR_Filter ( CONTROL_TYPE				*p_control,
-								  DSP_COMMON_TYPE			*p_dsp_state,
+								  DSP_STATE_TYPE			*p_dsp_state,
 									SENSOR_STATE_TYPE 	*p_sensor_state )
 {
 	/* TO DO: Add functionality for additional modes */
@@ -187,7 +187,7 @@ void IIR_Filter ( CONTROL_TYPE				*p_control,
 ** FUNCTION: FIR_Filter
 ** VARIABLES:
 **		[I ]	CONTROL_TYPE			*p_control
-**		[IO]	DSP_COMMON_TYPE		*p_dsp_state
+**		[IO]	DSP_STATE_TYPE		*p_dsp_state
 **		[IO]	SENSOR_STATE_TYPE *p_sensor_state
 ** RETURN:
 **		NONE
@@ -198,7 +198,7 @@ void IIR_Filter ( CONTROL_TYPE				*p_control,
 **			y[n] = b[0]*x[n] + b[1]*x[n-1] + ... + b[N]*x[n-N]
 */
 void FIR_Filter ( CONTROL_TYPE				*p_control,
-								  DSP_COMMON_TYPE			*p_dsp_state,
+								  DSP_STATE_TYPE			*p_dsp_state,
 									SENSOR_STATE_TYPE 	*p_sensor_state )
 {
 	/* TO DO: Add functionality for additional modes */

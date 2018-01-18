@@ -120,12 +120,6 @@
   #define ROLL_O 4
 #endif
 
-/* Set which sensors to read */
-#define ACCEL_ON 1
-#define GYRO_ON  1
-#define MAGN_ON  0 /* We removed support for the mag in the DCM! */
-
-
 
 /******************************************************************
 ** HW specific

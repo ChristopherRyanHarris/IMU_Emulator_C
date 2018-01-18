@@ -7,8 +7,8 @@
 ** DCM algorithms
 ******************************************************************/
 
-#ifndef DCM_H
-#define DCM_H
+#ifndef DCM_CONFIG_H
+#define DCM_CONFIG_H
 
 
 /*******************************************************************
@@ -35,5 +35,20 @@ typedef struct
 } DCM_STATE_TYPE;
 
 
+/*
+** TYPE: DCM_PRMS_TYPE
+** This type is used to hold the DCM
+** execution parameters. */
+typedef struct
+{
+  float Kp_RollPitch;
+  float Ki_RollPitch;
+  
+  float Kp_Yaw;
+  float Ki_Yaw;
+  
+} DCM_PRMS_TYPE;
 
-#endif
+
+
+#endif /* DCM_CONFIG_H */

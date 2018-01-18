@@ -44,7 +44,7 @@ int main( void )
 	** potentially many algorithms, I decided to initially use
 	** a control architecture to turn the various programs on
 	** or off.
-	** Furhter, since this code is eventually ported to an
+	** Further, since this code is eventually ported to an
 	** arduino implementation, I wanted to be sure not to fill
 	** up the memory with unused code.
 	** This method could be easily changed later to allow for
@@ -144,25 +144,29 @@ int main( void )
   Read_Sensors( &g_control, &g_sensor_state );
 
   /* Initialize Freq. Filter */
-  #if( DSP_ON==1 )
+  if( g_control.DSP_on==1 )
+  {
   	DSP_Filter_Init( &g_control, &g_dsp );
-  #endif
+  }
 
-  #if CALIBRATE_MODE==1
+  if( g_control.calibration_on==1 )
+  {
   	Calibration_Init( &g_calibration );
-  #endif
+  }
 
-  #if GAPA_ON==1
+  if( g_control.GaPA_on==1 )
+  {
     GaPA_Init( &g_control, &g_gapa_state );
-  #endif
+  }
 
 	/* Initialize the Directional Cosine Matrix Filter */
   DCM_Init( &g_control, &g_dcm_state, &g_sensor_state );
 
   /* Initialize Walking Incline and Speed Estimator */
-  #if( WISE_ON==1 )
+  if( g_control.WISE_on==1 )
+  {
   	WISE_Init( &g_control, &g_sensor_state, &g_wise_state );
-  #endif
+  }
 
 
   fprintf(stdout,"pitch:%f\n",g_sensor_state.pitch);
@@ -178,7 +182,7 @@ int main( void )
 	/* We execute until EOF */
   while( (junk=getc(g_control.emu_data.InputFID)) != EOF )
   {
-  	/* Rewind getc */
+  	/* Rewind getc (from above) */
   	fseek(g_control.emu_data.InputFID,-1L,SEEK_CUR);
 
     /* Update sensor readings */
@@ -189,16 +193,18 @@ int main( void )
 
     /* If in calibration mode,
 		** call calibration function */
-	  #if( CALIBRATE_MODE==1 )
+	  if( g_control.calibration_on==1 )
+  	{
 	  	Calibrate( &g_control, &g_calibration, &g_sensor_state );
-	  #endif
+	  }
 
 	  /* Apply Freq Filter to Input */
-	  #if( DSP_ON==1 )
+	  if( g_control.DSP_on==1 )
+  	{
 	  	FIR_Filter( &g_control, &g_dsp, &g_sensor_state );
 	  	IIR_Filter( &g_control, &g_dsp, &g_sensor_state );
 	  	DSP_Shift( &g_control, &g_dsp );
-	  #endif
+	  }
 
 	  /* Apply the DCM Filter */
 	  DCM_Filter( &g_control, &g_dcm_state, &g_sensor_state );
