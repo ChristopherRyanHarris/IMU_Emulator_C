@@ -116,7 +116,16 @@ typedef struct
 } WISE_STATE_TYPE;
 
 
-
+typedef struct
+{
+	float gain_ad;
+	float gain_ap;
+	float gain_vd;
+	float gain_vp;
+	
+	float correction;
+	float mini_count;	
+}	WISE_PRMS_TYPE;
 
 
 #endif // WISE_COMMON_H

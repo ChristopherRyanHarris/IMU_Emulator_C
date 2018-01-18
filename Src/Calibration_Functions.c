@@ -48,6 +48,28 @@ void Calibration_Init ( CONTROL_TYPE			*p_control,
 
   LOG_PRINTLN("> Initializing Calibration");
 
+	/* Set default calibration parameters */
+	p_control->calibration_prms.output_mode = CAL_OUTPUT_MODE;
+	
+	p_control->calibration_prms.accel_min_x = ACCEL_X_MIN;
+	p_control->calibration_prms.accel_max_x = ACCEL_X_MAX;
+	p_control->calibration_prms.accel_min_y = ACCEL_Y_MIN;
+	p_control->calibration_prms.accel_max_y = ACCEL_Y_MAX;
+	p_control->calibration_prms.accel_min_z = ACCEL_Z_MIN;
+	p_control->calibration_prms.accel_max_z = ACCEL_Z_MAX;
+	
+	p_control->calibration_prms.gyro_ave_offset_x = GYRO_AVERAGE_OFFSET_X;
+	p_control->calibration_prms.gyro_ave_offset_y = GYRO_AVERAGE_OFFSET_Y;
+	p_control->calibration_prms.gyro_ave_offset_z = GYRO_AVERAGE_OFFSET_Z;
+	
+	p_control->calibration_prms.magn_min_x = MAGN_X_MIN;
+	p_control->calibration_prms.magn_max_x = MAGN_X_MAX;
+	p_control->calibration_prms.magn_min_y = MAGN_Y_MIN;
+	p_control->calibration_prms.magn_max_y = MAGN_Y_MAX;
+	p_control->calibration_prms.magn_min_z = MAGN_Z_MIN;
+	p_control->calibration_prms.magn_max_z = MAGN_Z_MAX;
+
+	/* Initialize calibration state */
   for( i=0; i<3; i++ )
   {
     p_calibration->accel_total[i] = 0.0f;

@@ -14,6 +14,18 @@
 ** Defines
 ********************************************************************/
 
+#define GAPA_Kp_PHI 0.01
+#define GAPA_Ki_PHI 0
+
+#define GAPA_Kp_phi 0.01
+#define GAPA_Ki_phi 0.01
+
+#define GAPA_PHImw_ALPHA 0.01
+#define GAPA_phimw_ALPHA 0.01
+
+#define GAPA_MIN_GYRO 500
+#define GAPA_GAIT_END_THRESH 1.5708
+
 
 /*******************************************************************
 ** Tyedefs
@@ -54,6 +66,22 @@ typedef struct
 	float nu_prev;	/* The previous Phase Angle */
 } GAPA_STATE_TYPE;
 
+
+typedef struct
+{
+	int phase_method;
+	
+	float Kp_PHI;
+	float Ki_PHI;
+	float Kp_phi;
+	float Ki_phi;
+	
+	float PHImw_alpha;
+	float phimw_alpha;
+	
+	float min_gyro;
+	float gait_end_threshold;
+} GAPA_PERMS_TYPE
 
 /* 
 ** TYPE: ERNIE_STATE_TYPE

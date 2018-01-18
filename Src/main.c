@@ -64,9 +64,7 @@ int main( void )
 	/* Calibration Structure
 	** This structure is used to aid in calibrating the sensor
 	** This is not used in normal processing */
-	#if CALIBRATION_MODE==1
-		CALIBRATION_TYPE  g_calibration;
-	#endif
+	CALIBRATION_TYPE  g_calibration;
 
 
 	/* DSP state
@@ -76,9 +74,8 @@ int main( void )
 	** for the algorithm.
 	** NOTE: At the moment, this is a very simple FIR and IIR
 	**			 filter set. Could easily be expanded. */
-	#if( DSP_ON==1 )
-		DSP_COMMON_TYPE   g_dsp;
-	#endif
+	DSP_COMMON_TYPE   g_dsp;
+	
 
 	/* DCM variables
 	** The Directional cosine matrix is one
@@ -86,15 +83,15 @@ int main( void )
 	** IMU. This matrix holds the state information of
 	** the DCM algorihtm. */
 	DCM_STATE_TYPE      g_dcm_state;
+	
 
 	/* GaPA state
 	** The Gait Phase Angle estimator is an aglorithm
 	** (or set of algorithms) which will determine the
 	** current gait phase angle of the user. This
 	** structure holds the state variables of the algorithm */
-	#if( GAPA_ON==1 )
-		GAPA_STATE_TYPE   g_gapa_state;
-	#endif
+	GAPA_STATE_TYPE   g_gapa_state;
+	
 
 	/* WISE state
 	** The Walking Incline and Speed Estimator is
@@ -102,9 +99,8 @@ int main( void )
 	** estimates the walking speed and the incline
 	** of motion of the user. This structure holds
 	** the state variables for the algorithm. */
-	#if( WISE_ON==1 )
-		WISE_STATE_TYPE   g_wise_state;
-	#endif
+	WISE_STATE_TYPE   g_wise_state;
+	
 
 
 
@@ -144,36 +140,25 @@ int main( void )
   Read_Sensors( &g_control, &g_sensor_state );
 
   /* Initialize Freq. Filter */
-  if( g_control.DSP_on==1 )
-  {
-  	DSP_Filter_Init( &g_control, &g_dsp );
-  }
+  if( g_control.DSP_on==1 ){ DSP_Filter_Init( &g_control, &g_dsp ); }
 
-  if( g_control.calibration_on==1 )
-  {
-  	Calibration_Init( &g_calibration );
-  }
+	/* Initialize calibartion parameters */
+  if( g_control.calibration_on==1 ){ Calibration_Init( &g_calibration ); }
 
-  if( g_control.GaPA_on==1 )
-  {
-    GaPA_Init( &g_control, &g_gapa_state );
-  }
+	/* Initialize GaPA parameters */
+  if( g_control.GaPA_on==1 ){ GaPA_Init( &g_control, &g_gapa_state ); }
 
-	/* Initialize the Directional Cosine Matrix Filter */
-  DCM_Init( &g_control, &g_dcm_state, &g_sensor_state );
+	/* Initialize the Directional Cosine Matrix algorithm parameters */
+  if( g_control.DCM_on==1 ){ DCM_Init( &g_control, &g_dcm_state, &g_sensor_state ); }
 
   /* Initialize Walking Incline and Speed Estimator */
-  if( g_control.WISE_on==1 )
-  {
-  	WISE_Init( &g_control, &g_sensor_state, &g_wise_state );
-  }
+  if( g_control.WISE_on==1 ){ WISE_Init( &g_control, &g_sensor_state, &g_wise_state ); }
+
 
 
   fprintf(stdout,"pitch:%f\n",g_sensor_state.pitch);
   fprintf(stdout,"Time:%ld\n",g_control.timestamp);
 	fprintf(stdout,"\n");
-
-
 
 	/************************************************************
 	** -------------------- Loop Begin --------------------------
@@ -193,10 +178,7 @@ int main( void )
 
     /* If in calibration mode,
 		** call calibration function */
-	  if( g_control.calibration_on==1 )
-  	{
-	  	Calibrate( &g_control, &g_calibration, &g_sensor_state );
-	  }
+	  if( g_control.calibration_on==1 ){ Calibrate( &g_control, &g_calibration, &g_sensor_state ); }
 
 	  /* Apply Freq Filter to Input */
 	  if( g_control.DSP_on==1 )
@@ -207,18 +189,19 @@ int main( void )
 	  }
 
 	  /* Apply the DCM Filter */
-	  DCM_Filter( &g_control, &g_dcm_state, &g_sensor_state );
-
+	  if( g_control.DCM_on==1 ){ DCM_Filter( &g_control, &g_dcm_state, &g_sensor_state ); }
+		
 	  /* Estimate the Gait Phase Angle */
-    GaPA_Update( &g_control, &g_sensor_state, &g_gapa_state );
-
+	  if( g_control.GaPA_on==1 ){ GaPA_Update( &g_control, &g_sensor_state, &g_gapa_state ); }
+		
 	  /* Estimate Walking Speed and Incline */
-	  #if( WISE_ON==1 )
+	  if( g_control.WISE_on==1 )
+	  { 
 	  	if( ((g_dcm_state.gyro_std[0]+g_dcm_state.gyro_std[1]+g_dcm_state.gyro_std[2])/3 > MOVE_MIN_GYRO_STD) )
 			{
 				WISE_Update(&g_control, &g_sensor_state, &g_wise_state );
 			}
-		#endif
+		}
 
 
     fprintf(stdout,"\n");
@@ -238,15 +221,9 @@ int main( void )
   }
 
   /* Close the file handles */
-  if( g_control.emu_data.InputFID!=NULL )
-  {
-    fclose(g_control.emu_data.InputFID);
-  }
+  if( g_control.emu_data.InputFID!=NULL ){ fclose(g_control.emu_data.InputFID); }
 
-  if( g_control.emu_data.OutputFID!=NULL )
-  {
-    fclose(g_control.emu_data.OutputFID);
-  }
+  if( g_control.emu_data.OutputFID!=NULL ){ fclose(g_control.emu_data.OutputFID); }
 
 
   return 0;

@@ -48,6 +48,25 @@
 void GaPA_Init( CONTROL_TYPE			*p_control,
 								GAPA_STATE_TYPE		*p_gapa_state )
 {
+	
+	/* 
+	** Initialize GaPA control parameters 
+	*/
+	
+	p_control->gapa_prms.phase_method 			= 1;
+	p_control->gapa_prms.Kp_PHI 						= GAPA_Kp_PHI;
+	p_control->gapa_prms.Ki_PHI 						= GAPA_Ki_PHI;
+	p_control->gapa_prms.Kp_phi 						= GAPA_Kp_phi;
+	p_control->gapa_prms.Ki_phi 						= GAPA_Ki_phi;
+	p_control->gapa_prms.PHImw_alpha 				= GAPA_PHImw_ALPHA;
+	p_control->gapa_prms.phimw_alpha 				= GAPA_phimw_ALPHA;
+	p_control->gapa_prms.min_gyro 				  = GAPA_MIN_GYRO;
+	p_control->gapa_prms.gait_end_threshold = GAPA_GAIT_END_THRESH;
+	
+	/* 
+	** Initialize GaPA state parameters 
+	*/
+	
 	/* The version of the phase portrait to use
 	**  1:PHI
 	**  2:PHV

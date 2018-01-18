@@ -56,6 +56,23 @@ void DCM_Init( CONTROL_TYPE				*p_control,
 
   LOG_PRINTLN("> Initializing DCM Filter");
 
+	/* 
+	** Initialize DCM control parameters 
+	*/
+	
+	p_control->dcm_prms.Kp_RollPitch 			= Kp_ROLLPITCH;
+	p_control->dcm_prms.Ki_RollPitch 			= Ki_ROLLPITCH;
+	p_control->dcm_prms.Kp_Yaw       			= Kp_YAW;
+	p_control->dcm_prms.Ki_Yaw       			= Ki_YAW;
+	p_control->dcm_prms.PitchOrientation  = PITCH_O;
+	p_control->dcm_prms.PitchRotationConv = PITCH_ROT_CONV;
+	p_control->dcm_prms.RollRotationConv  = ROLL_ROT_CONV;
+	p_control->dcm_prms.PitchRotationConv = ROLL_ZREF;	
+
+	/* 
+	** Initialize DCM state parameters 
+	*/
+
   for(i=0;i<3;i++) p_dcm_state->Omega_I[i] = 0.0f;
   for(i=0;i<3;i++) p_dcm_state->Omega_P[i] = 0.0f;
   p_dcm_state->SampleNumber=0;

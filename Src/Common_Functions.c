@@ -76,49 +76,6 @@ void Common_Init ( CONTROL_TYPE *p_control )
 	p_control->sensor_prms.gyro_on     = GYRO_ON;
 	p_control->sensor_prms.magn_on     = MAGN_ON;
 	p_control->sensor_prms.sample_rate = TIME_SR;
-	
-	
-	/* DSP Init */
-	p_control->dsp_prms.n_taps = NTAPS;
-	p_control->dsp_prms.IIR_on = FIR_on;
-	p_control->dsp_prms.FIR_on = IIR_on;
-	
-	p_control->dcm_prms.Kp_RollPitch = Kp_ROLLPITCH;
-	p_control->dcm_prms.Ki_RollPitch = Ki_ROLLPITCH;
-	p_control->dcm_prms.Kp_Yaw       = Kp_YAW;
-	p_control->dcm_prms.Ki_Yaw       = Ki_YAW;
-	
-	p_control->dcm_prms.PitchOrientation  = PITCH_O;
-	p_control->dcm_prms.PitchRotationConv = PITCH_ROT_CONV;
-	p_control->dcm_prms.RollRotationConv  = ROLL_ROT_CONV;
-	p_control->dcm_prms.PitchRotationConv = ROLL_ZREF;
-	
-
-  /* If in calibration mode,
-	** set default calibration parameters */
-	if( p_control->cal_mode==1 )
-  {
-  	p_control->calibration_prms.output_mode = CAL_OUTPUT_MODE;
-  	
-  	p_control->calibration_prms.accel_min_x = ACCEL_X_MIN;
-  	p_control->calibration_prms.accel_max_x = ACCEL_X_MAX;
-  	p_control->calibration_prms.accel_min_y = ACCEL_Y_MIN;
-  	p_control->calibration_prms.accel_max_y = ACCEL_Y_MAX;
-  	p_control->calibration_prms.accel_min_z = ACCEL_Z_MIN;
-  	p_control->calibration_prms.accel_max_z = ACCEL_Z_MAX;
-  	
-  	p_control->calibration_prms.gyro_ave_offset_x = GYRO_AVERAGE_OFFSET_X;
-  	p_control->calibration_prms.gyro_ave_offset_y = GYRO_AVERAGE_OFFSET_Y;
-  	p_control->calibration_prms.gyro_ave_offset_z = GYRO_AVERAGE_OFFSET_Z;
-  	
-  	p_control->calibration_prms.magn_min_x = MAGN_X_MIN;
-  	p_control->calibration_prms.magn_max_x = MAGN_X_MAX;
-  	p_control->calibration_prms.magn_min_y = MAGN_Y_MIN;
-  	p_control->calibration_prms.magn_max_y = MAGN_Y_MAX;
-  	p_control->calibration_prms.magn_min_z = MAGN_Z_MIN;
-  	p_control->calibration_prms.magn_max_z = MAGN_Z_MAX;
-  }
-
 } /* End Common_Init*/
 
 

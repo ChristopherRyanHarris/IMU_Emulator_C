@@ -47,6 +47,7 @@
 #define CAL_OUTPUT_MODE 0
 #define NUM_CALCOM_MODES 2
 
+/* Default Algorithms */
 #define DCM_ON 1
 #define DSP_ON 0
 #define GAPA_ON 1
@@ -150,7 +151,6 @@ typedef struct
   float gyro_ave_offset_x;
   float gyro_ave_offset_y;
   float gyro_ave_offset_z;
-  
 } CALIBRATION_PRMS_TYPE;
 
 
@@ -202,6 +202,12 @@ typedef struct
 
 	/* DCM parameters */
 	DCM_PRMS_TYPE	dcm_prms;
+	
+	/* GaPA parameters */
+	GAPA_PERMS_TYPE gapa_prms;
+	
+	/* WISE parameters */
+	WISE_PRMS_TYPE wise_prms;
 
   /* If calibration mode,
   ** include calibration struct */
