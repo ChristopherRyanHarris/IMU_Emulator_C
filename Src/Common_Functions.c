@@ -1,9 +1,13 @@
 
 /*******************************************************************
-** FILE: Common_Functions
-** This file contains several setup and initialization functions
-** which are common accross all execution platforms.
-*/
+** FILE: 
+**   	Common_Functions
+** DESCRIPTION:
+** 		This file contains several setup and initialization functions
+** 		which are common accross all execution platforms.
+**		Any functions or algorithms added to this file should be common
+**    to all platforms and algorithms.
+********************************************************************/
 
 
 /*******************************************************************

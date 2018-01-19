@@ -1,10 +1,12 @@
 
 /*******************************************************************
-** FILE: SparkFun-9DoF-IMU-WISE
-** This file contains the helper functions exclusive to running
-** emulation mode. These functions are implemented separatly
-** (or not at all) in real-time mode.
-*/
+** FILE: 
+**   	IMU9250_Functions
+** DESCRIPTION:
+** 		This file contains the helper functions exclusive to running
+** 		emulation mode. These functions are implemented separatly
+** 		(or not at all) in real-time mode.
+********************************************************************/
 
 
 /*******************************************************************

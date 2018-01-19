@@ -1,4 +1,8 @@
-/******************************************************************
+
+/*******************************************************************
+** FILE: 
+**   	Communication_Config.h
+** DESCRIPTION:
 ** FILE: Emulator.h
 ** This file contains all header information specific to the
 ** the IMU emulator. The IMU emulator uses previously collected

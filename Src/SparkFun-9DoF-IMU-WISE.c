@@ -1,12 +1,14 @@
 
 /*******************************************************************
-** FILE: SparkFun-9DoF-IMU-WISE
-** This is the calling executable for the real-time
-** Sparkfun IMU code.
-** To use, this code must be embedded into a compatible IMU and the 
-** appropriate header files must be referenced.
-** See the common header file for more specific information.
-*/
+** FILE: 
+**		SparkFun-9DoF-IMU-WISE
+** DESCRIPTION:
+** 		This is the calling executable for the real-time
+** 		Sparkfun IMU code.
+** 		To use, this code must be embedded into a compatible IMU and the 
+** 		appropriate header files must be referenced.
+** 		See the common header file for more specific information.
+********************************************************************/
 
 
 /*******************************************************************

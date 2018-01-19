@@ -183,8 +183,8 @@ int main( void )
 	  /* Apply Freq Filter to Input */
 	  if( g_control.DSP_on==1 )
   	{
-	  	FIR_Filter( &g_control, &g_dsp, &g_sensor_state );
-	  	IIR_Filter( &g_control, &g_dsp, &g_sensor_state );
+	  	if( p_control->dsp_prms.IIR_on==1 ){ FIR_Filter( &g_control, &g_dsp, &g_sensor_state ); }
+	  	if( p_control->dsp_prms.IIR_on==1 ){ IIR_Filter( &g_control, &g_dsp, &g_sensor_state ); }
 	  	DSP_Shift( &g_control, &g_dsp );
 	  }
 

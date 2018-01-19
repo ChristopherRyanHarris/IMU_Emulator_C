@@ -1,5 +1,8 @@
 
-/******************************************************************
+/*******************************************************************
+** FILE: 
+**   	Communication_Config.h
+** DESCRIPTION:
 ** FILE: GaPA_Config.h
 ** Header for the Gait Phase Angle estimator (GaPA)
 ** This file should contain only definitions specific to the

@@ -1,4 +1,8 @@
-/******************************************************************
+
+/*******************************************************************
+** FILE: 
+**   	Communication_Config.h
+** DESCRIPTION:
 ** FILE: DSP_Common.h
 ** Header for common Digital Signal Processing (DSP) algorithms.
 ** These definitions are used for all FIR and IIR applications.

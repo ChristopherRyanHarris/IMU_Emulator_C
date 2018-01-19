@@ -1,4 +1,8 @@
-/******************************************************************
+
+/*******************************************************************
+** FILE: 
+**   	Communication_Config.h
+** DESCRIPTION:
 ** FILE: IMU9250_Config.h
 ** This file contains all header information specific to the
 ** 9250 platform

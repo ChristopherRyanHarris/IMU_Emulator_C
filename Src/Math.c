@@ -1,10 +1,12 @@
 
-/*************************************************
-** FILE : Math
-** This file contains all the math helper functions.
-** These functions help compute common functions
-** which are not defined in the standard libraries.
-**************************************************/
+/*******************************************************************
+** FILE: 
+**   	Math
+** DESCRIPTION:
+** 		This file contains all the math helper functions.
+** 		These functions help compute common functions
+** 		which are not defined in the standard libraries.
+********************************************************************/
 
 
 /*******************************************************************

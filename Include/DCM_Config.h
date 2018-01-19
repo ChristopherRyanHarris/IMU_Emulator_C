@@ -1,5 +1,8 @@
 
-/******************************************************************
+/*******************************************************************
+** FILE: 
+**   	Communication_Config.h
+** DESCRIPTION:
 ** FILE: DCM_Config.h
 ** Header file for the Directional Cosine Matrix (DCM) "filter"
 ** and orientation algorithms.

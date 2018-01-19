@@ -1,9 +1,13 @@
 
-/*************************************************
-** FILE: CAL_Functions
-** This file contains the functions which will help
-** calibration the sensors
-*/
+/*******************************************************************
+** FILE: 
+**   	Calibration_Functions
+** DESCRIPTION:
+** 		This file contains the functions which will aid in
+**    calibrating the sensors.
+** 		These functions are hardware independent. 
+**    These functions cannot be used in emulation mode.
+********************************************************************/
 
 
 /*******************************************************************

@@ -1,11 +1,12 @@
 
-
 /*******************************************************************
-** FILE: MPU9250_Functions
-** This file contains some MPU 9250 (HW specific)
-** functions. Specifically, for initializing and 
-** reading the sensor registeres
-*/
+** FILE: 
+**   	IMU9250_Functions
+** DESCRIPTION:
+** 		This file contains some MPU 9250 (HW specific)
+** 		functions. Specifically, for initializing and 
+** 		reading the sensor registeres
+********************************************************************/
 
 
 #ifdef _IMU9250_

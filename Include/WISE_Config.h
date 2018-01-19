@@ -1,5 +1,8 @@
 
-/******************************************************************
+/*******************************************************************
+** FILE: 
+**   	Communication_Config.h
+** DESCRIPTION:
 ** FILE: WISE_Common.h
 ** Header for the Walking Speed and Incline Estimator (WISE)
 ** This file should contain only definitions specific to the

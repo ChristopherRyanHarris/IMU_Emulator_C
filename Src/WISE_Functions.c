@@ -1,9 +1,12 @@
-/*************************************************
-** FILE: WISE_Functions
-** This file contains all functions which are
-** specific to the speed and walking incline
-** estimation capabilities
-**************************************************/
+
+/*******************************************************************
+** FILE: 
+**   	WISE_Functions
+** DESCRIPTION:
+** 		This file contains all functions which are
+** 		specific to the speed and walking incline
+** 		estimation capabilities
+********************************************************************/
 
 
 /*******************************************************************

@@ -1,10 +1,14 @@
-/*************************************************
-** FILE: DCM_Functions
-** This file contains the DCM filter functions
-** These functions take the accel/magn/gyro data
-** and (via the DCM filter) output filtered
-** Euler angles.+
-**************************************************/
+
+/*******************************************************************
+** FILE: 
+**   	DCM_Functions
+** DESCRIPTION:
+**		The Directional Cosine Matrix filtering algorithm.
+** 		This file contains the DCM filter functions
+** 		These functions take the accel/magn/gyro data
+** 		and (via the DCM filter) output filtered
+** 		Euler angles.
+********************************************************************/
 
 
 /*******************************************************************

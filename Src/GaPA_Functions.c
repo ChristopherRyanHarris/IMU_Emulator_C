@@ -1,8 +1,11 @@
-/*************************************************
-** FILE: GaPa_Functions
-** This file contains all functions spacific to the
-** Gait Phase Angle estimation (GaPA) capabilities
-**************************************************/
+
+/*******************************************************************
+** FILE: 
+**   	GaPA_Functions
+** DESCRIPTION:
+** 		This file contains all functions spacific to the
+** 		Gait Phase Angle estimation (GaPA) capabilities
+********************************************************************/
 
 
 /*******************************************************************

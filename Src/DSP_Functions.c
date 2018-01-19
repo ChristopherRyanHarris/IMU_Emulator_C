@@ -1,14 +1,18 @@
-/*************************************************
-** FILE: DSP_Functions
-** This file contains the functions specific to
-** our low pass filter functions.
-** We are supplying support for several flavors,
-** but in the general case, we will be applying a
-** simple filters on each of the inputs.
-** A short FIR LP filter (4 taps) and a IIR filter on
-** each of the input accelerations
-** A short FIR HP filter (4 taps) on the gyro
-**************************************************/
+
+/*******************************************************************
+** FILE: 
+**   	DSP_Functions
+** DESCRIPTION:
+**		The Digital Signal Processing (DSP) functions.
+** 		This file contains the functions specific to
+** 		our low pass filter functions.
+** 		We are supplying support for several flavors,
+** 		but in the general case, we will be applying a
+** 		simple filters on each of the inputs.
+** 		A short FIR LP filter and a IIR filter on
+** 		each of the input accelerations
+** 		A short FIR HP filter on the gyro
+********************************************************************/
 
 
 /*******************************************************************

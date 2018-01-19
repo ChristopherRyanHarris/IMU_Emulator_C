@@ -1,10 +1,12 @@
 
 /*******************************************************************
-** FILE: IMU10736_Functions
-** This file contains some MPU 9250 (HW specific)
-** functions. Specifically, for initializing and
-** reading the sensor registeres
-**************************************************/
+** FILE: 
+**   	IMU10736_Functions
+** DESCRIPTION:
+** 		This file contains some MPU 9250 (HW specific)
+** 		functions. Specifically, for initializing and
+** 		reading the sensor registeres
+********************************************************************/
 
 /*************************************************
 ** NOTES on orientation for the 10736 IMU

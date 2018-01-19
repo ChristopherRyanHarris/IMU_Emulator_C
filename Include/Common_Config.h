@@ -1,5 +1,8 @@
 
-/******************************************************************
+/*******************************************************************
+** FILE: 
+**   	Communication_Config.h
+** DESCRIPTION:
 ** FILE: IMU_Common.h
 ** Header containing IMU definitions which are platform agnostic.
 ** Definitions in this file should be independent of IMU version.
@@ -110,53 +113,6 @@ typedef struct
 
 
 
-/*
-** TYPE: CALIBRATION_TYPE
-** This type is used to hold
-** data useful for calibration */
-typedef struct
-{
-  float accel_total[3];
-  float accel_max[3];
-  float accel_min[3];
-
-  float gyro_total[3];
-  float gyro_max[3];
-  float gyro_min[3];
-
-  float N;
-} CALIBRATION_TYPE;
-
-/* TYPE: CALIBRATION_PRMS_TYPE
-** This type is used to hold the calibration
-** control parameters. */
-typedef struct
-{
-  int output_mode;
-  
-  float accel_min_x;
-  float accel_max_x;
-  float accel_min_y;
-  float accel_max_y;
-  float accel_min_z;
-  float accel_max_z;
-  
-  float magn_min_x;
-  float magn_max_x;
-  float magn_min_y;
-  float magn_max_y;
-  float magn_min_z;
-  float magn_max_z;
-  
-  float gyro_ave_offset_x;
-  float gyro_ave_offset_y;
-  float gyro_ave_offset_z;
-} CALIBRATION_PRMS_TYPE;
-
-
-
-
-
 
 /*
 ** TYPE: CONTROL_TYPE
@@ -219,18 +175,7 @@ typedef struct
 
 
 
-/*
-** TYPE: RESPONSE_TYPE
-** Used to store temporary resonse data
-** for responding to request from master */
-typedef struct
-{
-  uint16_t       Packet_nBytes;  /* Length of entire packet, minus this variable, in bytes */
-  uint16_t       PacketType;     /* Type code of packet */
-  uint16_t       Buffer_nBytes;  /* Length of data buffer in bytes (0-50) */
-  unsigned char  Buffer[50];     /* Data buffer */
-  unsigned char  CheckSum;       /* CheckSum of data buffer only */
-} RESPONSE_TYPE;
+
 
 
 #endif // IMU_COMMON_H

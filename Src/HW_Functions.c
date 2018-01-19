@@ -1,12 +1,16 @@
 
 /*******************************************************************
-** FILE : HW_Functions
-** This file contains functions which are used
-** to asses the internal state of the board.
-** Ideally, we would have functions which can run
-** diagnostics.
-** All functions should be platform independent
-**************************************************/
+** FILE: 
+**   	HW_Functions
+** DESCRIPTION:
+**		The Hardware functions.
+** 		This file contains functions which are used
+** 		to asses the internal state of the board.
+**		Ideally, we would have functions which can run
+** 		diagnostics.
+** 		All functions should be fairly independent of IMU hardware. 
+**    This file should not be used in emulation mode.
+********************************************************************/
 
 
 /*******************************************************************

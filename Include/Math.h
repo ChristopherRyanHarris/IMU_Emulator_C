@@ -1,6 +1,10 @@
-/******************************************************************
-** FILE: Math.h
-** Header containing Math defines and platform conversions.
+
+/*******************************************************************
+** FILE: 
+**   	Math.h
+** DESCRIPTION: 
+** 		This header file is inteded to hold common mathmatical
+**		macros and commonly used constants.
 ******************************************************************/
 
 
