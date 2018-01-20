@@ -1,10 +1,12 @@
 
 /*******************************************************************
-** FILE: main
-** This is the calling executable for the emulation
-** code. This can only be used offline, and with the
-** proper emulation-related flags set appropriatly.
-*/
+** FILE:
+**   	main
+** DESCRIPTION:
+** 		This is the calling executable for the emulation
+** 		code. This can only be used offline, and with the
+** 		proper emulation-related flags set appropriatly.
+********************************************************************/
 
 
 /*******************************************************************
@@ -74,8 +76,8 @@ int main( void )
 	** for the algorithm.
 	** NOTE: At the moment, this is a very simple FIR and IIR
 	**			 filter set. Could easily be expanded. */
-	DSP_COMMON_TYPE   g_dsp;
-	
+	DSP_STATE_TYPE   g_dsp;
+
 
 	/* DCM variables
 	** The Directional cosine matrix is one
@@ -83,7 +85,7 @@ int main( void )
 	** IMU. This matrix holds the state information of
 	** the DCM algorihtm. */
 	DCM_STATE_TYPE      g_dcm_state;
-	
+
 
 	/* GaPA state
 	** The Gait Phase Angle estimator is an aglorithm
@@ -91,7 +93,7 @@ int main( void )
 	** current gait phase angle of the user. This
 	** structure holds the state variables of the algorithm */
 	GAPA_STATE_TYPE   g_gapa_state;
-	
+
 
 	/* WISE state
 	** The Walking Incline and Speed Estimator is
@@ -100,7 +102,7 @@ int main( void )
 	** of motion of the user. This structure holds
 	** the state variables for the algorithm. */
 	WISE_STATE_TYPE   g_wise_state;
-	
+
 
 
 
@@ -143,7 +145,7 @@ int main( void )
   if( g_control.DSP_on==1 ){ DSP_Filter_Init( &g_control, &g_dsp ); }
 
 	/* Initialize calibartion parameters */
-  if( g_control.calibration_on==1 ){ Calibration_Init( &g_calibration ); }
+  if( g_control.calibration_on==1 ){ Calibration_Init( &g_control, &g_calibration ); }
 
 	/* Initialize GaPA parameters */
   if( g_control.GaPA_on==1 ){ GaPA_Init( &g_control, &g_gapa_state ); }
@@ -183,20 +185,20 @@ int main( void )
 	  /* Apply Freq Filter to Input */
 	  if( g_control.DSP_on==1 )
   	{
-	  	if( p_control->dsp_prms.IIR_on==1 ){ FIR_Filter( &g_control, &g_dsp, &g_sensor_state ); }
-	  	if( p_control->dsp_prms.IIR_on==1 ){ IIR_Filter( &g_control, &g_dsp, &g_sensor_state ); }
+	  	if( g_control.dsp_prms.IIR_on==1 ){ FIR_Filter( &g_control, &g_dsp, &g_sensor_state ); }
+	  	if( g_control.dsp_prms.IIR_on==1 ){ IIR_Filter( &g_control, &g_dsp, &g_sensor_state ); }
 	  	DSP_Shift( &g_control, &g_dsp );
 	  }
 
 	  /* Apply the DCM Filter */
 	  if( g_control.DCM_on==1 ){ DCM_Filter( &g_control, &g_dcm_state, &g_sensor_state ); }
-		
+
 	  /* Estimate the Gait Phase Angle */
 	  if( g_control.GaPA_on==1 ){ GaPA_Update( &g_control, &g_sensor_state, &g_gapa_state ); }
-		
+
 	  /* Estimate Walking Speed and Incline */
 	  if( g_control.WISE_on==1 )
-	  { 
+	  {
 	  	if( ((g_dcm_state.gyro_std[0]+g_dcm_state.gyro_std[1]+g_dcm_state.gyro_std[2])/3 > MOVE_MIN_GYRO_STD) )
 			{
 				WISE_Update(&g_control, &g_sensor_state, &g_wise_state );

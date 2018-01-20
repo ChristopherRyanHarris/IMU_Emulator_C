@@ -3,9 +3,10 @@
 ** FILE: 
 **   	IMU10736_Functions
 ** DESCRIPTION:
-** 		This file contains some MPU 9250 (HW specific)
+** 		This file contains some IMU 10736 (HW specific)
 ** 		functions. Specifically, for initializing and
-** 		reading the sensor registeres
+** 		reading the sensor registeres.
+**		These functions cannot be used in emulation mode.
 ********************************************************************/
 
 /*************************************************

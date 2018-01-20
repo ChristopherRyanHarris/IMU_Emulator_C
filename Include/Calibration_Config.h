@@ -3,10 +3,8 @@
 ** FILE: 
 **   	Communication_Config.h
 ** DESCRIPTION:
-** FILE: Calibration_Config.h
 **
-******************************************************************/
-
+********************************************************************/
 #ifndef CALIBRATION_CONFIG_H
 #define CALIBRATION_CONFIG_H
 
@@ -60,4 +58,4 @@ typedef struct
 
 
 
-#endif /* CALIBRATION_CONFIG_H */
+#endif /* End CALIBRATION_CONFIG_H */

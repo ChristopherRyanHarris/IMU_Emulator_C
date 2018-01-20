@@ -178,38 +178,42 @@
 	<stdbool.h>
 	"Emulator_Config.h"
 
-1516067142 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\calibration_functions.c
+1516419082 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\calibration_functions.c
 	"../Include/Common_Config.h"
 	"../Include/Emulator_Config.h"
 	"../Include/Emulator_Protos.h"
 	"../Include/IMU10736_Config.h"
 	"../Include/IMU9250_Config.h"
 
-1516067990 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\common_config.h
+1516422844 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\common_config.h
 	<stdbool.h>
 	<inttypes.h>
 	<stdio.h>
 	"../Include/Emulator_Config.h"
+	"../Include/Calibration_Config.h"
+	"../Include/DSP_Config.h"
 	"../Include/DCM_Config.h"
+	"../Include/GaPA_Config.h"
+	"../Include/WISE_Config.h"
 
-1516058300 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\emulator_config.h
+1516419424 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\emulator_config.h
 
-1516057847 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\imu10736_config.h
-	"Common_Config.h"
+1516424942 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\imu10736_config.h
+	"../Include/Common_Config.h"
 
-1515908389 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\dsp_config.h
+1516425217 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\dsp_config.h
 	<inttypes.h>
 
-1515909087 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\wise_config.h
+1516419794 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\wise_config.h
 
-1516072055 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\common_functions.c
+1516420204 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\common_functions.c
 	"../Include/Common_Config.h"
 	"../Include/Emulator_Config.h"
 	"../Include/Emulator_Protos.h"
 	"../Include/IMU10736_Config.h"
 	"../Include/IMU9250_Config.h"
 
-1516068005 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\dcm_functions.c
+1516425147 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\dcm_functions.c
 	"../Include/Common_Config.h"
 	<math.h>
 	<stdio.h>
@@ -221,10 +225,10 @@
 	"../Include/IMU10736_Config.h"
 	"../Include/IMU9250_Config.h"
 
-1516069175 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\math.h
+1516419053 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\math.h
 	"Common_Config.h"
 
-1516067915 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\dsp_functions.c
+1516425241 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\dsp_functions.c
 	"../Include/Common_Config.h"
 	<string.h>
 	"../Include/DSP_Config.h"
@@ -234,18 +238,19 @@
 	"../Include/IMU10736_Config.h"
 	"../Include/IMU9250_Config.h"
 
-1516068164 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\hw_functions.c
+1516419078 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\hw_functions.c
 	"../Include/Common_Config.h"
 
-1516068059 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\emulator_functions.c
+1516424781 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\emulator_functions.c
 	"../Include/Common_Config.h"
+	<time.h>
 	"../Include/Emulator_Config.h"
 	"../Include/Emulator_Protos.h"
 	"../Include/Math.h"
 	"../Include/IMU10736_Config.h"
 	"../Include/IMU9250_Config.h"
 
-1516072108 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\main.c
+1516425353 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -256,7 +261,7 @@
 	"../Include/Emulator_Config.h"
 	"../Include/Emulator_Protos.h"
 
-1516068720 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\math.c
+1516323761 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\math.c
 	"../Include/Common_Config.h"
 	<math.h>
 	"../Include/Emulator_Config.h"
@@ -264,10 +269,10 @@
 	"../Include/IMU10736_Config.h"
 	"../Include/IMU9250_Config.h"
 
-1516067075 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\imu9250_config.h
-	"Common_Config.h"
+1516424929 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\imu9250_config.h
+	"../Include/Common_Config.h"
 
-1516068850 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\wise_functions.c
+1516425443 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\wise_functions.c
 	"../Include/Common_Config.h"
 	<math.h>
 	<string.h>
@@ -278,7 +283,7 @@
 	"../Include/Emulator_Config.h"
 	"../Include/Emulator_Protos.h"
 
-1515908354 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\gapa_config.h
+1516419813 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\gapa_config.h
 
 1511326172 source:d:\chris\documents\github\imu_emulator_c\src\calibration_functions.c
 	"../Include/Common_Config.h"
@@ -404,21 +409,23 @@
 	<math.h>
 	"../Include/Emulator_Config.h"
 
-1515895040 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\dcm_config.h
+1516425152 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\dcm_config.h
 
-1516068346 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\emulator_protos.h
+1516424826 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\emulator_protos.h
 	"../Include/Common_Config.h"
 	<math.h>
 	<string.h>
-	"../Include/IMU10736_Config.h"
-	"../Include/IMU9250_Config.h"
+	"../Include/Emulator_Config.h"
+	"../Include/Calibration_Config.h"
 	"../Include/DSP_Config.h"
 	"../Include/DCM_Config.h"
 	"../Include/GaPA_Config.h"
 	"../Include/WISE_Config.h"
-	"../Include/Emulator_Config.h"
+	"../Include/Communication_Config.h"
+	"../Include/IMU10736_Config.h"
+	"../Include/IMU9250_Config.h"
 
-1516069060 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\gapa_functions.c
+1516419091 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\gapa_functions.c
 	"../Include/Common_Config.h"
 	<math.h>
 	<string.h>
@@ -428,4 +435,25 @@
 	"../Include/GaPA_Config.h"
 	"../Include/Emulator_Config.h"
 	"../Include/Emulator_Protos.h"
+
+1516419253 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\calibration_config.h
+
+1516420116 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\communication_config.h
+
+1516424842 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\communication_functions.c
+	"../Include/Common_Config.h"
+	"../Include/Emulator_Config.h"
+	"../Include/Emulator_Protos.h"
+	"../Include/Communication_Config.h"
+	"../Include/Math.h"
+	"../Include/IMU10736_Config.h"
+	"../Include/IMU9250_Config.h"
+
+1516425312 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\logging_functions.c
+	"../Include/Common_Config.h"
+	"../Include/Emulator_Config.h"
+	"../Include/Emulator_Protos.h"
+	"../Include/WISE_Config.h"
+	"../Include/IMU10736_Config.h"
+	"../Include/IMU9250_Config.h"
 

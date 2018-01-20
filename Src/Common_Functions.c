@@ -1,6 +1,6 @@
 
 /*******************************************************************
-** FILE: 
+** FILE:
 **   	Common_Functions
 ** DESCRIPTION:
 ** 		This file contains several setup and initialization functions
@@ -58,7 +58,7 @@ void Common_Init ( CONTROL_TYPE *p_control )
   p_control->timestamp_old  = 0;
   p_control->G_Dt           = 0.0;
 
-	/* For emulation mode, 
+	/* For emulation mode,
 	** am "emu timestamp" is needed  */
 	#if EXE_MODE==1 /* Emulator Mode */
 		p_control->emu_data.timestamp = 0;
@@ -67,13 +67,13 @@ void Common_Init ( CONTROL_TYPE *p_control )
 	#endif
 
 
-	p_control->verbose        = DEBUG; 
+	p_control->verbose        = DEBUG;
 	p_control->calibration_on = CALIBRATION_MODE;
 	p_control->DSP_on         = DSP_ON;
 	p_control->DCM_on					= DCM_ON;
 	p_control->GaPA_on        = GAPA_ON;
 	p_control->WISE_on        = WISE_ON;
-	
+
 	/* Set mode parameters */
 	p_control->sensor_prms.gravity     = GRAVITY;
 	p_control->sensor_prms.accel_on    = ACCEL_ON;

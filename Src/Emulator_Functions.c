@@ -1,7 +1,7 @@
 
 /*******************************************************************
 ** FILE: 
-**   	IMU9250_Functions
+**   	Emulator_Functions
 ** DESCRIPTION:
 ** 		This file contains the helper functions exclusive to running
 ** 		emulation mode. These functions are implemented separatly
@@ -16,6 +16,8 @@
 
 #include "../Include/Common_Config.h"
 #if EXE_MODE==1 /* Emulator Mode */
+	#include<time.h>
+	
 	#include "../Include/Emulator_Config.h"
 	#include "../Include/Emulator_Protos.h"
 	#include "../Include/Math.h"
@@ -100,3 +102,8 @@ void Read_Sensors( CONTROL_TYPE				*p_control,
 
 
 
+void delay(unsigned int mseconds)
+{
+    clock_t goal = mseconds + clock();
+    while (goal > clock());
+}

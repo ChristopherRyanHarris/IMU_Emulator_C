@@ -1,17 +1,15 @@
 
 /*******************************************************************
 ** FILE: 
-**   	Communication_Config.h
-** DESCRIPTION:
-** FILE: IMU10736_Config.h
-** This file contains all header information specific to the
-** 10736 platform
-******************************************************************/
+**   	IMU10736_Config.h
+** DESCRIPTION: 
+** 		This file contains all header information specific to the
+** 		10736 platform
+********************************************************************/
+#ifndef IMU10736_CONFIG_H
+#define IMU10736_CONFIG_H
 
-#ifndef IMU10736_H
-#define IMU10736_H
-
-#include "Common_Config.h"
+#include "../Include/Common_Config.h"
 
 /******************************************************************
 ** User defined
@@ -132,16 +130,27 @@
 
 /* COMM Ports
 *******************************************************************/
-#define LOG_PORT if(DEBUG)Serial
-//#define LOG_PORT if(DEBUG)SERIAL_PORT_USBVIRTUAL
-#define COMM_PORT Serial
 
 #if EXE_MODE==0 /* IMU Mode */
+	#define LOG_PORT if(DEBUG)Serial
+	//#define LOG_PORT if(DEBUG)SERIAL_PORT_USBVIRTUAL
+	#define COMM_PORT Serial
+
 	#define LOG_PRINTLN LOG_PORT.println
 	#define LOG_PRINT LOG_PORT.print
+	
+	#define COMM_PRINT COMM_PORT.print
+	#define COMM_WRITE COMM_PORT.write
+	#define COMM_AVAILABLE COMM_PORT.available()
+	#define COMM_READ COMM_PORT.read()
 #else /* Emulator Mode */
-	#define LOG_PRINTLN(x) fprintf(stdout,x);fprintf(stdout,"\n")
-	#define LOG_PRINT(x) fprintf(stdout,x)
+	#define LOG_PRINTLN(x) fprintf(stdout,x);fprintf(stdout,"\n");
+	#define LOG_PRINT(x) fprintf(stdout,x);
+	
+	#define COMM_PRINT(x)  fprintf(stdout,"[COMM PRINT]: %c\n",x);
+	#define COMM_WRITE(x,y)  fprintf(stdout,"[COMM WRITE]: %d (len:%d)",*x,y);
+	#define COMM_AVAILABLE (0)
+	#define COMM_READ (-1) /*Serail.read() return -1 if no data */
 #endif
 
 /* Sampling resolution
@@ -274,7 +283,7 @@
 
 
 
-#endif // IMU10736_H
+#endif /* End IMU10736_CONFIG_H */
 
 
 

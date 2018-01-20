@@ -1,15 +1,13 @@
 
 /*******************************************************************
 ** FILE: 
-**   	Communication_Config.h
+**   	DCM_Config.h
 ** DESCRIPTION:
-** FILE: DCM_Config.h
-** Header file for the Directional Cosine Matrix (DCM) "filter"
-** and orientation algorithms.
-** This file should contain only definitions specific to the
-** DCM algorithms
-******************************************************************/
-
+** 		Header file for the Directional Cosine Matrix (DCM) "filter"
+** 		and orientation algorithms.
+** 		This file should contain only definitions specific to the
+** 		DCM algorithms
+********************************************************************/
 #ifndef DCM_CONFIG_H
 #define DCM_CONFIG_H
 
@@ -50,8 +48,13 @@ typedef struct
   float Kp_Yaw;
   float Ki_Yaw;
   
+  int PitchOrientation;
+  int PitchRotationConv;
+  int RollRotationConv;
+  int RollRotationRef;
+  
 } DCM_PRMS_TYPE;
 
 
 
-#endif /* DCM_CONFIG_H */
+#endif /* End DCM_CONFIG_H */

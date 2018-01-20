@@ -1,6 +1,6 @@
 
 /*******************************************************************
-** FILE: 
+** FILE:
 **   	DSP_Functions
 ** DESCRIPTION:
 **		The Digital Signal Processing (DSP) functions.
@@ -70,17 +70,17 @@ void DSP_Filter_Init ( CONTROL_TYPE			*p_control,
 	float FIR_coeffs_H[NTAPS]  = FIR_HPF;
 
   LOG_PRINTLN("> Initializing DSP Filter");
-  
-  /* 
-  ** Initialize DSP control parameters 
+
+  /*
+  ** Initialize DSP control parameters
   */
-  
+
 	p_control->dsp_prms.n_taps = NTAPS;
-	p_control->dsp_prms.IIR_on = FIR_on;
-	p_control->dsp_prms.FIR_on = IIR_on;
+	p_control->dsp_prms.FIR_on = DSP_FIR_ON;
+	p_control->dsp_prms.IIR_on = DSP_IIR_ON;
 
 	/*
-	** Initialize DSP state parameters 
+	** Initialize DSP state parameters
 	*/
 
 	memcpy(&p_dsp_state->IIR_coeffs_La[0],&IIR_coeffs_La[0],NTAPS*sizeof(float));

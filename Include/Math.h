@@ -5,7 +5,7 @@
 ** DESCRIPTION: 
 ** 		This header file is inteded to hold common mathmatical
 **		macros and commonly used constants.
-******************************************************************/
+********************************************************************/
 
 
 #ifndef MATH_H

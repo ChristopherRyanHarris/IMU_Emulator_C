@@ -71,7 +71,7 @@ void DCM_Init( CONTROL_TYPE				*p_control,
 	p_control->dcm_prms.PitchOrientation  = PITCH_O;
 	p_control->dcm_prms.PitchRotationConv = PITCH_ROT_CONV;
 	p_control->dcm_prms.RollRotationConv  = ROLL_ROT_CONV;
-	p_control->dcm_prms.PitchRotationConv = ROLL_ZREF;	
+	p_control->dcm_prms.RollRotationRef   = ROLL_ZREF;	
 
 	/* 
 	** Initialize DCM state parameters 

@@ -1,17 +1,15 @@
 
 /*******************************************************************
-** FILE: 
-**   	Communication_Config.h
+** FILE:
+**   	IMU9250_Config.h
 ** DESCRIPTION:
-** FILE: IMU9250_Config.h
-** This file contains all header information specific to the
-** 9250 platform
-******************************************************************/
+** 		This file contains all header information specific to the
+** 		9250 platform
+********************************************************************/
+#ifndef IMU9250_CONFIG_H
+#define IMU9250_CONFIG_H
 
-#ifndef IMU9250_H
-#define IMU9250_H
-
-#include "Common_Config.h"
+#include "../Include/Common_Config.h"
 
 /******************************************************************
 ** User defined
@@ -152,16 +150,27 @@
 
 /* COMM Ports
 *******************************************************************/
-//#define LOG_PORT if(DEBUG)Serial
-#define LOG_PORT if(DEBUG)SERIAL_PORT_USBVIRTUAL
-#define COMM_PORT SERIAL_PORT_USBVIRTUAL
 
 #if EXE_MODE==0 /* IMU Mode */
-#define LOG_PRINTLN LOG_PORT.println
-#define LOG_PRINT LOG_PORT.print
+  //#define LOG_PORT if(DEBUG)Serial
+  #define LOG_PORT if(DEBUG)SERIAL_PORT_USBVIRTUAL
+  #define COMM_PORT SERIAL_PORT_USBVIRTUAL
+
+	#define LOG_PRINTLN LOG_PORT.println
+	#define LOG_PRINT LOG_PORT.print
+
+	#define COMM_PRINT COMM_PORT.print
+	#define COMM_WRITE COMM_PORT.write
+	#define COMM_AVAILABLE COMM_PORT.available()
+	#define COMM_READ COMM_PORT.read()
 #else /* Emulator Mode */
-#define LOG_PRINTLN(x) fprintf(stdout,x);fprintf(stdout,"\n")
-#define LOG_PRINT(x) fprintf(stdout,x)
+	#define LOG_PRINTLN(x) fprintf(stdout,x);fprintf(stdout,"\n");
+	#define LOG_PRINT(x) fprintf(stdout,x);
+
+	#define COMM_PRINT(x)  fprintf(stdout,"[COMM PRINT]: %c\n",x);
+	#define COMM_WRITE(x,y)  fprintf(stdout,"[COMM WRITE]: %d (len:%d)",*x,y);
+	#define COMM_AVAILABLE (0)
+	#define COMM_READ (-1) /*Serail.read() return -1 if no data */
 #endif
 
 /* Sampling resolution
@@ -279,7 +288,7 @@
 
 
 
-#endif // IMU9250_H
+#endif /* End IMU9250_CONFIG_H */
 
 
 

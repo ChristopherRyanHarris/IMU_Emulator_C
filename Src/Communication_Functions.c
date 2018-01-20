@@ -1,12 +1,12 @@
 
 /*******************************************************************
-** FILE: 
+** FILE:
 **   	Communication_Functions
 ** DESCRIPTION:
 ** 		This file contains all the serial communication functions
 **		and protocols for use in the real-time execution code. These
 **		functions are intended for the final executable.
-**		These functions are not to be used in emulation mode.
+**		These functions cannot be used in emulation mode.
 ********************************************************************/
 
 
@@ -18,13 +18,13 @@
 #if EXE_MODE==1 /* Emulator Mode */
 	#include "../Include/Emulator_Config.h"
 	#include "../Include/Emulator_Protos.h"
-	#include "../Include/WISE_Config.h"
+	#include "../Include/Communication_Config.h"
+	#include "../Include/Math.h"
 
 	#ifdef _IMU10736_
 		#include "../Include/IMU10736_Config.h"
 	#endif
 	#ifdef _IMU9250_
-		#include <SparkFunMPU9250-DMP.h>
 		#include "../Include/IMU9250_Config.h"
 	#endif
 
@@ -41,22 +41,30 @@
 ** We have recieved a request
 ** The request will be a single character (one Byte)
 ** which will coorespond to a given type of data being
-** requested by the master 
+** requested by the master
 */
-void f_RespondToInput( int nBytesIn )
+void f_RespondToInput( CONTROL_TYPE 			*p_control,
+											 SENSOR_STATE_TYPE 	*p_sensor_state,
+											 CALIBRATION_TYPE		*p_calibration,
+                       int nBytesIn )
 {
   int i;
   unsigned char RequestByte;
-  unsigned char Garbage;
+
+
+  /* Debug Logging */
+  char fastlog[500];
+
 
   /* uint16_t Packet_nBytes;
   ** uint16_t nBytes;
   ** uint8_t Buffer[50];
   ** uint8_t CheckSum; */
-  RESPONSE_TYPE Response;
+  COMMUNICATION_PACKET_TYPE Response;
 
   /* Some Log Output (usb) */
-  LOG_PRINTLN("> Recieved " + String(nBytesIn) + " Bytes");
+
+  sprintf(fastlog,"> Recieved %i Bytes",nBytesIn); LOG_PRINTLN( fastlog );
 
   /* We must read the request and respond appropriately
   ** If there is more than one request, we will respond
@@ -67,11 +75,10 @@ void f_RespondToInput( int nBytesIn )
   for( i=0; i<nBytesIn; i++)
   {
     /* Read request from the master */
-    RequestByte = COMM_PORT.read();
+    RequestByte = COMM_READ;
 
     /* Some Log outputs (usb) */
-    LOG_PRINT("> Request Code (HEX): ");
-    LOG_PRINTLN(RequestByte, HEX);
+  sprintf(fastlog,"> Request Code (HEX): %x",RequestByte); LOG_PRINTLN( fastlog );
 
     /* Respond the the request appropriately
     ** The packet architecture allows for mulitple
@@ -90,8 +97,7 @@ void f_RespondToInput( int nBytesIn )
         **   Ints are signed */
 
         /* Some Log outputs (usb) */
-        LOG_PRINT("\tRecieved Debug Request: ");
-        LOG_PRINTLN(RequestByte, HEX);
+  			sprintf(fastlog,"\tRecieved Debug Request: %x",RequestByte); LOG_PRINTLN( fastlog );
         Response.PacketType     = 11;
         Response.Buffer_nBytes  = sizeof(uint8_t)*2*1;
         Response.Packet_nBytes  = sizeof(uint16_t)*2 + sizeof(uint8_t)*(1 + Response.Buffer_nBytes);
@@ -106,8 +112,7 @@ void f_RespondToInput( int nBytesIn )
         ** Data buffer
         **   1 x 32 bit float
         **   Float is sent bit for bit */
-        LOG_PRINT("\tRecieved Debug Request: ");
-        LOG_PRINTLN(RequestByte, HEX);
+  			sprintf(fastlog,"\tRecieved Debug Request: %x",RequestByte); LOG_PRINTLN( fastlog );
         Response.PacketType     = 12;
         Response.Buffer_nBytes  = sizeof(uint8_t)*4*1;
         Response.Packet_nBytes  = sizeof(uint16_t)*2 + sizeof(uint8_t)*(1 + Response.Buffer_nBytes);
@@ -125,8 +130,7 @@ void f_RespondToInput( int nBytesIn )
         **    floats are signed */
 
         /* Some Log outputs (usb) */
-        LOG_PRINT("\tRecieved Roll Pitch request ... Case : ");
-        LOG_PRINTLN(RequestByte, DEC);
+  			sprintf(fastlog,"\tRecieved Roll Pitch request ... Case : %d",RequestByte); LOG_PRINTLN( fastlog );
         Response.PacketType     = 1;
         Response.Buffer_nBytes  = sizeof(uint8_t)*2*3;
         Response.Packet_nBytes  = sizeof(uint16_t)*2 + sizeof(uint8_t)*(1 + Response.Buffer_nBytes);
@@ -144,8 +148,7 @@ void f_RespondToInput( int nBytesIn )
         **    3 x 32 bit floats
         **    floats are packed bit for bit */
         /* Some Log outputs (usb) */
-        LOG_PRINT("\tRecieved Roll Pitch request ... Case : ");
-        LOG_PRINTLN(RequestByte, DEC);
+  			sprintf(fastlog,"\tRecieved Roll Pitch request ... Case : %d",RequestByte); LOG_PRINTLN( fastlog );
         Response.PacketType     = 2;
         Response.Buffer_nBytes  = sizeof(uint8_t)*4*3;
         Response.Packet_nBytes  = sizeof(uint16_t)*2 + sizeof(uint8_t)*(1 + Response.Buffer_nBytes);
@@ -163,32 +166,28 @@ void f_RespondToInput( int nBytesIn )
         ** calibration output
         ** 0:Accel (min/ave/max) in text
         ** 1:Gyro  (current/ave) in text */
-        LOG_PRINT("\t> Recieved Output Toggle Request ... Case : ");
-        LOG_PRINTLN(RequestByte, DEC);
-        if( CALIBRATE_MODE ) { p_calibration->output_mode = (p_calibration->output_mode+1)%NUM_CALCOM_MODES; }
+  			sprintf(fastlog,"\t> Recieved Output Toggle Request ... Case : %d",RequestByte); LOG_PRINTLN( fastlog );
+        if( p_control->calibration_on==1 ) { p_control->calibration_prms.output_mode = (p_control->calibration_prms.output_mode+1)%NUM_CALCOM_MODES; }
         else { p_control->output_mode = (p_control->output_mode+1)%NUM_COM_MODES; }
         break;
 
       case 0x63:
         /* DEBUG - Reset Calibration Variables
         ** Resets all calibration states */
-        LOG_PRINT("\t> Recieved Calibration Reset Request ... Case : ");
-        LOG_PRINTLN(RequestByte, DEC);
-        Calibration_Init();
+  			sprintf(fastlog,"\t> Recieved Calibration Reset Request ... Case : %d",RequestByte); LOG_PRINTLN( fastlog );
+        Calibration_Init( p_control, p_calibration );
         break;
 
       case 0x64:
         /* WISE - Reset WISE state variables
         ** Simulate heel strike */
-        LOG_PRINT("\t> Recieved WISE Reset Request ... Case : ");
-        LOG_PRINTLN(RequestByte, DEC);
-        WISE_Reset();
+  			sprintf(fastlog,"\t> Recieved WISE Reset Request ... Case : %d",RequestByte); LOG_PRINTLN( fastlog );
+        //WISE_Reset( p_control, p_wise_state );
         break;
 
       default:
         LOG_PRINTLN("\t ERROR: I don't understand the request!");
-        LOG_PRINT("\t Unidentified Request Code (DEC): ");
-        LOG_PRINTLN(RequestByte, DEC);
+  			sprintf(fastlog,"\t> Unidentified Request Code (DEC): %d",RequestByte); LOG_PRINTLN( fastlog );
         break;
     }
 
@@ -204,11 +203,14 @@ void f_RespondToInput( int nBytesIn )
 ** from the defined "Response" packet then sends
 ** the data as a singly stream over the UART line
 */
-void f_SendPacket( RESPONSE_TYPE Response )
+void f_SendPacket( COMMUNICATION_PACKET_TYPE Response )
 {
   uint8_t Packet[100];
   int ret;
   int i;
+
+  /* Debug Logging */
+	char fastlog[500];
 
   /* Initialize the array */
   for( ret=0; ret<100; ret++) Packet[ret] = 0;
@@ -223,11 +225,11 @@ void f_SendPacket( RESPONSE_TYPE Response )
 
   for( i=0; i<Response.Packet_nBytes+2; i++ )
   {
-    LOG_PRINT(Packet[i],HEX);
+		sprintf(fastlog,"%x",Packet[i]); LOG_PRINT( fastlog );
     LOG_PRINT(" , ");
-    COMM_PORT.write(&Packet[i],1);
+    COMM_WRITE(&Packet[i],1);
   }
-  LOG_PRINTLN();
+  LOG_PRINTLN(" ");
 } /* End f_SendPacket */
 
 /*************************************************
@@ -294,7 +296,7 @@ void f_WriteFToPacket_s32( unsigned char *Packet, float Input )
 
   /* Pack the 32 bytes int into a byte array */
   for( i=0; i<nBytes; i++ ) { Packet[i] = ( p_byte[nBytes-1-i] ); }
-  
+
 } /* End f_WriteFToPacket_s32 */
 
 
@@ -307,7 +309,7 @@ void f_WriteFToPacket_s32( unsigned char *Packet, float Input )
 ** we must send the baud lock character "a" or "A"
 ** and then wait for the confirmation charaacter
 */
-void f_Handshake( void )
+void f_Handshake( CONTROL_TYPE *p_control )
 {
   /* ASCII 'A' :: DEC:65 HEX:0x41 */
   /* ASCII 'a' :: DEC:97 HEX:0x61 */
@@ -319,29 +321,30 @@ void f_Handshake( void )
 
   /* Rx/Tx variabels */
   uint8_t IncomingByte;
+  uint8_t JunkByte;
   int     nBytesIn;
 
-  LOG_PRINT("> Using BaudLockChar (int):");
-  LOG_PRINTLN(BaudLockChar,DEC);
-  LOG_PRINT("> Using ConfirmChar (int):");
-  LOG_PRINTLN(ConfirmChar,DEC);
-  LOG_PRINT("> Using FailChar (int):");
-  LOG_PRINTLN(FailChar,DEC);
+  /* Debug Logging */
+  char fastlog[500];
+
+  sprintf(fastlog,"> Using BaudLockChar (int):%i",BaudLockChar); LOG_PRINTLN( fastlog );
+  sprintf(fastlog,"> Using ConfirmChar (int):%i",ConfirmChar); LOG_PRINTLN( fastlog );
+  sprintf(fastlog,"> Using FailChar (int):%i",FailChar); LOG_PRINTLN( fastlog );
 
   /* We continue to attempt a handshake
   ** until there is a lock */
   while( p_control->BaudLock==FALSE )
   {
     /* Some Log Output (usb) */
-    LOG_PRINTLN("> Beginning Handshake");
+    LOG_PRINTLN( "> Beginning Handshake" );
 
     /* Wait for initiation
     ** Master can send any character(s)
     ** NOTE: The first data sent from the master
     **       is assumed to be garbage */
-    while( Serial.available()==0 ) {}
+    while( COMM_AVAILABLE==0 ) {}
 
-    LOG_PRINTLN("> Recieved Initiazation");
+    LOG_PRINTLN( "> Recieved Initiazation" );
 
     /* Clear the input buffer
     ** Since the data sent from the master will be garbage,
@@ -350,16 +353,18 @@ void f_Handshake( void )
     ** We delay a few ms to ensure all garbage is in FIFO buffer
     ** This allows for a proper clear */
     delay( 5 );
-    nBytesIn = Serial.available();
-    LOG_PRINTLN("> Clearing " + String(nBytesIn) + " characters from buffer");
-    while( nBytesIn-- > 0 ) { Serial.read(); }
+    nBytesIn = COMM_AVAILABLE;
+
+  	sprintf(fastlog,"> Clearing %d characters from buffer",nBytesIn); LOG_PRINTLN( fastlog );
+    while( nBytesIn-- > 0 ) { JunkByte = COMM_READ; }
 
     /* Once handshake is initated by the master,
     ** we send the lock character
     ** The master should respond with the confirmation
     ** character */
-    Serial.print( BaudLockChar ); // Serial.print to Tx pin
-    LOG_PRINTLN("> BaudLockChar \"" + String(BaudLockChar) + "\" sent");
+    // Serial.print to Tx pin
+    COMM_PRINT( BaudLockChar )
+  	sprintf(fastlog,"> BaudLockChar \"%c\" sent",BaudLockChar); LOG_PRINTLN( fastlog );
 
     /* We delay a few ms to allow the
     ** master to detect and answer the handshake */
@@ -368,14 +373,13 @@ void f_Handshake( void )
     /* Read incomming characters
     ** If confirmation character is detected,
     ** toggle baud lock variable */
-    while( Serial.available()==0 ) {}
-    nBytesIn = Serial.available(); /* nBytes should == 1 */
-    if( nBytesIn>0 ) { IncomingByte = Serial.read(); }
+    while( COMM_AVAILABLE==0 ) {}
+    nBytesIn = COMM_AVAILABLE; /* nBytes should == 1 */
+    if( nBytesIn>0 ) { IncomingByte = COMM_READ; }
 
     /* Some Log Output (usb) */
-    LOG_PRINTLN("> Recieved " + String(nBytesIn) + " Bytes");
-    LOG_PRINT("  Character (int): ");
-    LOG_PRINTLN(IncomingByte, DEC);
+  	sprintf(fastlog,"> Recieved %d Bytes",nBytesIn); LOG_PRINTLN( fastlog );
+  	sprintf(fastlog,"  Character (int): %d",IncomingByte); LOG_PRINTLN( fastlog );
 
     /* If confirmation character detected, Baud is locked
     ** Reply with confimation character to end handshake
@@ -391,7 +395,7 @@ void f_Handshake( void )
 
       /* Reply with confimation char to
       ** complete the handshake with the master */
-      Serial.print( ConfirmChar );
+      COMM_PRINT( ConfirmChar );
       LOG_PRINTLN("> Confirmation Character Sent");
     }
     else
@@ -401,17 +405,18 @@ void f_Handshake( void )
 
       /* Clear input buffer */
       delay( 5 );
-      nBytesIn = Serial.available();
-      LOG_PRINTLN("> Clearing " + String(nBytesIn) + " characters from buffer");
-      while( nBytesIn-- > 0 ) { Serial.read(); }
+      nBytesIn = COMM_AVAILABLE;
+
+  		sprintf(fastlog,"> Clearing %d characters from buffer",nBytesIn); LOG_PRINTLN( fastlog );
+      while( nBytesIn-- > 0 ) { JunkByte = COMM_READ; }
 
       /* Reply with Error char
       ** If the Baud lock truely failed, then
       ** the master will likely not understand
       ** this response at all. This is more of
       ** a symbolic check */
-      //Serial.print( FailChar );
-      //Serial.print( IncomingByte );
+      //COMM_PRINT( FailChar );
+      //COMM_PRINT( IncomingByte );
       LOG_PRINTLN("> Fail Character Sent");
     }
     /* Reset Input Buffer */

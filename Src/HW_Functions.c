@@ -9,7 +9,7 @@
 **		Ideally, we would have functions which can run
 ** 		diagnostics.
 ** 		All functions should be fairly independent of IMU hardware. 
-**    This file should not be used in emulation mode.
+**    These functions cannot be used in emulation mode.
 ********************************************************************/
 
 

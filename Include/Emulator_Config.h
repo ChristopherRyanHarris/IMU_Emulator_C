@@ -1,13 +1,12 @@
 
 /*******************************************************************
 ** FILE: 
-**   	Emulator.h
+**   	Emulator_Config.h
 ** DESCRIPTION: 
 ** 		This file contains all header information specific to the
 ** 		the IMU emulator. The IMU emulator uses previously collected
 ** 		data. This allows us to test the preformance of the algorithm
-******************************************************************/
-
+********************************************************************/
 #ifndef EMULATOR_CONFIG_H
 #define EMULATOR_CONFIG_H
 
@@ -33,7 +32,7 @@ typedef struct
     FILE*       OutputFID;
 } EMULATION_TYPE;
 
-#endif /* EMULATOR_CONFIG_H */
+#endif /* End EMULATOR_CONFIG_H */
 
 
 

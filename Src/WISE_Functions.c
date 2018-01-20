@@ -1,6 +1,6 @@
 
 /*******************************************************************
-** FILE: 
+** FILE:
 **   	WISE_Functions
 ** DESCRIPTION:
 ** 		This file contains all functions which are
@@ -59,23 +59,23 @@ void WISE_Init ( CONTROL_TYPE				*p_control,
   int i;
 
   LOG_PRINTLN("> Initializing WISE");
-  
-  /* 
-  ** Initialize WISE control parameters 
+
+  /*
+  ** Initialize WISE control parameters
   */
-	
+
 	p_control->wise_prms.gain_ad 		= WISE_GAIN_AD;
-	p_control->wise_prms.gaid_ap 		= WISE_GAIN_AP;
+	p_control->wise_prms.gain_ap 		= WISE_GAIN_AP;
 	p_control->wise_prms.gain_vd 		= WISE_GAIN_VD;
 	p_control->wise_prms.gain_vp	  = WISE_GAIN_VP;
 	p_control->wise_prms.correction = WISE_CORRECTION;
 	p_control->wise_prms.mini_count = WISE_MINCOUNT;
 
 
-	/* 
-	** Initialize WISE state 
+	/*
+	** Initialize WISE state
 	*/
-  
+
   p_wise_state->swing_state = FALSE; /* Bool */
   p_wise_state->toe_off     = FALSE; /* Bool */
   p_wise_state->minCount    = WISE_MINCOUNT;

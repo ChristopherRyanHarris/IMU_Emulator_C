@@ -1,15 +1,13 @@
 
 /*******************************************************************
 ** FILE: 
-**   	Communication_Config.h
+**   	DSP_Config.h
 ** DESCRIPTION:
-** FILE: DSP_Common.h
-** Header for common Digital Signal Processing (DSP) algorithms.
-** These definitions are used for all FIR and IIR applications.
+** 		Header for common Digital Signal Processing (DSP) algorithms.
+** 		These definitions are used for all FIR and IIR applications.
 ********************************************************************/
-
-#ifndef DSP_COMMON_H
-#define DSP_COMMON_H
+#ifndef DSP_CONFIG_H
+#define DSP_CONFIG_H
 
 #if EXE_MODE==1 /* Emulator mode */
 #include <inttypes.h>
@@ -22,8 +20,8 @@
 
 /* Set the default state of the 
 ** DSP filters */
-#define FIR_ON 0
-#define IIR_ON 0
+#define DSP_FIR_ON 0
+#define DSP_IIR_ON 0
 
 
 
@@ -122,7 +120,7 @@ typedef struct
 }	DSP_PRMS_TYPE;
 
 
-#endif /* End DSP_COMMON_H */
+#endif /* End DSP_CONFIG_H */
 
 
 

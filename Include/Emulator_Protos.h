@@ -1,14 +1,12 @@
 
 /*******************************************************************
-** FILE: 
-**   	Communication_Config.h
+** FILE:
+**   	Emulator_Protos.h
 ** DESCRIPTION:
-** FILE: Emulator.h
-** This file contains all header information specific to the
-** the IMU emulator. The IMU emulator uses previously collected
-** data. This allows us to test the preformance of the algorithm
-******************************************************************/
-
+** 		This file contains all header information specific to the
+** 		the IMU emulator. The IMU emulator uses previously collected
+** 		data. This allows us to test the preformance of the algorithm
+********************************************************************/
 #ifndef EMULATOR_PROTOS_H
 #define EMULATOR_PROTOS_H
 
@@ -22,18 +20,20 @@
 	#include <math.h>
 	#include <string.h>
 
+	#include "../Include/Emulator_Config.h"
+	#include "../Include/Calibration_Config.h"
+	#include "../Include/DSP_Config.h"
+	#include "../Include/DCM_Config.h"
+	#include "../Include/GaPA_Config.h"
+	#include "../Include/WISE_Config.h"
+	#include "../Include/Communication_Config.h"
+
 	#ifdef _IMU10736_
 		#include "../Include/IMU10736_Config.h"
 	#endif
 	#ifdef _IMU9250_
 		#include "../Include/IMU9250_Config.h"
 	#endif
-
-	#include "../Include/DSP_Config.h"
-	#include "../Include/DCM_Config.h"
-	#include "../Include/GaPA_Config.h"
-	#include "../Include/WISE_Config.h"
-	#include "../Include/Emulator_Config.h"
 #endif /* End Emulator mode */
 
 /*******************************************************************
@@ -44,7 +44,8 @@
 void Init_Emulator( CONTROL_TYPE *p_control );
 void Read_Sensors( CONTROL_TYPE				*p_control,
 								 	 SENSOR_STATE_TYPE	*p_sensor_state );
-
+void delay(unsigned int mseconds);
+	
 /* COMMON_FUNCTIONS */
 void Common_Init ( CONTROL_TYPE *p_control );
 void Update_Time( CONTROL_TYPE *p_control );
@@ -102,11 +103,11 @@ void Debug_LogOut( CONTROL_TYPE				*p_control,
 									 WISE_STATE_TYPE		*p_wise_state );
 void Cal_LogOut( void );
 void f_SendData( int nBytesIn );
-void f_SendPacket( RESPONSE_TYPE Response );
+void f_SendPacket( COMMUNICATION_PACKET_TYPE Response );
 void f_WriteIToPacket( uint8_t *Packet, uint16_t InputBuffer );
 void f_WriteFToPacket_u16( unsigned char *Packet, float Input );
 void f_WriteFToPacket_s32( unsigned char *Packet, float Input );
-void f_Handshake( void );
+void f_Handshake( CONTROL_TYPE *p_control );
 uint8_t f_CheckSum( unsigned char *p_Buffer, uint16_t nBytes );
 
 /* DCM_Functions */
@@ -127,17 +128,17 @@ void Set_Sensor_Fusion( CONTROL_TYPE			*p_control,
 
 /* DSP_Functions */
 void DSP_Filter_Init ( CONTROL_TYPE			*p_control,
-											 DSP_COMMON_TYPE	*p_dsp_state );
+											 DSP_STATE_TYPE	*p_dsp_state );
 void DSP_Update ( CONTROL_TYPE			*p_control,
-									DSP_COMMON_TYPE		*p_dsp_state,
+									DSP_STATE_TYPE		*p_dsp_state,
 									SENSOR_STATE_TYPE *p_sensor_state );
 void DSP_Shift ( CONTROL_TYPE				*p_control,
-								 DSP_COMMON_TYPE		*p_dsp_state );
+								 DSP_STATE_TYPE		*p_dsp_state );
 void IIR_Filter ( CONTROL_TYPE				*p_control,
-								  DSP_COMMON_TYPE			*p_dsp_state,
+								  DSP_STATE_TYPE			*p_dsp_state,
 									SENSOR_STATE_TYPE 	*p_sensor_state );
 void FIR_Filter ( CONTROL_TYPE				*p_control,
-								  DSP_COMMON_TYPE			*p_dsp_state,
+								  DSP_STATE_TYPE			*p_dsp_state,
 									SENSOR_STATE_TYPE 	*p_sensor_state );
 
 /* HW_Functions */
@@ -157,7 +158,7 @@ float f_atan2( float y, float x );
 void calc_circle_center( float p1[2], float p2[2], float p3[2], float xcyc[2] );
 
 
-#endif /* EMULATOR */
+#endif /* End EMULATOR_PROTOS_H */
 
 
 

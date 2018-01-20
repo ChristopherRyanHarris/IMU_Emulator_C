@@ -1,12 +1,14 @@
 
 /*******************************************************************
-** FILE: 
+** FILE:
 **   	Logging_Functions
 ** DESCRIPTION:
 ** 		This file contains the logging functions.
 **		These functions are used exclusively in debug mode
 ** 		and should not be included in the final firmware
 **		implementation.
+**		These functions are inteded for emulation
+**		or debug modes only.
 ********************************************************************/
 
 
@@ -14,7 +16,9 @@
 ** Includes ********************************************************
 ********************************************************************/
 
-#include "../Include/Common_Config.h"
+#ifndef COMMON_CONFIG_H
+	#include "../Include/Common_Config.h"
+#endif
 #if EXE_MODE==1 /* Emulator Mode */
 	#include "../Include/Emulator_Config.h"
 	#include "../Include/Emulator_Protos.h"
@@ -24,7 +28,6 @@
 		#include "../Include/IMU10736_Config.h"
 	#endif
 	#ifdef _IMU9250_
-		#include <SparkFunMPU9250-DMP.h>
 		#include "../Include/IMU9250_Config.h"
 	#endif
 
@@ -44,17 +47,16 @@
 **		[I ]	WISE_STATE_TYPE		*p_wise_state
 ** RETURN:
 **		NONE
-** DESCRIPTION: 
+** DESCRIPTION:
 ** 		This function just prints a standard string
 ** 		to the log_port serial port.
 ** 		It prints the rpy as well as the timestamp and
 ** 		and estimate of the sample rate
 */
-void Debug_LogOut( CONTROL_TYPE				*p_control, 
+void Debug_LogOut( CONTROL_TYPE				*p_control,
 									 SENSOR_STATE_TYPE	*p_sensor_state,
 									 WISE_STATE_TYPE		*p_wise_state )
 {
-  String imuLog = ""; 
   char fastlog[500];
 
   switch ( p_control->output_mode )
@@ -87,16 +89,16 @@ void Debug_LogOut( CONTROL_TYPE				*p_control,
 	    	p_sensor_state->accel[0],p_sensor_state->accel[1],p_sensor_state->accel[2],
 	    	p_sensor_state->gyro[0],p_sensor_state->gyro[1],p_sensor_state->gyro[2],
 	    	TO_DEG(p_sensor_state->yaw),TO_DEG(p_sensor_state->pitch),TO_DEG(p_sensor_state->roll) );
-	    LOG_PRINT( fastlog ); 
+	    LOG_PRINT( fastlog );
       break;
     case 5:
-    	sprintf(fastlog,"G_ave: %.4f %.4f %.4f G_std: %.4f %.4f %.4f\n",
-    		p_dcm_state->gyro_ave[0],p_dcm_state->gyro_ave[1],p_dcm_state->gyro_ave[2],
-    		p_dcm_state->gyro_std[0],p_dcm_state->gyro_std[1],p_dcm_state->gyro_std[2]  );
+    	//sprintf(fastlog,"G_ave: %.4f %.4f %.4f G_std: %.4f %.4f %.4f\n",
+    	//	p_dcm_state->gyro_ave[0],p_dcm_state->gyro_ave[1],p_dcm_state->gyro_ave[2],
+    	//	p_dcm_state->gyro_std[0],p_dcm_state->gyro_std[1],p_dcm_state->gyro_std[2]  );
     default:
     	break;
   }
-  LOG_PRINT( fastlog ); 
+  LOG_PRINT( fastlog );
 } /* End Debug_LogOut */
 
 /*************************************************
@@ -108,10 +110,11 @@ void Debug_LogOut( CONTROL_TYPE				*p_control,
 */
 void Cal_LogOut(void)
 {
-  String imuLog = ""; 
-  imuLog += "Time:" + String( p_control->timestamp ) + ", "; 
+  /*
+  String imuLog = "";
+  imuLog += "Time:" + String( p_control->timestamp ) + ", ";
   imuLog += "DT:" + String( p_control->G_Dt,3 ) + ", ";
-  imuLog += "SR:" + String( (1/p_control->G_Dt) ) + ", "; 
+  imuLog += "SR:" + String( (1/p_control->G_Dt) ) + ", ";
 
   switch ( p_calibration->output_mode )
   {
@@ -130,6 +133,7 @@ void Cal_LogOut(void)
   }
   imuLog += "\r\n";
   LOG_PRINT( imuLog );
+  */
 } /* End Cal_LogOut */
 
 

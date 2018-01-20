@@ -1,16 +1,15 @@
 
 /*******************************************************************
-** FILE: 
-**   	Communication_Config.h
+** FILE:
+**   	Common_Config.h
 ** DESCRIPTION:
-** FILE: IMU_Common.h
-** Header containing IMU definitions which are platform agnostic.
-** Definitions in this file should be independent of IMU version.
-******************************************************************/
+** 		Header containing IMU definitions which are platform agnostic.
+** 		Definitions in this file should be independent of IMU version.
+********************************************************************/
+#ifndef COMMON_CONFIG_H
+#define COMMON_CONFIG_H
 
 
-#ifndef COMMON_H
-#define COMMON_H
 
 /* 0: IMU
 ** 1: Emulator */
@@ -22,21 +21,24 @@
 	#include <stdbool.h>
 	#include <inttypes.h>
 	#include <stdio.h>
+
 	#include "../Include/Emulator_Config.h"
+	#include "../Include/Calibration_Config.h"
+	#include "../Include/DSP_Config.h"
 	#include "../Include/DCM_Config.h"
+	#include "../Include/GaPA_Config.h"
+	#include "../Include/WISE_Config.h"
 
-	//#define _IMU10736_ /* Using IMU10736 */
-	#define _IMU9250_ /* Using IMU9250 */
 #else
-	/* Real-time mode */
-	//#define _IMU10736_ /* Using IMU10736 */
-	#define _IMU9250_ /* Using IMU9250 */
 #endif
 
 
+//#define _IMU10736_ /* Using IMU10736 */
+#define _IMU9250_ /* Using IMU9250 */
+	
 /**********************
-** These are defaults, 
-** Future releases are inteded to have the ability to 
+** These are defaults,
+** Future releases are inteded to have the ability to
 ** hot switch these. */
 
 #define DEBUG 1 /* Print log/verbose information */
@@ -102,13 +104,13 @@ typedef struct
 typedef struct
 {
 	int gravity;
-	
+
 	int accel_on;
 	int gyro_on;
 	int magn_on;
-	
+
 	int sample_rate;
-	
+
 }	SENSOR_PRMS_TYPE;
 
 
@@ -142,10 +144,11 @@ typedef struct
   bool      LedState; /* Used to set LED state */
   uint32_t  LastBlinkTime; /* Used to set LED state */
 
-	
-	
+
+
 	int verbose;
 	int calibration_on;
+	int DCM_on;
 	int DSP_on;
 	int GaPA_on;
 	int WISE_on;
@@ -158,10 +161,10 @@ typedef struct
 
 	/* DCM parameters */
 	DCM_PRMS_TYPE	dcm_prms;
-	
+
 	/* GaPA parameters */
 	GAPA_PERMS_TYPE gapa_prms;
-	
+
 	/* WISE parameters */
 	WISE_PRMS_TYPE wise_prms;
 
@@ -178,4 +181,4 @@ typedef struct
 
 
 
-#endif // IMU_COMMON_H
+#endif /* End COMMON_CONFIG_H */

@@ -1,16 +1,14 @@
 
 /*******************************************************************
 ** FILE: 
-**   	Communication_Config.h
+**   	WISE_Config.h
 ** DESCRIPTION:
-** FILE: WISE_Common.h
-** Header for the Walking Speed and Incline Estimator (WISE)
-** This file should contain only definitions specific to the
-** WISE algorithms
-******************************************************************/
-
-#ifndef WISE_COMMON_H
-#define WISE_COMMON_H
+** 		Header for the Walking Speed and Incline Estimator (WISE)
+** 		This file should contain only definitions specific to the
+** 		WISE algorithms
+********************************************************************/
+#ifndef WISE_CONFIG_H
+#define WISE_CONFIG_H
 
 
 //#define WISE_GAIN_AD 0.025f
@@ -131,6 +129,6 @@ typedef struct
 }	WISE_PRMS_TYPE;
 
 
-#endif // WISE_COMMON_H
+#endif /* End WISE_CONFIG_H */
 
 

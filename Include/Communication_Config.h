@@ -1,9 +1,9 @@
 
 /*******************************************************************
-** FILE: 
+** FILE:
 **   	Communication_Config.h
 ** DESCRIPTION:
-**		
+**
 ********************************************************************/
 
 #ifndef CCOMMUNICATION_CONFIG_H
@@ -15,7 +15,7 @@
 ********************************************************************/
 
 /*
-** TYPE: RESPONSE_TYPE
+** TYPE: COMMUNICATION_PACKET_TYPE
 ** Used to store temporary resonse data
 ** for responding to request from master */
 typedef struct

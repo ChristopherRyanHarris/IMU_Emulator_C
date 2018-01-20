@@ -1,16 +1,14 @@
 
 /*******************************************************************
 ** FILE: 
-**   	Communication_Config.h
+**   	GaPA_Config.h
 ** DESCRIPTION:
-** FILE: GaPA_Config.h
-** Header for the Gait Phase Angle estimator (GaPA)
-** This file should contain only definitions specific to the
-** GaPA algorithms
-******************************************************************/
-
-#ifndef GAPA_H
-#define GAPA_H
+** 		Header for the Gait Phase Angle estimator (GaPA)
+** 		This file should contain only definitions specific to the
+**		GaPA algorithms
+********************************************************************/
+#ifndef GAPA_CONFIG_H
+#define GAPA_CONFIG_H
 
 
 /*******************************************************************
@@ -84,7 +82,7 @@ typedef struct
 	
 	float min_gyro;
 	float gait_end_threshold;
-} GAPA_PERMS_TYPE
+} GAPA_PERMS_TYPE;
 
 /* 
 ** TYPE: ERNIE_STATE_TYPE
@@ -95,5 +93,5 @@ typedef struct
 ** algorithm is essentially a Piece-Wise algorithm of computing the 
 ** phase variable */
 
-#endif // GAPA_H
+#endif /* End GAPA_CONFIG_H */
 
