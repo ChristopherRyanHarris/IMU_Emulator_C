@@ -1,6 +1,6 @@
 
 /*******************************************************************
-** FILE: 
+** FILE:
 **   	GaPA_Functions
 ** DESCRIPTION:
 ** 		This file contains all functions spacific to the
@@ -12,29 +12,20 @@
 ** Includes ********************************************************
 ********************************************************************/
 
-#include "../Include/Common_Config.h"
-#if EXE_MODE /* Emulator mode */
-	#include <math.h>
-	#include <string.h>
-
-	#ifdef _IMU10736_
-		#include "../Include/IMU10736_Config.h"
-	#endif
-	#ifdef _IMU9250_
-		#include "../Include/IMU9250_Config.h"
-	#endif
-
-	#include "../Include/Math.h"
-	#include "../Include/GaPA_Config.h"
-	#include "../Include/Emulator_Config.h"
+#ifndef COMMON_CONFIG_H
+	#include "../Include/Common_Config.h"
+#endif
+#if EXE_MODE==1 /* Emulator Mode */
+	/* In emulatiom mode, "Emulator_Protos" is needed to 
+	** use funcitons in other files.
+	** NOTE: This header should contain the function 
+	** 			 prototypes for all execution functions */
 	#include "../Include/Emulator_Protos.h"
-#endif /* End Emulator mode */
+#endif  /* End Emulator Mode */
 
 /*******************************************************************
 ** Functions *******************************************************
 ********************************************************************/
-
-
 
 
 /*****************************************************************
@@ -51,11 +42,11 @@
 void GaPA_Init( CONTROL_TYPE			*p_control,
 								GAPA_STATE_TYPE		*p_gapa_state )
 {
-	
-	/* 
-	** Initialize GaPA control parameters 
+
+	/*
+	** Initialize GaPA control parameters
 	*/
-	
+
 	p_control->gapa_prms.phase_method 			= 1;
 	p_control->gapa_prms.Kp_PHI 						= GAPA_Kp_PHI;
 	p_control->gapa_prms.Ki_PHI 						= GAPA_Ki_PHI;
@@ -65,11 +56,11 @@ void GaPA_Init( CONTROL_TYPE			*p_control,
 	p_control->gapa_prms.phimw_alpha 				= GAPA_phimw_ALPHA;
 	p_control->gapa_prms.min_gyro 				  = GAPA_MIN_GYRO;
 	p_control->gapa_prms.gait_end_threshold = GAPA_GAIT_END_THRESH;
-	
-	/* 
-	** Initialize GaPA state parameters 
+
+	/*
+	** Initialize GaPA state parameters
 	*/
-	
+
 	/* The version of the phase portrait to use
 	**  1:PHI
 	**  2:PHV
@@ -194,14 +185,14 @@ void GaPA_Update( CONTROL_TYPE			*p_control,
 
 	/* Compute the windowed moving average of each of the
 	** phase variables */
-	p_gapa_state->phi_mw = Windowed_Mean( p_gapa_state->phi_mw, p_gapa_state->phi, p_gapa_state->iteration, (float)0.01 );
-	p_gapa_state->PHI_mw = Windowed_Mean( p_gapa_state->PHI_mw, p_gapa_state->PHI, p_gapa_state->iteration, (float)0.01 );
+	p_gapa_state->phi_mw = Windowed_Mean( p_gapa_state->phi_mw, p_gapa_state->phi, p_gapa_state->iteration, p_control->gapa_prms.phimw_alpha );
+	p_gapa_state->PHI_mw = Windowed_Mean( p_gapa_state->PHI_mw, p_gapa_state->PHI, p_gapa_state->iteration, p_control->gapa_prms.PHImw_alpha );
 
 	/* Compute phase variable feedback error */
-	p_gapa_state->PErr_phi =  p_gapa_state->phi_mw * 0.01;
-	p_gapa_state->IErr_phi += p_gapa_state->phi_mw * 0.01;
-	p_gapa_state->PErr_PHI =  p_gapa_state->PHI_mw * 0.01;
-	p_gapa_state->IErr_PHI += p_gapa_state->PHI_mw * 0;
+	p_gapa_state->PErr_phi =  p_gapa_state->phi_mw * p_control->gapa_prms.Kp_phi;
+	p_gapa_state->IErr_phi += p_gapa_state->phi_mw * p_control->gapa_prms.Ki_phi;
+	p_gapa_state->PErr_PHI =  p_gapa_state->PHI_mw * p_control->gapa_prms.Kp_PHI;
+	p_gapa_state->IErr_PHI += p_gapa_state->PHI_mw * p_control->gapa_prms.Ki_PHI;
 
 	/* Record phase variable min and max */
 	p_gapa_state->phi_max = MAX( p_gapa_state->phi_max, p_gapa_state->phi );
@@ -240,7 +231,7 @@ void GaPA_Update( CONTROL_TYPE			*p_control,
 	p_gapa_state->nu = f_atan2( leftParam, rightParam );
 
 	/* Detect the end of gait */
-	if( fabs(p_gapa_state->nu-p_gapa_state->nu_prev) > 0.25*PI )
+	if( fabs(p_gapa_state->nu-p_gapa_state->nu_prev) > p_control->gapa_prms.gait_end_threshold )
 	{
 		p_gapa_state->z_phi = p_gapa_state->phi_max;
 		if(p_gapa_state->z_phi==0){p_gapa_state->z_phi=1;}

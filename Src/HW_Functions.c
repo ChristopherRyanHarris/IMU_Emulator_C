@@ -17,16 +17,24 @@
 ** Includes ********************************************************
 ********************************************************************/
 
-#include "../Include/Common_Config.h"
-#if EXE_MODE==0 /* Real-Time Mode */
+#ifndef COMMON_CONFIG_H
+	#include "../Include/Common_Config.h"
+#endif
+#if EXE_MODE==1 /* Emulator Mode */
+	/* In emulatiom mode, "Emulator_Protos" is needed to 
+	** use funcitons in other files.
+	** NOTE: This header should contain the function 
+	** 			 prototypes for all execution functions */
+	#include "../Include/Emulator_Protos.h"
+#endif  /* End Emulator Mode */
 
-
-
+/* Only link if not in emulation mode 
+** (i.e. in real-time execution mode) */
+#if EXE_MODE==0
 
 /*******************************************************************
 ** Functions *******************************************************
 ********************************************************************/
-
 
 
 /*************************************************
@@ -59,7 +67,7 @@ void Init_Hardware( CONTROL_TYPE	*p_control )
 /*************************************************
 ** FUNCTION: BLinkLED
 ** VARIABLES:
-**		[I ]	CONTROL_TYPE 			*p_control
+**		[IO]	CONTROL_TYPE 			*p_control
 ** RETURN:
 **		NONE
 ** DESCRIPTION:
@@ -69,19 +77,16 @@ void Init_Hardware( CONTROL_TYPE	*p_control )
 */
 void Blink_LED( CONTROL_TYPE	*p_control )
 {
-  #if EXE_MODE==0 /* IMU Mode */
-  	/* We blink every UART_BLINK_RATE millisecods */
-  	if ( millis() > (p_control->LastBlinkTime + UART_BLINK_RATE) )
-  	{
-    	/* Toggle LED */
-    	digitalWrite(HW_LED_PIN, g_control_state.g_LedState);
-    	p_control->LedState = !p_control->LedState;
-    	p_control->LastBlinkTime = millis();
-  	}
-  #endif /* EXE_MODE */
-
+	/* We blink every UART_BLINK_RATE millisecods */
+	if ( millis() > (p_control->LastBlinkTime + UART_BLINK_RATE) )
+	{
+  	/* Toggle LED */
+  	digitalWrite(HW_LED_PIN, g_control_state.g_LedState);
+  	p_control->LedState = !p_control->LedState;
+  	p_control->LastBlinkTime = millis();
+	}
 } /* End Blink_LED */
 
 
-#endif  /* End Emulator Mode */
+#endif  /* End EXE_MODE (Real-Time Execution) */
 

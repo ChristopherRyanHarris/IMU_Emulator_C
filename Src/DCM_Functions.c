@@ -1,6 +1,6 @@
 
 /*******************************************************************
-** FILE: 
+** FILE:
 **   	DCM_Functions
 ** DESCRIPTION:
 **		The Directional Cosine Matrix filtering algorithm.
@@ -15,26 +15,16 @@
 ** Includes ********************************************************
 ********************************************************************/
 
-
-#include "../Include/Common_Config.h"
+#ifndef COMMON_CONFIG_H
+	#include "../Include/Common_Config.h"
+#endif
 #if EXE_MODE==1 /* Emulator Mode */
-	#include <math.h>
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include "../Include/DCM_Config.h"
-	#include "../Include/Math.h"
-	#include "../Include/Emulator_Config.h"
+	/* In emulatiom mode, "Emulator_Protos" is needed to 
+	** use funcitons in other files.
+	** NOTE: This header should contain the function 
+	** 			 prototypes for all execution functions */
 	#include "../Include/Emulator_Protos.h"
-
-	#ifdef _IMU10736_
-		#include "../Include/IMU10736_Config.h"
-	#endif
-	#ifdef _IMU9250_
-		#include "../Include/IMU9250_Config.h"
-	#endif
-
 #endif  /* End Emulator Mode */
-
 
 /*******************************************************************
 ** Functions *******************************************************
@@ -44,7 +34,7 @@
 /*************************************************
 ** FUNCTION: DCM_Init
 ** VARIABLES:
-**		[I ]	CONTROL_TYPE			*p_control
+**		[IO]	CONTROL_TYPE			*p_control
 **		[IO]	DCM_STATE_TYPE		*p_dcm_state
 **		[IO]	SENSOR_STATE_TYPE	*p_sensor_state
 ** RETURN:
@@ -60,10 +50,10 @@ void DCM_Init( CONTROL_TYPE				*p_control,
 
   LOG_PRINTLN("> Initializing DCM Filter");
 
-	/* 
-	** Initialize DCM control parameters 
+	/*
+	** Initialize DCM control parameters
 	*/
-	
+
 	p_control->dcm_prms.Kp_RollPitch 			= Kp_ROLLPITCH;
 	p_control->dcm_prms.Ki_RollPitch 			= Ki_ROLLPITCH;
 	p_control->dcm_prms.Kp_Yaw       			= Kp_YAW;
@@ -71,10 +61,10 @@ void DCM_Init( CONTROL_TYPE				*p_control,
 	p_control->dcm_prms.PitchOrientation  = PITCH_O;
 	p_control->dcm_prms.PitchRotationConv = PITCH_ROT_CONV;
 	p_control->dcm_prms.RollRotationConv  = ROLL_ROT_CONV;
-	p_control->dcm_prms.RollRotationRef   = ROLL_ZREF;	
+	p_control->dcm_prms.RollRotationRef   = ROLL_ZREF;
 
-	/* 
-	** Initialize DCM state parameters 
+	/*
+	** Initialize DCM state parameters
 	*/
 
   for(i=0;i<3;i++) p_dcm_state->Omega_I[i] = 0.0f;
@@ -161,7 +151,7 @@ void Set_Sensor_Fusion( CONTROL_TYPE			*p_control,
 ** VARIABLES:
 **		[I ]	CONTROL_TYPE			*p_control
 **		[IO]	DCM_STATE_TYPE		*p_dcm_state
-**		[IO]	SENSOR_STATE_TYPE	*p_sensor_state
+**		[I ]	SENSOR_STATE_TYPE	*p_sensor_state
 ** RETURN:
 **		NONE
 ** DESCRIPTION:
@@ -186,17 +176,17 @@ void Init_Rotation_Matrix( CONTROL_TYPE				*p_control,
 
   /* Euler angles, right-handed, intrinsic, XYZ convention
   ** (which means: rotate around body axes Z, Y', X'')  */
-  m[0 + 0*3] = c2 * c3;
-  m[0 + 1*3] = c3 * s1 * s2 - c1 * s3;
-  m[0 + 2*3] = s1 * s3 + c1 * c3 * s2;
+  m[0*3 + 0] = c2 * c3;
+  m[0*3 + 1] = c3 * s1 * s2 - c1 * s3;
+  m[0*3 + 2] = s1 * s3 + c1 * c3 * s2;
 
-  m[1 + 0*3] = c2 * s3;
-  m[1 + 1*3] = c1 * c3 + s1 * s2 * s3;
-  m[1 + 2*3] = c1 * s2 * s3 - c3 * s1;
+  m[1*3 + 0] = c2 * s3;
+  m[1*3 + 1] = c1 * c3 + s1 * s2 * s3;
+  m[1*3 + 2] = c1 * s2 * s3 - c3 * s1;
 
-  m[2 + 0*3] = -s2;
-  m[2 + 1*3] = c2 * s1;
-  m[2 + 2*3] = c1 * c2;
+  m[2*3 + 0] = -s2;
+  m[2*3 + 1] = c2 * s1;
+  m[2*3 + 2] = c1 * c2;
 } /* End Init_Rotation_Matrix */
 
 
@@ -234,8 +224,9 @@ void DCM_Filter( CONTROL_TYPE				*p_control,
   float errorRollPitch[3];
   float errorYaw[3];
 
-  /* Clear Rolling Std/Average after set time */
-  #if( WISE_ON==1 )
+  /* Clear Rolling Std/Average after set time 
+  ** NOTE: This should be moved elsewhere */
+  #if( p_control->WISE_on==1 )
   	p_sensor_state->std_time+=(p_control->G_Dt*TIME_RESOLUTION);
   	if( p_sensor_state->std_time>MOVE_RESET_RATE )
  		{
@@ -270,9 +261,9 @@ void DCM_Filter( CONTROL_TYPE				*p_control,
 
   /* Convert the acceleration values
   ** Note: Values read from sensor are fixed point */
-  //Accel_Vector[0] = ACCEL_X_SCALED( g_sensor_state.accel[0] );
-  //Accel_Vector[1] = ACCEL_Y_SCALED( g_sensor_state.accel[1] );
-  //Accel_Vector[2] = ACCEL_Z_SCALED( g_sensor_state.accel[2] );
+  //Accel_Vector[0] = ACCEL_X_SCALED( p_sensor_state->accel[0] );
+  //Accel_Vector[1] = ACCEL_Y_SCALED( p_sensor_state->accel[1] );
+  //Accel_Vector[2] = ACCEL_Z_SCALED( p_sensor_state->accel[2] );
   Accel_Vector[0] = ( p_sensor_state->accel[0] );
   Accel_Vector[1] = ( p_sensor_state->accel[1] );
   Accel_Vector[2] = ( p_sensor_state->accel[2] );
@@ -280,9 +271,9 @@ void DCM_Filter( CONTROL_TYPE				*p_control,
   /* Apply prop and int gain to rotation
   ** Need to convert the Gyro values to radians
   **    Note: Values read from sensor are fixed point */
-  //Omega_Vector[0] = GYRO_SCALED_RAD( g_sensor_state.gyro[0] ) + p_dcm_state->Omega_I[0] + p_dcm_state->Omega_P[0];
-  //Omega_Vector[1] = GYRO_SCALED_RAD( g_sensor_state.gyro[1] ) + p_dcm_state->Omega_I[1] + p_dcm_state->Omega_P[1];
-  //Omega_Vector[2] = GYRO_SCALED_RAD( g_sensor_state.gyro[2] ) + p_dcm_state->Omega_I[2] + p_dcm_state->Omega_P[2];
+  //Omega_Vector[0] = GYRO_SCALED_RAD( p_sensor_state->gyro[0] ) + p_dcm_state->Omega_I[0] + p_dcm_state->Omega_P[0];
+  //Omega_Vector[1] = GYRO_SCALED_RAD( p_sensor_state->gyro[1] ) + p_dcm_state->Omega_I[1] + p_dcm_state->Omega_P[1];
+  //Omega_Vector[2] = GYRO_SCALED_RAD( p_sensor_state->gyro[2] ) + p_dcm_state->Omega_I[2] + p_dcm_state->Omega_P[2];
   Omega_Vector[0] = GYRO_X_SCALED( p_sensor_state->gyro[0] ) + p_dcm_state->Omega_I[0] + p_dcm_state->Omega_P[0];
   Omega_Vector[1] = GYRO_Y_SCALED( p_sensor_state->gyro[1] ) + p_dcm_state->Omega_I[1] + p_dcm_state->Omega_P[1];
   Omega_Vector[2] = GYRO_Z_SCALED( p_sensor_state->gyro[2] ) + p_dcm_state->Omega_I[2] + p_dcm_state->Omega_P[2];
@@ -336,7 +327,7 @@ void DCM_Filter( CONTROL_TYPE				*p_control,
 
 
   /******************************************************************
-  ** DCM 3. Drift_Correction
+  ** DCM 3. Drift_CorrectionAccel_magnitude
   ** Drift correction basically looks at the difference in
   ** the orientation described by the DCM matrix and the
   ** orientation described by the current acceleration vector.
@@ -354,7 +345,7 @@ void DCM_Filter( CONTROL_TYPE				*p_control,
 
   /* Dynamic weighting of accelerometer info (reliability filter)
   ** Weight for accelerometer info (<0.5G = 0.0, 1G = 1.0 , >1.5G = 0.0) */
-  Accel_weight = FCONSTRAIN( 1.0-2.0*abs(1-Accel_magnitude), 0.0, 1.0 ) ;
+  Accel_weight = FCONSTRAIN( 1.0-2.0*FABS(1-Accel_magnitude), 0.0, 1.0 ) ;
 
   /* Adjust the ground of reference
   ** errorRP = accel x DCM[2][:]
@@ -401,13 +392,18 @@ void DCM_Filter( CONTROL_TYPE				*p_control,
   ** orientation of the IMU in space.
   ******************************************************************/
 
+	p_control->dcm_prms.PitchOrientation  = PITCH_O;
+	p_control->dcm_prms.PitchRotationConv = PITCH_ROT_CONV;
+	p_control->dcm_prms.RollRotationConv  = ROLL_ROT_CONV;
+	p_control->dcm_prms.RollRotationRef   = ROLL_ZREF;
+	
   /* Pitch Conventions (set in config):
   ** Range: -90:90
   ** With PITCH_ROT_CONV==1 :
   ** PITCH_O:1 - Pitch orientation #1. Angle x-axis w/ Horizontal Plane  +Rot:Aft-Down    0:Nadir0/Zenith down. +90:Aft down   -90:Fore down
   ** PITCH_O:2 - Pitch orientation #2. Angle y-axis w/ Horizontal Plane  +Rot:Port-Down   0:Fore/Aft down       +90:Port down  -90:Starboard down
   ** PITCH_O:3 - Pitch orientation #3. Angle z-axis w/ Horizontal Plane  +Rot:Nadir-Down  0:Fore/Aft down       +90:Nadir down -90:Zenith down */
-  switch ( PITCH_O )
+  switch ( p_control->dcm_prms.PitchOrientation )
   {
     case 1 :
       p_sensor_state->pitch = -PITCH_ROT_CONV*f_asin( p_dcm_state->DCM_Matrix[2][0] );
@@ -434,22 +430,22 @@ void DCM_Filter( CONTROL_TYPE				*p_control,
   switch ( ROLL_O )
   {
     case 1 :
-      p_sensor_state->roll = -ROLL_ROT_CONV*f_atan2( p_dcm_state->DCM_Matrix[2][0], -ROLL_ZREF*p_dcm_state->DCM_Matrix[2][1] );
+      p_sensor_state->roll = -p_control->dcm_prms.RollRotationConv*f_atan2( p_dcm_state->DCM_Matrix[2][0], -p_control->dcm_prms.RollRotationRef*p_dcm_state->DCM_Matrix[2][1] );
       break;
     case 2 :
-      p_sensor_state->roll = -ROLL_ROT_CONV*f_atan2( p_dcm_state->DCM_Matrix[2][0], -ROLL_ZREF*p_dcm_state->DCM_Matrix[2][2] );
+      p_sensor_state->roll = -p_control->dcm_prms.RollRotationConv*f_atan2( p_dcm_state->DCM_Matrix[2][0], -p_control->dcm_prms.RollRotationRef*p_dcm_state->DCM_Matrix[2][2] );
       break;
     case 3 :
-      p_sensor_state->roll = -ROLL_ROT_CONV*f_atan2( p_dcm_state->DCM_Matrix[2][1], -ROLL_ZREF*p_dcm_state->DCM_Matrix[2][2] );
+      p_sensor_state->roll = -p_control->dcm_prms.RollRotationConv*f_atan2( p_dcm_state->DCM_Matrix[2][1], -p_control->dcm_prms.RollRotationRef*p_dcm_state->DCM_Matrix[2][2] );
       break;
     case 4 :
-      p_sensor_state->roll =  ROLL_ROT_CONV*f_atan2( p_dcm_state->DCM_Matrix[2][1], -ROLL_ZREF*p_dcm_state->DCM_Matrix[2][0] );
+      p_sensor_state->roll =  p_control->dcm_prms.RollRotationConv*f_atan2( p_dcm_state->DCM_Matrix[2][1], -p_control->dcm_prms.RollRotationRef*p_dcm_state->DCM_Matrix[2][0] );
       break;
     case 5 :
-      p_sensor_state->roll =  ROLL_ROT_CONV*f_atan2( p_dcm_state->DCM_Matrix[2][2], -ROLL_ZREF*p_dcm_state->DCM_Matrix[2][0] );
+      p_sensor_state->roll =  p_control->dcm_prms.RollRotationConv*f_atan2( p_dcm_state->DCM_Matrix[2][2], -p_control->dcm_prms.RollRotationRef*p_dcm_state->DCM_Matrix[2][0] );
       break;
     case 6 :
-      p_sensor_state->roll =  ROLL_ROT_CONV*f_atan2( p_dcm_state->DCM_Matrix[2][2], -ROLL_ZREF*p_dcm_state->DCM_Matrix[2][1] );
+      p_sensor_state->roll =  p_control->dcm_prms.RollRotationConv*f_atan2( p_dcm_state->DCM_Matrix[2][2], -p_control->dcm_prms.RollRotationRef*p_dcm_state->DCM_Matrix[2][1] );
       break;
   }
 

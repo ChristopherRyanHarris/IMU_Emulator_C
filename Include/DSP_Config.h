@@ -9,10 +9,6 @@
 #ifndef DSP_CONFIG_H
 #define DSP_CONFIG_H
 
-#if EXE_MODE==1 /* Emulator mode */
-#include <inttypes.h>
-#endif
-
 
 /*******************************************************************
 ** DEFINES

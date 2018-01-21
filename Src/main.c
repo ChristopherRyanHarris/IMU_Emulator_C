@@ -21,9 +21,15 @@
 #include <inttypes.h>
 #include <stdbool.h>
 
-#include "../Include/Emulator_Config.h"
+#include "../Include/Common_Config.h"
 #include "../Include/Emulator_Protos.h"
 
+#ifdef _IMU10736_
+	#include "../Include/IMU10736_Config.h"
+#endif
+#ifdef _IMU9250_
+	#include "../Include/IMU9250_Config.h"
+#endif
 
 /*******************************************************************
 ** Globals *********************************************************
@@ -113,8 +119,8 @@ int main( void )
 	************************************************************/
 
 	/* Set input data file and (optional) output file */
-	const char* InputFile  = ".\\Data\\BinaryData\\Subject3_2\\F4_2.bin";
-	const char* OutputFile = "C:\\Users\\chris\\Desktop\\test.txt";
+	g_control.emu_data.InputFile  = ".\\Data\\BinaryData\\Subject3_2\\F4_2.bin";
+	g_control.emu_data.OutputFile = "C:\\Users\\chris\\Desktop\\test.txt";
 
   float count = 1.0;
 	bool ret;
@@ -124,10 +130,10 @@ int main( void )
   Common_Init( &g_control );
 
 	/* Open input file */
-  g_control.emu_data.InputFID = fopen(InputFile,"rb");
+  g_control.emu_data.InputFID = fopen(g_control.emu_data.InputFile,"rb");
   if( g_control.emu_data.InputFID==NULL )
   {
-  	fprintf(stderr,"ERROR : Opening Input Data file %s : File Handle Null",InputFile);
+  	fprintf(stderr,"ERROR : Opening Input Data file %s : File Handle Null",g_control.emu_data.InputFile);
   }
 
   /* If desired, open output file to write debug data

@@ -7,7 +7,10 @@
 ** 		functions. Specifically, for initializing and
 ** 		reading the sensor registeres.
 **		These functions cannot be used in emulation mode.
+**		Furhter, these functions can only be used for the IMU10736 
+**		platform.
 ********************************************************************/
+
 
 /*************************************************
 ** NOTES on orientation for the 10736 IMU
@@ -29,13 +32,16 @@
 **************************************************/
 
 
-#ifdef _IMU10736_
-
-
 /*******************************************************************
 ** Includes ********************************************************
 ********************************************************************/
 
+#ifndef COMMON_CONFIG_H
+	#include "../Include/Common_Config.h"
+#endif
+
+/* Only link if using IMU10736 */
+#ifdef _IMU10736_
 
 /*******************************************************************
 ** Functions *******************************************************
@@ -422,7 +428,7 @@ void Read_Gyro( CONTROL_TYPE 			*p_control,
 } /* End Read_Gyro */
 
 
-#endif /* _IMU10736_ */
+#endif /* End _IMU10736_ */
 
 
 

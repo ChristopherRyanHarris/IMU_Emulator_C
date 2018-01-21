@@ -1,6 +1,6 @@
 
 /*******************************************************************
-** FILE: 
+** FILE:
 **   	Math
 ** DESCRIPTION:
 ** 		This file contains all the math helper functions.
@@ -13,21 +13,16 @@
 ** Includes ********************************************************
 ********************************************************************/
 
-
-#include "../Include/Common_Config.h"
+#ifndef COMMON_CONFIG_H
+	#include "../Include/Common_Config.h"
+#endif
 #if EXE_MODE==1 /* Emulator Mode */
-	#include <math.h>
-	#include "../Include/Emulator_Config.h"
+	/* In emulatiom mode, "Emulator_Protos" is needed to 
+	** use funcitons in other files.
+	** NOTE: This header should contain the function 
+	** 			 prototypes for all execution functions */
 	#include "../Include/Emulator_Protos.h"
-
-	#ifdef _IMU10736_
-		#include "../Include/IMU10736_Config.h"
-	#endif
-	#ifdef _IMU9250_
-		#include "../Include/IMU9250_Config.h"
-	#endif
-
-#endif /* End Emulator Mode */
+#endif  /* End Emulator Mode */
 
 /*******************************************************************
 ** Functions *******************************************************
@@ -151,7 +146,7 @@ void Matrix_Matrix_Multiply(const float m1[3][3], const float m2[3][3], float ou
 void Matrix_Vector_Multiply(const float m[3][3], const float v[3], float out[3])
 {
 	int i;
-  for( 0; i<3; i++ ) { out[i] = m[i][0]*v[0] + m[i][1]*v[1] + m[i][2]*v[2]; }
+  for( i=0; i<3; i++ ) { out[i] = m[i][0]*v[0] + m[i][1]*v[1] + m[i][2]*v[2]; }
 } /* End Matrix_Vector_Multiply */
 
 

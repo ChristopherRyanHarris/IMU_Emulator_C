@@ -9,7 +9,9 @@
 #ifndef IMU9250_CONFIG_H
 #define IMU9250_CONFIG_H
 
-#include "../Include/Common_Config.h"
+#ifndef MATH_H
+  #include "../Include/Math.h"
+#endif
 
 /******************************************************************
 ** User defined
@@ -164,13 +166,13 @@
 	#define COMM_AVAILABLE COMM_PORT.available()
 	#define COMM_READ COMM_PORT.read()
 #else /* Emulator Mode */
-	#define LOG_PRINTLN(x) fprintf(stdout,x);fprintf(stdout,"\n");
-	#define LOG_PRINT(x) fprintf(stdout,x);
-
-	#define COMM_PRINT(x)  fprintf(stdout,"[COMM PRINT]: %c\n",x);
-	#define COMM_WRITE(x,y)  fprintf(stdout,"[COMM WRITE]: %d (len:%d)",*x,y);
-	#define COMM_AVAILABLE (0)
-	#define COMM_READ (-1) /*Serail.read() return -1 if no data */
+//	#define LOG_PRINTLN(x) fprintf(stdout,x);fprintf(stdout,"\n");
+//	#define LOG_PRINT(x) fprintf(stdout,x);
+//
+//	#define COMM_PRINT(x)  fprintf(stdout,"[COMM PRINT]: %c\n",x);
+//	#define COMM_WRITE(x,y)  fprintf(stdout,"[COMM WRITE]: %d (len:%d)",*x,y);
+//	#define COMM_AVAILABLE (0)
+//	#define COMM_READ (-1) /*Serail.read() return -1 if no data */
 #endif
 
 /* Sampling resolution
@@ -225,8 +227,8 @@
 
 /* Calibration Macros
 ******************************************************************/
-#define TO_RAD(x) (x * 0.01745329252)  // deg to rad: *pi/180
-#define TO_DEG(x) (x * 57.2957795131)  // rad to deg: *180/pi
+//#define TO_RAD(x) (x * 0.01745329252)  // deg to rad: *pi/180
+//#define TO_DEG(x) (x * 57.2957795131)  // rad to deg: *180/pi
 
 /* Movement Detection Thresholds
 ******************************************************************/

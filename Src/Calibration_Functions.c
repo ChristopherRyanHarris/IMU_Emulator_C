@@ -1,11 +1,11 @@
 
 /*******************************************************************
-** FILE: 
+** FILE:
 **   	Calibration_Functions
 ** DESCRIPTION:
 ** 		This file contains the functions which will aid in
 **    calibrating the sensors.
-** 		These functions are hardware independent. 
+** 		These functions are hardware independent.
 **    These functions cannot be used in emulation mode.
 ********************************************************************/
 
@@ -14,30 +14,26 @@
 ** Includes ********************************************************
 ********************************************************************/
 
-
-#include "../Include/Common_Config.h"
+#ifndef COMMON_CONFIG_H
+	#include "../Include/Common_Config.h"
+#endif
 #if EXE_MODE==1 /* Emulator Mode */
-	#include "../Include/Emulator_Config.h"
+	/* In emulatiom mode, "Emulator_Protos" is needed to 
+	** use funcitons in other files.
+	** NOTE: This header should contain the function 
+	** 			 prototypes for all execution functions */
 	#include "../Include/Emulator_Protos.h"
-
-	#ifdef _IMU10736_
-		#include "../Include/IMU10736_Config.h"
-	#endif
-	#ifdef _IMU9250_
-		#include "../Include/IMU9250_Config.h"
-	#endif
-
-#endif /* End Emulator Mode */
-
+#endif  /* End Emulator Mode */
 
 /*******************************************************************
 ** Functions *******************************************************
 ********************************************************************/
 
+
 /*************************************************
 ** FUNCTION: Calibration_Init
 ** VARIABLES:
-**		[I ]	CONTROL_TYPE			*p_control
+**		[IO]	CONTROL_TYPE			*p_control
 **		[IO]	CALIBRATION_TYPE	*p_calibration
 ** RETURN:
 **		NONE
@@ -54,18 +50,18 @@ void Calibration_Init ( CONTROL_TYPE			*p_control,
 
 	/* Set default calibration parameters */
 	p_control->calibration_prms.output_mode = CAL_OUTPUT_MODE;
-	
+
 	p_control->calibration_prms.accel_min_x = ACCEL_X_MIN;
 	p_control->calibration_prms.accel_max_x = ACCEL_X_MAX;
 	p_control->calibration_prms.accel_min_y = ACCEL_Y_MIN;
 	p_control->calibration_prms.accel_max_y = ACCEL_Y_MAX;
 	p_control->calibration_prms.accel_min_z = ACCEL_Z_MIN;
 	p_control->calibration_prms.accel_max_z = ACCEL_Z_MAX;
-	
+
 	p_control->calibration_prms.gyro_ave_offset_x = GYRO_AVERAGE_OFFSET_X;
 	p_control->calibration_prms.gyro_ave_offset_y = GYRO_AVERAGE_OFFSET_Y;
 	p_control->calibration_prms.gyro_ave_offset_z = GYRO_AVERAGE_OFFSET_Z;
-	
+
 	p_control->calibration_prms.magn_min_x = MAGN_X_MIN;
 	p_control->calibration_prms.magn_max_x = MAGN_X_MAX;
 	p_control->calibration_prms.magn_min_y = MAGN_Y_MIN;

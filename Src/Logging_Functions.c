@@ -20,19 +20,12 @@
 	#include "../Include/Common_Config.h"
 #endif
 #if EXE_MODE==1 /* Emulator Mode */
-	#include "../Include/Emulator_Config.h"
+	/* In emulatiom mode, "Emulator_Protos" is needed to 
+	** use funcitons in other files.
+	** NOTE: This header should contain the function 
+	** 			 prototypes for all execution functions */
 	#include "../Include/Emulator_Protos.h"
-	#include "../Include/WISE_Config.h"
-
-	#ifdef _IMU10736_
-		#include "../Include/IMU10736_Config.h"
-	#endif
-	#ifdef _IMU9250_
-		#include "../Include/IMU9250_Config.h"
-	#endif
-
-#endif /* End Emulator Mode */
-
+#endif  /* End Emulator Mode */
 
 /*******************************************************************
 ** Functions *******************************************************
@@ -62,7 +55,7 @@ void Debug_LogOut( CONTROL_TYPE				*p_control,
   switch ( p_control->output_mode )
   {
     case 0:
-    	sprintf(fastlog,"T:%09d, DT:%.4f, SR:% 07.4f, R:% 09.4f, P:% 09.4f, Y:% 09.4f, A:% 05.0f,% 05.0f,% 05.0f, G:% 05.0f,% 05.0f,% 05.0f\n",
+    	sprintf(fastlog,"T:%09lu, DT:%.4f, SR:% 07.4f, R:% 09.4f, P:% 09.4f, Y:% 09.4f, A:% 05.0f,% 05.0f,% 05.0f, G:% 05.0f,% 05.0f,% 05.0f\n",
     		p_control->timestamp,p_control->G_Dt,(1/p_control->G_Dt),
 	    	TO_DEG(p_sensor_state->roll),TO_DEG(p_sensor_state->pitch),TO_DEG(p_sensor_state->yaw),
 	    	p_sensor_state->accel[0],p_sensor_state->accel[1],p_sensor_state->accel[2],
@@ -74,17 +67,17 @@ void Debug_LogOut( CONTROL_TYPE				*p_control,
     		p_wise_state->Incline_gait,p_wise_state->Incline_ave,p_wise_state->Incline );
       break;
     case 2:
-    	sprintf(fastlog,"WISE(v) (v/av/d/od/op): 1:%.4f/%.4f/%.4f/%.4f 2:%.4f/%.4f/%.4f/%.4f\n",
+    	sprintf(fastlog,"WISE(v) (v/av/d/od/op): 1:%.4f/%.4f/%.4f/%.4f/%.4f 2:%.4f/%.4f/%.4f/%.4f/%.4f\n",
     		p_wise_state->vel[0],p_wise_state->vel_ave[0],p_wise_state->vel_delta[0],p_wise_state->omega_vd[0],p_wise_state->omega_vp[0],
     		p_wise_state->vel[1],p_wise_state->vel_ave[1],p_wise_state->vel_delta[1],p_wise_state->omega_vd[1],p_wise_state->omega_vp[1] );
       break;
     case 3:
-    	sprintf(fastlog,"WISE(a) (a/aa/d/od/op): 1:%.4f/%.4f/%.4f/%.4f 2:%.4f/%.4f/%.4f/%.4f\n",
+    	sprintf(fastlog,"WISE(a) (a/aa/d/od/op): 1:%.4f/%.4f/%.4f/%.4f/%.4f 2:%.4f/%.4f/%.4f/%.4f/%.4f\n",
     		p_wise_state->accel[0],p_wise_state->accel_ave[0],p_wise_state->accel_delta[0],p_wise_state->omega_ad[0],p_wise_state->omega_ap[0],
     		p_wise_state->accel[1],p_wise_state->accel_ave[1],p_wise_state->accel_delta[1],p_wise_state->omega_ad[1],p_wise_state->omega_ap[1]);
       break;
     case 4:
-    	sprintf(fastlog,"%d,%.0f,%.0f,%.0f,%.0f,%.0f,%.0f,%.4f,%.4f,%.4f\n",
+    	sprintf(fastlog,"%09lu,%.0f,%.0f,%.0f,%.0f,%.0f,%.0f,%.4f,%.4f,%.4f\n",
     		p_control->timestamp,
 	    	p_sensor_state->accel[0],p_sensor_state->accel[1],p_sensor_state->accel[2],
 	    	p_sensor_state->gyro[0],p_sensor_state->gyro[1],p_sensor_state->gyro[2],

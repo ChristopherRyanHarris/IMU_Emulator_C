@@ -14,22 +14,16 @@
 ** Includes ********************************************************
 ********************************************************************/
 
-#include "../Include/Common_Config.h"
+#ifndef COMMON_CONFIG_H
+	#include "../Include/Common_Config.h"
+#endif
 #if EXE_MODE==1 /* Emulator Mode */
-	#include "../Include/Emulator_Config.h"
+	/* In emulatiom mode, "Emulator_Protos" is needed to 
+	** use funcitons in other files.
+	** NOTE: This header should contain the function 
+	** 			 prototypes for all execution functions */
 	#include "../Include/Emulator_Protos.h"
-	#include "../Include/Communication_Config.h"
-	#include "../Include/Math.h"
-
-	#ifdef _IMU10736_
-		#include "../Include/IMU10736_Config.h"
-	#endif
-	#ifdef _IMU9250_
-		#include "../Include/IMU9250_Config.h"
-	#endif
-
-#endif /* End Emulator Mode */
-
+#endif  /* End Emulator Mode */
 
 /*******************************************************************
 ** Functions *******************************************************
@@ -37,10 +31,18 @@
 
 
 /*************************************************
-** f_RespondToInput
-** We have recieved a request
-** The request will be a single character (one Byte)
-** which will coorespond to a given type of data being
+** FUNCTION: f_RespondToInput
+** VARIABLES:
+**		[I ]	CONTROL_TYPE			*p_control
+**		[I ]	SENSOR_STATE_TYPE	*p_sensor_state
+**		[I ]	WISE_STATE_TYPE		*p_wise_state
+**		[I ]	int								nBytes
+** RETURN:
+**		NONE
+** DESCRIPTION:
+** 		We have recieved a request
+** 		The request will be a single character (one Byte)
+** 		which will coorespond to a given type of data being
 ** requested by the master
 */
 void f_RespondToInput( CONTROL_TYPE 			*p_control,
@@ -198,10 +200,15 @@ void f_RespondToInput( CONTROL_TYPE 			*p_control,
 
 
 /*************************************************
-** f_SendPacket
-** This code builds the contiguous byte array
-** from the defined "Response" packet then sends
-** the data as a singly stream over the UART line
+** FUNCTION: f_SendPacket
+** VARIABLES:
+**		[I ]	COMMUNICATION_PACKET_TYPE Response
+** RETURN:
+**		NONE
+** DESCRIPTION: 
+** 		This code builds the contiguous byte array
+** 		from the defined "Response" packet then sends
+** 		the data as a singly stream over the UART line
 */
 void f_SendPacket( COMMUNICATION_PACKET_TYPE Response )
 {
@@ -232,10 +239,17 @@ void f_SendPacket( COMMUNICATION_PACKET_TYPE Response )
   LOG_PRINTLN(" ");
 } /* End f_SendPacket */
 
+
 /*************************************************
-** f_WriteIToPacket
-** This is a helper function which copies an 2 byte integer
-** into an array of single bytes
+** FUNCTION: f_WriteIToPacket
+** VARIABLES:
+**		[IO]	uint8_t			*Packet
+**		[I ]	uint16_t		InputBuffer
+** RETURN:
+**		NONE
+** DESCRIPTION:  
+** 		This is a helper function which copies an 2 byte integer
+** 		into an array of single bytes
 */
 void f_WriteIToPacket( uint8_t *Packet, uint16_t InputBuffer )
 {
@@ -249,20 +263,26 @@ void f_WriteIToPacket( uint8_t *Packet, uint16_t InputBuffer )
 } /* End f_WriteIToPacket */
 
 /*************************************************
-** f_WriteFToPacket_u16
-** This is a helper function which copies an 4 byte float
-** into an array of single bytes
-** Because the master (the C200) uses half precision floats,
-** we cannot send the full 4 byte float.
-** Instead, we:
-**    1) Convert the 4 byte float into a 2 byte unsigned integer
-**    2) Pack the 2 byte integer into an array of single bytes
-** When the data is recieved by the master, it is converted to
-** a 2 byte float.
-** This function assumes that we are sending signed floats.
-** If we can assume that the data is unsigned, we would be able
-** to shift an additional bit. This could be implemented as another
-** packet "Type"
+** FUNCTION: f_WriteFToPacket_u16
+** VARIABLES:
+**		[IO]	unsigned char	*Packet
+**		[I ]	float					Input
+** RETURN:
+**		NONE
+** DESCRIPTION:  
+** 		This is a helper function which copies an 4 byte float
+** 		into an array of single bytes
+** 		Because the master (the C200) uses half precision floats,
+** 		we cannot send the full 4 byte float.
+** 		Instead, we:
+**    	1) Convert the 4 byte float into a 2 byte unsigned integer
+**    	2) Pack the 2 byte integer into an array of single bytes
+** 		When the data is recieved by the master, it is converted to
+** 		a 2 byte float.
+** 		This function assumes that we are sending signed floats.
+** 		If we can assume that the data is unsigned, we would be able
+** 		to shift an additional bit. This could be implemented as another
+** 		packet "Type"
 */
 void f_WriteFToPacket_u16( unsigned char *Packet, float Input )
 {
@@ -281,10 +301,16 @@ void f_WriteFToPacket_u16( unsigned char *Packet, float Input )
 } /* End f_WriteFToPacket_u16 */
 
 /*************************************************
-** f_WriteFToPacket_s32
-** This function writes a float to the packet
-** in a bit for bit fashion. Ie. we pack the float
-** as it is stored in memory
+** FUNCTION: f_WriteFToPacket_s32
+** VARIABLES:
+**		[IO]	unsigned char	*Packet
+**		[I ]	float					Input
+** RETURN:
+**		NONE
+** DESCRIPTION:   
+** 		This function writes a float to the packet
+** 		in a bit for bit fashion. Ie. we pack the float
+**		as it is stored in memory
 */
 void f_WriteFToPacket_s32( unsigned char *Packet, float Input )
 {
@@ -300,14 +326,18 @@ void f_WriteFToPacket_s32( unsigned char *Packet, float Input )
 } /* End f_WriteFToPacket_s32 */
 
 
-
 /*************************************************
-** f_Handshake
-** The Handshake code waits for the TI board to
-** initiate the handshake. Handshake is initiated
-** by recieving any character(s). Once Initiated,
-** we must send the baud lock character "a" or "A"
-** and then wait for the confirmation charaacter
+** FUNCTION: f_Handshake
+** VARIABLES:
+**		[I ]	CONTROL_TYPE	*p_control
+** RETURN:
+**		NONE
+** DESCRIPTION: 
+** 		The Handshake code waits for the TI board to
+** 		initiate the handshake. Handshake is initiated
+** 		by recieving any character(s). Once Initiated,
+** 		we must send the baud lock character "a" or "A"
+** 		and then wait for the confirmation charaacter
 */
 void f_Handshake( CONTROL_TYPE *p_control )
 {
@@ -426,11 +456,17 @@ void f_Handshake( CONTROL_TYPE *p_control )
 
 
 /*************************************************
-** f_CheckSum
-** This function gets a simple checksum for
-** the response packet. This checksum simply summs
-** the response buffer (modulated to keep within 1 byte)
-** This allows for proper data transmission
+** FUNCTION: f_CheckSum
+** VARIABLES:
+**		[I ]	unsigned char	*p_Buffer
+**		[I ]	uint16_t			nBytes
+** RETURN:
+**		uint8_t		checksum
+** DESCRIPTION: 
+** 		This function gets a simple checksum for
+** 		the response packet. This checksum simply summs
+** 		the response buffer (modulated to keep within 1 byte)
+** 		This allows for proper data transmission
 */
 uint8_t f_CheckSum( unsigned char *p_Buffer, uint16_t nBytes )
 {

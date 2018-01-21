@@ -6,15 +6,44 @@
 ** 		This file contains some MPU 9250 (HW specific)
 ** 		functions. Specifically, for initializing and 
 ** 		reading the sensor registeres
+**		These functions cannot be used in emulation mode.
+**		Furhter, these functions can only be used for the IMU9250
+**		platform.
 ********************************************************************/
 
 
-#ifdef _IMU9250_
+/*************************************************
+** Notes on orientation for the 9250 IMU
+**   Terms:
+**     Fore:       (Front) Edge of the USB port
+**     Aft:        (Rear) Edge oposite of the USB port
+**     Starboard:  (Right) Edge oposite of PWR switch
+**     Port:       (Left) Edge with PWR switch
+**     Zenith:     (Up) face with USB port
+**     Nadir:      (Down) face oposite USB port
+**   Contrary to the silk, the axis are positioned as follows:
+**     +x is Fore,       -x is Aft
+**     +y is Starboard,  -y is Port
+**     +z is Zenith,     -z is Nadir
+**   This means, placing the board on a flat surface with the
+**   face without the USB port (Nadir) down will result in an acceleration
+**   of about -2000 (1xg) for accel[2] (z) since the acceleration
+**   from gravity with be acting along -z.
+**   Accel: [ x  y  z ]
+**   Gyro:  [-x -y -z ] (RH rule)
+**************************************************/
 
 
 /*******************************************************************
 ** Includes ********************************************************
 ********************************************************************/
+
+#ifndef COMMON_CONFIG_H
+	#include "../Include/Common_Config.h"
+#endif
+
+/* Only link if using IMU9250 */
+#ifdef _IMU9250_
 
 /*******************************************************************
 ** Functions *******************************************************
@@ -112,7 +141,7 @@ void Read_Sensors( CONTROL_TYPE				*p_control,
   
 } /* End Read_Sensors */
 
-#endif /* _IMU9250_ */
+#endif /* End _IMU9250_ */
 
 
 

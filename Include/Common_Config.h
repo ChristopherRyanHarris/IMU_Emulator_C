@@ -15,26 +15,42 @@
 ** 1: Emulator */
 #define EXE_MODE 1
 
+//#define _IMU10736_ /* Using IMU10736 */
+#define _IMU9250_ /* Using IMU9250 */
+
 
 #if EXE_MODE==1
 	/* Emulator mode */
-	#include <stdbool.h>
-	#include <inttypes.h>
+	#include <math.h>
 	#include <stdio.h>
-
-	#include "../Include/Emulator_Config.h"
+	#include <stdio.h>
+	#include <inttypes.h>
+	#include <stdbool.h>
+	#include <string.h>
+	#include <time.h>
+	
 	#include "../Include/Calibration_Config.h"
 	#include "../Include/DSP_Config.h"
 	#include "../Include/DCM_Config.h"
 	#include "../Include/GaPA_Config.h"
 	#include "../Include/WISE_Config.h"
-
+	#include "../Include/Communication_Config.h"
+	#include "../Include/Math.h"
+
+	#include "../Include/Emulator_Config.h"
+	
+	#ifdef _IMU10736_
+		#include "../Include/IMU10736_Config.h"
+	#endif
+	#ifdef _IMU9250_
+		#include "../Include/IMU9250_Config.h"
+	#endif
+	
 #else
 #endif
 
 
-//#define _IMU10736_ /* Using IMU10736 */
-#define _IMU9250_ /* Using IMU9250 */
+
 	
 /**********************
 ** These are defaults,

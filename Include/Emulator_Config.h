@@ -17,6 +17,18 @@
 
 
 /*******************************************************************
+** Defines *********************************************************
+********************************************************************/
+
+#define LOG_PRINTLN(x) fprintf(stdout,x);fprintf(stdout,"\n");
+#define LOG_PRINT(x) fprintf(stdout,x);
+
+#define COMM_PRINT(x)  fprintf(stdout,"[COMM PRINT]: %c\n",x);
+#define COMM_WRITE(x,y)  fprintf(stdout,"[COMM WRITE]: %d (len:%d)",*x,y);
+#define COMM_AVAILABLE (0)
+#define COMM_READ (-1) /*Serail.read() returns "-1" if no data */
+
+/*******************************************************************
 ** Tyedefs *********************************************************
 ********************************************************************/
 
@@ -28,8 +40,11 @@ typedef struct
 
     bool flag;
 
-    FILE*       InputFID;
-    FILE*       OutputFID;
+    FILE* InputFID;
+    char*	InputFile;
+    FILE* OutputFID;
+    char* OutputFile;
+    
 } EMULATION_TYPE;
 
 #endif /* End EMULATOR_CONFIG_H */

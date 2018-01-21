@@ -1,6 +1,6 @@
 
 /*******************************************************************
-** FILE: 
+** FILE:
 **   	Emulator_Functions
 ** DESCRIPTION:
 ** 		This file contains the helper functions exclusive to running
@@ -13,31 +13,33 @@
 ** Includes ********************************************************
 ********************************************************************/
 
-
-#include "../Include/Common_Config.h"
+#ifndef COMMON_CONFIG_H
+	#include "../Include/Common_Config.h"
+#endif
 #if EXE_MODE==1 /* Emulator Mode */
-	#include<time.h>
-	
-	#include "../Include/Emulator_Config.h"
+	/* In emulatiom mode, "Emulator_Protos" is needed to 
+	** use funcitons in other files.
+	** NOTE: This header should contain the function 
+	** 			 prototypes for all execution functions */
 	#include "../Include/Emulator_Protos.h"
-	#include "../Include/Math.h"
+#endif  /* End Emulator Mode */
 
-	#ifdef _IMU10736_
-		#include "../Include/IMU10736_Config.h"
-	#endif
-	#ifdef _IMU9250_
-		#include "../Include/IMU9250_Config.h"
-	#endif
-
-#endif /* End Emulator Mode */
-
+/* Only link if in emulation mode */
+#if EXE_MODE==1
 
 /*******************************************************************
 ** Functions *******************************************************
 ********************************************************************/
 
 /*************************************************
-** Init_Emulator
+** FUNCTION: Init_Emulator
+** VARIABLES:
+**		[I ]	CONTROL_TYPE		*p_control
+** RETURN:
+**		NONE
+** DESCRIPTION:
+**		This function initialized the control struct to
+**		to handle emulation mode execution.
 */
 void Init_Emulator( CONTROL_TYPE *p_control )
 {
@@ -100,10 +102,24 @@ void Read_Sensors( CONTROL_TYPE				*p_control,
 } /* End Read_Sensors */
 
 
-
-
+/*************************************************
+** FUNCTION: delay
+** VARIABLES:
+**		[I ]	unsigned int mseconds
+** RETURN:
+**		NONE
+** DESCRIPTION:
+**		This function emulates the delay function
+**		in Arduino.
+**		This function is uneccessary and shouldn't 
+**		be called.
+*/
 void delay(unsigned int mseconds)
 {
     clock_t goal = mseconds + clock();
     while (goal > clock());
 }
+
+
+
+#endif /* End EXE_MODE (Emulation mode) */

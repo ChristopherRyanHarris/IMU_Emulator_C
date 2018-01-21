@@ -19,38 +19,26 @@
 ** Includes ********************************************************
 ********************************************************************/
 
-
-#include "../Include/Common_Config.h"
+#ifndef COMMON_CONFIG_H
+	#include "../Include/Common_Config.h"
+#endif
 #if EXE_MODE==1 /* Emulator Mode */
-	#include <string.h>
-
-	#include "../Include/DSP_Config.h"
-	#include "../Include/DCM_Config.h"
-	#include "../Include/Emulator_Config.h"
+	/* In emulatiom mode, "Emulator_Protos" is needed to 
+	** use funcitons in other files.
+	** NOTE: This header should contain the function 
+	** 			 prototypes for all execution functions */
 	#include "../Include/Emulator_Protos.h"
-
-	#ifdef _IMU10736_
-		#include "../Include/IMU10736_Config.h"
-	#endif
-	#ifdef _IMU9250_
-		#include "../Include/IMU9250_Config.h"
-	#endif
-
 #endif  /* End Emulator Mode */
-
 
 /*******************************************************************
 ** Functions *******************************************************
 ********************************************************************/
 
 
-
-
-
 /*************************************************
 ** FUNCTION: DSP_Filter_Init
 ** VARIABLES:
-**		[I ]	CONTROL_TYPE		*p_control
+**		[IO]	CONTROL_TYPE		*p_control
 **		[IO]	DSP_STATE_TYPE	*p_dsp_state
 ** RETURN:
 **		NONE
@@ -106,7 +94,7 @@ void DSP_Filter_Init ( CONTROL_TYPE			*p_control,
 ** VARIABLES:
 **		[I ]	CONTROL_TYPE			*p_control
 **		[IO]	DSP_STATE_TYPE		*p_dsp_state
-**		[IO]	SENSOR_STATE_TYPE *p_sensor_state
+**		[I ]	SENSOR_STATE_TYPE *p_sensor_state
 ** RETURN:
 **		NONE
 ** DESCRIPTION:
