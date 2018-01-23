@@ -17,27 +17,18 @@
 ** These can be changed to suit the users needs
 ******************************************************************/
 
-/* Communication Parameters
-*******************************************************************/
-/* Serial Port Configuration */
-#define LOG_PORT_BAUD 115200
-#define COMM_PORT_BAUD 9600
 
-/* The LED can be used for external debugging */
-//#define UART_BLINK_RATE 100
-#define UART_BLINK_RATE 1000
-
-/* DCM parameters
-*******************************************************************/
-
-/* DCM gain */
-#define Kp_ROLLPITCH 0.3f
-//#define Kp_ROLLPITCH 0.02f
-#define Ki_ROLLPITCH 0.00005f
-//#define Ki_ROLLPITCH 0.00002f
-
-#define Kp_YAW 1.2f
-#define Ki_YAW 0.00002f
+///* DCM parameters
+//*******************************************************************/
+//
+///* DCM gain */
+//#define Kp_ROLLPITCH 0.3f
+////#define Kp_ROLLPITCH 0.02f
+//#define Ki_ROLLPITCH 0.00005f
+////#define Ki_ROLLPITCH 0.00002f
+//
+//#define Kp_YAW 1.2f
+//#define Ki_YAW 0.00002f
 
 
 /*
@@ -127,8 +118,15 @@
 ** SparkFun "9DOF Razor IMU" version "SEN-10736" (HMC5883L magnetometer)
 *******************************************************************/
 
-/* COMM Ports
+/* Communication Parameters
 *******************************************************************/
+/* Serial Port Configuration */
+#define LOG_PORT_BAUD 115200
+#define COMM_PORT_BAUD 9600
+
+/* The LED can be used for external debugging */
+//#define UART_BLINK_RATE 100
+#define UART_BLINK_RATE 1000
 
 #if EXE_MODE==0 /* IMU Mode */
 	#define LOG_PORT if(DEBUG)Serial

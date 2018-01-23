@@ -213,7 +213,7 @@ float Windowed_Mean( float m, float x, int n, float a )
 float Rolling_Variance( const float m_prev, const float m, const float x, const float S )
 {
 	return ( S + (x-m)*(x-m_prev) );
-} /* End Rolling_Std */
+} /* End Rolling_Variance */
 
 
 /*************************************************

@@ -20,40 +20,24 @@
 ** These can be changed to suit the users needs
 ******************************************************************/
 
-/* Communication Parameters
-*******************************************************************/
-/* Serial Port Configuration */
-//#define LOG_PORT_BAUD 115200
-#define LOG_PORT_BAUD 250000
-//#define COMM_PORT_BAUD 9600
-#define COMM_PORT_BAUD 250000
-
-/* DEBUG LOG period (us) */
-//#define UART_LOG_RATE 100000
-#define UART_LOG_RATE 1
-
-/* The LED can be used for external debugging */
-//#define UART_BLINK_RATE 50
-//#define UART_BLINK_RATE 100
-#define UART_BLINK_RATE 300
 
 /* DCM parameters
 *******************************************************************/
 
 /* DCM gain */
-//#define Kp_ROLLPITCH 0.1f
-#define Kp_ROLLPITCH 0.0002f
-//#define Ki_ROLLPITCH 0.00005f
-//#define Ki_ROLLPITCH 0.00006f
-//#define Ki_ROLLPITCH 0.00001f
-#define Ki_ROLLPITCH 0.0000001f
-
-//#define Kp_YAW 1.2f
-//#define Kp_YAW 1.5f
-#define Kp_YAW 0.0f
-//#define Ki_YAW 0.00002f
-//#define Ki_YAW 0.00005f
-#define Ki_YAW 0.0f
+////#define Kp_ROLLPITCH 0.1f
+//#define Kp_ROLLPITCH 0.0002f
+////#define Ki_ROLLPITCH 0.00005f
+////#define Ki_ROLLPITCH 0.00006f
+////#define Ki_ROLLPITCH 0.00001f
+//#define Ki_ROLLPITCH 0.0000001f
+//
+////#define Kp_YAW 1.2f
+////#define Kp_YAW 1.5f
+//#define Kp_YAW 0.0f
+////#define Ki_YAW 0.00002f
+////#define Ki_YAW 0.00005f
+//#define Ki_YAW 0.0f
 
 /*
 ** Notes on orientation for the 9250 IMU
@@ -150,8 +134,23 @@
 #define MPU9250_INT_PIN 4
 #define MPU9250_INT_ACTIVE LOW
 
-/* COMM Ports
+
+/* Communication Parameters
 *******************************************************************/
+/* Serial Port Configuration */
+//#define LOG_PORT_BAUD 115200
+#define LOG_PORT_BAUD 250000
+//#define COMM_PORT_BAUD 9600
+#define COMM_PORT_BAUD 250000
+
+/* DEBUG LOG period (us) */
+//#define UART_LOG_RATE 100000
+#define UART_LOG_RATE 1
+
+/* The LED can be used for external debugging */
+//#define UART_BLINK_RATE 50
+//#define UART_BLINK_RATE 100
+#define UART_BLINK_RATE 300
 
 #if EXE_MODE==0 /* IMU Mode */
   //#define LOG_PORT if(DEBUG)Serial
@@ -165,14 +164,6 @@
 	#define COMM_WRITE COMM_PORT.write
 	#define COMM_AVAILABLE COMM_PORT.available()
 	#define COMM_READ COMM_PORT.read()
-#else /* Emulator Mode */
-//	#define LOG_PRINTLN(x) fprintf(stdout,x);fprintf(stdout,"\n");
-//	#define LOG_PRINT(x) fprintf(stdout,x);
-//
-//	#define COMM_PRINT(x)  fprintf(stdout,"[COMM PRINT]: %c\n",x);
-//	#define COMM_WRITE(x,y)  fprintf(stdout,"[COMM WRITE]: %d (len:%d)",*x,y);
-//	#define COMM_AVAILABLE (0)
-//	#define COMM_READ (-1) /*Serail.read() return -1 if no data */
 #endif
 
 /* Sampling resolution

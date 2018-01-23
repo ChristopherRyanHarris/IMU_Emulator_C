@@ -284,7 +284,7 @@ float Rolling_Mean(
 			float 		m, 
 			float 		x );
 
-float Rolling_Std( 
+float Rolling_Variance( 
 			const float m_prev, 
 			const float m, 
 			float 			x, 

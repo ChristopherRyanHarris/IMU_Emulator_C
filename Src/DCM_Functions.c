@@ -19,9 +19,9 @@
 	#include "../Include/Common_Config.h"
 #endif
 #if EXE_MODE==1 /* Emulator Mode */
-	/* In emulatiom mode, "Emulator_Protos" is needed to 
+	/* In emulatiom mode, "Emulator_Protos" is needed to
 	** use funcitons in other files.
-	** NOTE: This header should contain the function 
+	** NOTE: This header should contain the function
 	** 			 prototypes for all execution functions */
 	#include "../Include/Emulator_Protos.h"
 #endif  /* End Emulator Mode */
@@ -209,6 +209,9 @@ void DCM_Filter( CONTROL_TYPE				*p_control,
 								 DCM_STATE_TYPE			*p_dcm_state,
 								 SENSOR_STATE_TYPE	*p_sensor_state )
 {
+  int i;
+
+  float temp;
   float error = 0;
   float renorm = 0;
 
@@ -224,10 +227,11 @@ void DCM_Filter( CONTROL_TYPE				*p_control,
   float errorRollPitch[3];
   float errorYaw[3];
 
-  /* Clear Rolling Std/Average after set time 
+  /* Clear Rolling Std/Average after set time
   ** NOTE: This should be moved elsewhere */
-  #if( p_control->WISE_on==1 )
-  	p_sensor_state->std_time+=(p_control->G_Dt*TIME_RESOLUTION);
+  if( p_control->WISE_on==1 )
+  {
+    p_sensor_state->std_time+=(p_control->G_Dt*TIME_RESOLUTION);
   	if( p_sensor_state->std_time>MOVE_RESET_RATE )
  		{
 	  	for(i=0;i<3;i++) p_sensor_state->gyro_ave[i] = p_sensor_state->gyro[i];
@@ -246,7 +250,7 @@ void DCM_Filter( CONTROL_TYPE				*p_control,
   		p_sensor_state->gyro_ave[i] = temp;
   		p_sensor_state->gyro_std[i] = p_sensor_state->gyro_var[i]/p_dcm_state->SampleNumber;
   	}
-  #endif
+  }
 
 
   /******************************************************************
@@ -396,7 +400,7 @@ void DCM_Filter( CONTROL_TYPE				*p_control,
 	p_control->dcm_prms.PitchRotationConv = PITCH_ROT_CONV;
 	p_control->dcm_prms.RollRotationConv  = ROLL_ROT_CONV;
 	p_control->dcm_prms.RollRotationRef   = ROLL_ZREF;
-	
+
   /* Pitch Conventions (set in config):
   ** Range: -90:90
   ** With PITCH_ROT_CONV==1 :
