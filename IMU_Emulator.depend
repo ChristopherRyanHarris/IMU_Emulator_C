@@ -231,7 +231,7 @@
 	"../Include/Common_Config.h"
 	"../Include/Emulator_Protos.h"
 
-1516488538 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\main.c
+1516676640 source:c:\users\christopher harris\documents\githubp\imu_emulator_c\src\main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
@@ -381,7 +381,7 @@
 	<math.h>
 	"../Include/Emulator_Config.h"
 
-1516676211 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\dcm_config.h
+1516677095 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\dcm_config.h
 
 1516675450 c:\users\christopher harris\documents\githubp\imu_emulator_c\include\emulator_protos.h
 	"../Include/Common_Config.h"

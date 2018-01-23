@@ -120,7 +120,7 @@ int main( void )
 
 	/* Set input data file and (optional) output file */
 	g_control.emu_data.InputFile  = ".\\Data\\BinaryData\\Subject3_2\\F4_2.bin";
-	g_control.emu_data.OutputFile = "C:\\Users\\chris\\Desktop\\test.txt";
+	g_control.emu_data.OutputFile = "C:\Users\Christopher Harris\Desktop\\C_testing.txt";
 
   float count = 1.0;
 	bool ret;
@@ -138,11 +138,11 @@ int main( void )
 
   /* If desired, open output file to write debug data
   ** TODO: This could easily be expanded to be an execution log file */
-  //g_control.emu_data.OutputFID 	= fopen(OutputFile,"w");
-	//if( g_control.emu_data.InputFID==NULL )
-  //{
-  //	fprintf(stderr,"ERROR : Opening Input Data file %s : File Handle Null",InputFile);
-  //}
+  g_control.emu_data.OutputFID 	= fopen(OutputFile,"w");
+	if( g_control.emu_data.InputFID==NULL )
+  {
+  	fprintf(stderr,"ERROR : Opening Input Data file %s : File Handle Null",InputFile);
+  }
 
   /* Read all active sensors */
   Read_Sensors( &g_control, &g_sensor_state );
@@ -173,7 +173,7 @@ int main( void )
 	************************************************************/
 
 	/* We execute until EOF */
-  while( (junk=getc(g_control.emu_data.InputFID)) != EOF )
+  while( getc(g_control.emu_data.InputFID) != EOF )
   {
   	/* Rewind getc (from above) */
   	fseek(g_control.emu_data.InputFID,-1L,SEEK_CUR);
