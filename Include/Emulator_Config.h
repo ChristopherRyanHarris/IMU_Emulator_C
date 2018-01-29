@@ -20,11 +20,12 @@
 ** Defines *********************************************************
 ********************************************************************/
 
-#define LOG_PRINTLN(x) fprintf(stdout,x);fprintf(stdout,"\n");
-#define LOG_PRINT(x) fprintf(stdout,x);
+#define LOG_HEADER fprintf(stdout,"[%s:%d] > ",__func__,__LINE__);
+#define LOG_PRINTLN(x) LOG_HEADER;fprintf(stdout,x);fprintf(stdout,"\n");
+#define LOG_PRINT(x) LOG_HEADER;fprintf(stdout,x);
 
-#define COMM_PRINT(x)  fprintf(stdout,"[COMM PRINT]: %c\n",x);
-#define COMM_WRITE(x,y)  fprintf(stdout,"[COMM WRITE]: %d (len:%d)",*x,y);
+#define COMM_PRINT(x)  LOG_HEADER;fprintf(stdout,"[COMM PRINT]: %c\n",x);
+#define COMM_WRITE(x,y)  LOG_HEADER;fprintf(stdout,"[COMM WRITE]: %d (len:%d)",*x,y);
 #define COMM_AVAILABLE (0)
 #define COMM_READ (-1) /*Serail.read() returns "-1" if no data */
 

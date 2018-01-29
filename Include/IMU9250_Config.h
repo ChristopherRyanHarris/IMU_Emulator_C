@@ -144,22 +144,19 @@
 #define COMM_PORT_BAUD 250000
 
 /* DEBUG LOG period (us) */
-//#define UART_LOG_RATE 100000
 #define UART_LOG_RATE 1
 
 /* The LED can be used for external debugging */
-//#define UART_BLINK_RATE 50
-//#define UART_BLINK_RATE 100
 #define UART_BLINK_RATE 300
 
 #if EXE_MODE==0 /* IMU Mode */
+  
   //#define LOG_PORT if(DEBUG)Serial
   #define LOG_PORT if(DEBUG)SERIAL_PORT_USBVIRTUAL
-  #define COMM_PORT SERIAL_PORT_USBVIRTUAL
-
-	#define LOG_PRINTLN LOG_PORT.println
+  	#define LOG_PRINTLN LOG_PORT.println
 	#define LOG_PRINT LOG_PORT.print
 
+	#define COMM_PORT SERIAL_PORT_USBVIRTUAL
 	#define COMM_PRINT COMM_PORT.print
 	#define COMM_WRITE COMM_PORT.write
 	#define COMM_AVAILABLE COMM_PORT.available()

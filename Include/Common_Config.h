@@ -47,6 +47,21 @@
 	#endif
 	
 #else
+  #include "./Calibration_Config.h"
+	#include "./DSP_Config.h"
+	#include "./DCM_Config.h"
+	#include "./GaPA_Config.h"
+	#include "./WISE_Config.h"
+	#include "./Communication_Config.h"
+	#include "./Math.h"
+
+	#ifdef _IMU10736_
+		#include "./IMU10736_Config.h"
+	#endif
+	#ifdef _IMU9250_
+    #include <SparkFunMPU9250-DMP.h>
+		#include "./IMU9250_Config.h"
+	#endif
 #endif
 
 
@@ -60,8 +75,8 @@
 #define DEBUG 1 /* Print log/verbose information */
 
 /* I/O params */
-#define OUTPUT_MODE 4
-#define NUM_COM_MODES 6
+#define OUTPUT_MODE 1
+#define NUM_COM_MODES 2
 
 /* Calibration params  */
 #define CALIBRATION_MODE  0 /* 0:OFF 1:ON */

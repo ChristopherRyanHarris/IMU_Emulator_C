@@ -120,13 +120,13 @@ int main( void )
 
 	/* Set input data file and (optional) output file */
 	g_control.emu_data.InputFile  = ".\\Data\\BinaryData\\Subject3_2\\F4_2.bin";
-	g_control.emu_data.OutputFile = "C:\Users\Christopher Harris\Desktop\\C_testing.txt";
+	g_control.emu_data.OutputFile = "C:\\Users\\Christopher Harris\\Desktop\\C_testing.txt";
 
   float count = 1.0;
 	bool ret;
 	char junk;
 
-	/* Initilize the control structure */
+	/* Initialize the control structure */
   Common_Init( &g_control );
 
 	/* Open input file */
@@ -138,10 +138,10 @@ int main( void )
 
   /* If desired, open output file to write debug data
   ** TODO: This could easily be expanded to be an execution log file */
-  g_control.emu_data.OutputFID 	= fopen(OutputFile,"w");
-	if( g_control.emu_data.InputFID==NULL )
+  g_control.emu_data.OutputFID 	= fopen(g_control.emu_data.OutputFile,"w");
+	if( g_control.emu_data.OutputFID==NULL )
   {
-  	fprintf(stderr,"ERROR : Opening Input Data file %s : File Handle Null",InputFile);
+  	fprintf(stderr,"ERROR : Opening Output Data file %s : File Handle Null",g_control.emu_data.OutputFile);
   }
 
   /* Read all active sensors */
@@ -150,23 +150,24 @@ int main( void )
   /* Initialize Freq. Filter */
   if( g_control.DSP_on==1 ){ DSP_Filter_Init( &g_control, &g_dsp ); }
 
-	/* Initialize calibartion parameters */
+	/* Initialize calibration parameters */
   if( g_control.calibration_on==1 ){ Calibration_Init( &g_control, &g_calibration ); }
-
-	/* Initialize GaPA parameters */
-  if( g_control.GaPA_on==1 ){ GaPA_Init( &g_control, &g_gapa_state ); }
 
 	/* Initialize the Directional Cosine Matrix algorithm parameters */
   if( g_control.DCM_on==1 ){ DCM_Init( &g_control, &g_dcm_state, &g_sensor_state ); }
+
+	/* Initialize GaPA parameters */
+  if( g_control.GaPA_on==1 ){ GaPA_Init( &g_control, &g_gapa_state ); }
 
   /* Initialize Walking Incline and Speed Estimator */
   if( g_control.WISE_on==1 ){ WISE_Init( &g_control, &g_sensor_state, &g_wise_state ); }
 
 
 
-  fprintf(stdout,"pitch:%f\n",g_sensor_state.pitch);
-  fprintf(stdout,"Time:%ld\n",g_control.timestamp);
-	fprintf(stdout,"\n");
+  //fprintf(g_control.emu_data.OutputFID,"%f\n",g_sensor_state.pitch);
+  //fprintf(g_control.emu_data.OutputFID,"%lu\n",g_control.emu_data.timestamp);
+  //fprintf(stdout,"Time:%ld\n",g_control.timestamp);
+	//fprintf(stdout,"\n");
 
 	/************************************************************
 	** -------------------- Loop Begin --------------------------
@@ -212,18 +213,20 @@ int main( void )
 		}
 
 
-    fprintf(stdout,"\n");
-    fprintf(stdout,"Count: %f\n",count);
-    fprintf(stdout,"Time:%ld\n",g_control.timestamp);
+    //fprintf(stdout,"\n");
+    //fprintf(stdout,"Count: %f\n",count);
+    //fprintf(stdout,"Time:%ld\n",g_control.timestamp);
 
-    fprintf(stdout,"pitch:%f\n",g_sensor_state.pitch);
+    //fprintf(g_control.emu_data.OutputFID,"%f\n",g_sensor_state.pitch);
+    //fprintf(g_control.emu_data.OutputFID,"%lu\n",g_control.emu_data.timestamp);
+    fprintf(g_control.emu_data.OutputFID,"%f\n",g_gapa_state.nu);
 
-    fprintf(stdout,"nu:%f\n",g_gapa_state.nu);
-    fprintf(stdout,"phi:%f\nPHI:%f\n",g_gapa_state.phi, g_gapa_state.PHI);
+    //fprintf(stdout,"nu:%f\n",g_gapa_state.nu);
+    //fprintf(stdout,"phi:%f\nPHI:%f\n",g_gapa_state.phi, g_gapa_state.PHI);
 
-    fprintf(stdout,"\n");
+    //fprintf(stdout,"\n");
 
-    getchar();
+    //getchar();
 
     count++;
   }

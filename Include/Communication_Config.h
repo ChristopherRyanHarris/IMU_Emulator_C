@@ -5,7 +5,6 @@
 ** DESCRIPTION:
 **
 ********************************************************************/
-
 #ifndef CCOMMUNICATION_CONFIG_H
 #define CCOMMUNICATION_CONFIG_H
 

@@ -393,7 +393,7 @@ void f_Handshake( CONTROL_TYPE *p_control )
     ** The master should respond with the confirmation
     ** character */
     // Serial.print to Tx pin
-    COMM_PRINT( BaudLockChar )
+    COMM_PRINT( BaudLockChar );
   	sprintf(fastlog,"> BaudLockChar \"%c\" sent",BaudLockChar); LOG_PRINTLN( fastlog );
 
     /* We delay a few ms to allow the

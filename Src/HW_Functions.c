@@ -51,6 +51,7 @@ void Init_Hardware( CONTROL_TYPE	*p_control )
 {
   /* Initiate the LOG_PORT */
   LOG_PORT.begin(LOG_PORT_BAUD);
+  delay(2000);
 
   LOG_PRINTLN("> Initializing Hardware");
 
@@ -81,7 +82,7 @@ void Blink_LED( CONTROL_TYPE	*p_control )
 	if ( millis() > (p_control->LastBlinkTime + UART_BLINK_RATE) )
 	{
   	/* Toggle LED */
-  	digitalWrite(HW_LED_PIN, g_control_state.g_LedState);
+  	digitalWrite(HW_LED_PIN, p_control->LedState);
   	p_control->LedState = !p_control->LedState;
   	p_control->LastBlinkTime = millis();
 	}

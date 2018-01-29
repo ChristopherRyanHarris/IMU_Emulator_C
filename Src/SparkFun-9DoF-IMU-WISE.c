@@ -15,25 +15,20 @@
 ** Includes ********************************************************
 ********************************************************************/
 
-#include "../Include/Common_Config.h"
+#include "./Include/Common_Config.h"
 
 #include <Wire.h>
 #include <string.h>
 #include <math.h>
 
 #ifdef _IMU10736_
-	#include "../Include/IMU10736_Config.h"
+	#include "./Include/IMU10736_Config.h"
 #endif
 
 #ifdef _IMU9250_
 	#include <SparkFunMPU9250-DMP.h>
-	#include "../Include/IMU9250_Config.h"
+	#include "./Include/IMU9250_Config.h"
 #endif
-
-#include "../Include/DCM_Config.h"
-#include "../Include/DSP_Config.h"
-#include "../Include/WISE_Config.h"
-#include "../Include/Math.h"
 
 
 /*******************************************************************
@@ -49,20 +44,13 @@ CONTROL_TYPE        g_control;
 SENSOR_STATE_TYPE   g_sensor_state;
 
 /* Calibration Structure */
-#if CALIBRATION_MODE==1
-	CALIBRATION_TYPE  g_calibration;
-#endif
+CALIBRATION_TYPE  g_calibration;
 
 /* DCM variables */
 DCM_STATE_TYPE      g_dcm_state;
 
-#if( WISE_ON==1 )
-	WISE_STATE_TYPE     g_wise_state;
-#endif 
-
-#if( DSP_ON==1 )
-	DSP_COMMON_TYPE     g_dsp;
-#endif
+WISE_STATE_TYPE     g_wise_state;
+DSP_STATE_TYPE     g_dsp;
 
 /*******************************************************************
 ** START ***********************************************************
@@ -85,23 +73,18 @@ void setup( void )
 	bool ret;
 	
 	/* Initialize the hardware */
-  #if EXE_MODE==0 /* IMU real-time Mode */
-  	Init_Hardware( &g_control );
-  #endif
+  Init_Hardware( &g_control );
   
 	/* Initilize the control structure */
   Common_Init( &g_control );
   
   /* Initialize the IMU sensors*/
-  #if EXE_MODE==0 /* IMU real-time Mode */
-  	ret = Init_IMU( &g_control, &g_sensor_state );
-  	if ( ret==0 ) 
-  	{
-    	LOG_PRINTLN("ERROR : Setup : Cant Connect to IMU");
-    	while(1){}
-  	}
-  	delay(2000);
-  #endif
+	ret = Init_IMU( &g_control, &g_sensor_state );
+	if ( ret==0 ) 
+	{
+  	LOG_PRINTLN("ERROR : Setup : Cant Connect to IMU");
+  	while(1){}
+	}
   
   /* Set the initial roll/pitch/yaw from 
   ** initial accel/gyro */
@@ -110,21 +93,18 @@ void setup( void )
   Read_Sensors( &g_control, &g_sensor_state );
   
   /* Initialize Freq. Filter */
-  #if( DSP_ON==1 )
-  	DSP_Filter_Init( &g_control, &g_dsp );
-  #endif
+  if( g_control.DSP_on==1 ){ DSP_Filter_Init( &g_control, &g_dsp ); }
   
-  #if CALIBRATE_MODE==1
-  	Calibration_Init( &g_calibration );
-  #endif
+  if( g_control.calibration_on==1 ){ Calibration_Init( &g_control, &g_calibration ); }
 
 	/* Initialize the Directional Cosine Matrix Filter */
-  DCM_Init( &g_control, &g_dcm_state, &g_sensor_state );
+  if( g_control.DCM_on==1 ){ DCM_Init( &g_control, &g_dcm_state, &g_sensor_state ); }
   
+	/* Initialize GaPA parameters */
+  if( g_control.GaPA_on==1 ){ GaPA_Init( &g_control, &g_gapa_state ); }
+  	
   /* Initialize Walking Incline and Speed Estimator */
-  #if( WISE_ON==1 )
-  	WISE_Init( &g_control, &g_sensor_state, &g_wise_state );
-  #endif
+  if( g_control.WISE_on==1 ){ WISE_Init( &g_control, &g_sensor_state, &g_wise_state ); }
   
   LOG_PRINTLN("> IMU Setup Done");
   
@@ -150,12 +130,17 @@ void loop( void )
   /* Update the timestamp */
   Update_Time( &g_control );
   
+  /* If in calibration mode,
+	** call calibration function */
+  if( g_control.calibration_on==1 ){ Calibrate( &g_control, &g_calibration, &g_sensor_state ); }
+  
   /* Apply Freq Filter to Input */
-  #if( DSP_ON==1 )
-  	FIR_Filter( &g_control, &g_dsp, &g_sensor_state );
-  	IIR_Filter( &g_control, &g_dsp, &g_sensor_state );
+  if( g_control.DSP_on==1 )
+	{
+  	if( g_control.dsp_prms.IIR_on==1 ){ FIR_Filter( &g_control, &g_dsp, &g_sensor_state ); }
+  	if( g_control.dsp_prms.IIR_on==1 ){ IIR_Filter( &g_control, &g_dsp, &g_sensor_state ); }
   	DSP_Shift( &g_control, &g_dsp );
-  #endif
+  }
 
 	/* If in calibration mode, 
 	** call calibration function */
@@ -175,15 +160,18 @@ void loop( void )
 	#endif
     
   /* Read/Respond to command */
-  if( COMM_PORT.available()>0 ) { f_RespondToInput( COMM_PORT.available() );  }
+  if( COMM_AVAILABLE>0 )
+  { 
+    f_RespondToInput( &g_control, &g_sensor_state, &g_calibration, COMM_AVAILABLE );  
+  }
 
   /* We blink every UART_LOG_RATE millisecods */
-  if ( micros()>(g_control_state.LastLogTime+UART_LOG_RATE) )
+  if ( micros()>(g_control.LastLogTime+UART_LOG_RATE) )
   {
   	/* Log the current states to the debug port */
     Debug_LogOut( &g_control, &g_sensor_state, &g_wise_state );
     
-    g_control_state.g_LastLogTime = micros();
+    g_control.LastLogTime = micros();
 
     /* Display number of bytes available on comm port
     ** Com port is used for real-time communication with

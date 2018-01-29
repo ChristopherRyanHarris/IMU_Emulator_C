@@ -74,6 +74,8 @@ typedef struct
 
   int PitchOrientation;
   int PitchRotationConv;
+  
+  int RollOrientation;
   int RollRotationConv;
   int RollRotationRef;
 

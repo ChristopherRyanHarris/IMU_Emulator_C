@@ -31,8 +31,14 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="Include/Calibration_Config.h" />
 		<Unit filename="Include/Common_Config.h" />
+		<Unit filename="Include/Communication_Config.h" />
+		<Unit filename="Include/DCM_Config.h" />
+		<Unit filename="Include/DSP_Config.h" />
 		<Unit filename="Include/Emulator_Config.h" />
+		<Unit filename="Include/Emulator_Protos.h" />
+		<Unit filename="Include/GaPA_Config.h" />
 		<Unit filename="Include/IMU10736_Config.h" />
 		<Unit filename="Include/IMU9250_Config.h" />
 		<Unit filename="Include/Math.h" />
@@ -41,6 +47,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Src/Common_Functions.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Src/Communication_Functions.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Src/DCM_Functions.c">
@@ -52,7 +61,13 @@
 		<Unit filename="Src/Emulator_Functions.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="Src/GaPA_Functions.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="Src/HW_Functions.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="Src/Logging_Functions.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="Src/Math.c">
