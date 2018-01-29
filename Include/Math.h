@@ -3,7 +3,7 @@
 ** FILE:
 **   	Math.h
 ** DESCRIPTION:
-** 		This header file is inteded to hold common mathmatical
+** 		This header file is intended to hold common mathematical
 **		macros and commonly used constants.
 ********************************************************************/
 #ifndef MATH_H

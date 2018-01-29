@@ -37,7 +37,7 @@
 //#define Ki_YAW 0.00005f
 
 /*******************************************************************
-** Tyedefs *********************************************************
+** Typedefs *********************************************************
 ********************************************************************/
 
 /*
@@ -74,7 +74,7 @@ typedef struct
 
   int PitchOrientation;
   int PitchRotationConv;
-  
+
   int RollOrientation;
   int RollRotationConv;
   int RollRotationRef;

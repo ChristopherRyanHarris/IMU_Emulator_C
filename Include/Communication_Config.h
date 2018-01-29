@@ -10,12 +10,12 @@
 
 
 /*******************************************************************
-** Tyedefs *********************************************************
+** Typedefs *********************************************************
 ********************************************************************/
 
 /*
 ** TYPE: COMMUNICATION_PACKET_TYPE
-** Used to store temporary resonse data
+** Used to store temporary response data
 ** for responding to request from master */
 typedef struct
 {

@@ -43,7 +43,7 @@
 */
 void Common_Init ( CONTROL_TYPE *p_control )
 {
-  LOG_PRINT("> Initializing Common\n");
+  LOG_PRINTLN("> Initializing Common Parameters");
 
 	/* Set default IO mode */
 	p_control->output_mode = OUTPUT_MODE;
@@ -91,6 +91,7 @@ void Common_Init ( CONTROL_TYPE *p_control )
 */
 void Update_Time( CONTROL_TYPE *p_control )
 {
+
   #if EXE_MODE==1 /* Emulator Mode */
   	/* Timestamp is read from file */
   	p_control->timestamp_old = p_control->timestamp;

@@ -56,7 +56,7 @@ int main( void )
 	** arduino implementation, I wanted to be sure not to fill
 	** up the memory with unused code.
 	** This method could be easily changed later to allow for
-	** the various streams to be hot-swaped.
+	** the various streams to be hot-swapped.
 	************************************************************/
 
 	/* Control Structure
@@ -76,7 +76,7 @@ int main( void )
 
 
 	/* DSP state
-	** The Digitial Signal Processing algorithms
+	** The Digital Signal Processing algorithms
 	** are filters which are applied to the individual
 	** data feeds. This structure holds the state variables
 	** for the algorithm.
@@ -89,12 +89,12 @@ int main( void )
 	** The Directional cosine matrix is one
 	** method of determining the orientation of the
 	** IMU. This matrix holds the state information of
-	** the DCM algorihtm. */
+	** the DCM algorithm. */
 	DCM_STATE_TYPE      g_dcm_state;
 
 
 	/* GaPA state
-	** The Gait Phase Angle estimator is an aglorithm
+	** The Gait Phase Angle estimator is an algorithm
 	** (or set of algorithms) which will determine the
 	** current gait phase angle of the user. This
 	** structure holds the state variables of the algorithm */
@@ -114,7 +114,7 @@ int main( void )
 
 	/************************************************************
 	** ---------------- Initialize Variables --------------------
-	** Note that we must get an intial read of all the active
+	** Note that we must get an initial read of all the active
 	** sensors before we initialize the data structures.
 	************************************************************/
 
@@ -122,9 +122,13 @@ int main( void )
 	g_control.emu_data.InputFile  = ".\\Data\\BinaryData\\Subject3_2\\F4_2.bin";
 	g_control.emu_data.OutputFile = "C:\\Users\\Christopher Harris\\Desktop\\C_testing.txt";
 
-  float count = 1.0;
+  long int count = 1.0;
 	bool ret;
 	char junk;
+
+	/* Used in cases I want to write out to
+	** a file rather than stdout */
+  //SET_EMULATION_stdout(stdout);
 
 	/* Initialize the control structure */
   Common_Init( &g_control );
@@ -185,6 +189,8 @@ int main( void )
   	/* Update the timestamp */
   	Update_Time( &g_control );
 
+  	LOG_PRINTLN("(%ld) TIME:%lu DT:%f",count, g_control.timestamp, g_control.G_Dt);
+
     /* If in calibration mode,
 		** call calibration function */
 	  if( g_control.calibration_on==1 ){ Calibrate( &g_control, &g_calibration, &g_sensor_state ); }
@@ -212,21 +218,10 @@ int main( void )
 			}
 		}
 
+    LOG_PRINTLN("Pitch:%f", g_sensor_state.pitch);
+    LOG_PRINTLN("phi:%6.3f PHI:%6.3f Nu:%6.3f", g_gapa_state.phi, g_gapa_state.PHI, g_gapa_state.nu);
 
-    //fprintf(stdout,"\n");
-    //fprintf(stdout,"Count: %f\n",count);
-    //fprintf(stdout,"Time:%ld\n",g_control.timestamp);
-
-    //fprintf(g_control.emu_data.OutputFID,"%f\n",g_sensor_state.pitch);
-    //fprintf(g_control.emu_data.OutputFID,"%lu\n",g_control.emu_data.timestamp);
-    fprintf(g_control.emu_data.OutputFID,"%f\n",g_gapa_state.nu);
-
-    //fprintf(stdout,"nu:%f\n",g_gapa_state.nu);
-    //fprintf(stdout,"phi:%f\nPHI:%f\n",g_gapa_state.phi, g_gapa_state.PHI);
-
-    //fprintf(stdout,"\n");
-
-    //getchar();
+    getchar();
 
     count++;
   }

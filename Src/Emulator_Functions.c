@@ -17,9 +17,9 @@
 	#include "../Include/Common_Config.h"
 #endif
 #if EXE_MODE==1 /* Emulator Mode */
-	/* In emulatiom mode, "Emulator_Protos" is needed to 
+	/* In emulatiom mode, "Emulator_Protos" is needed to
 	** use funcitons in other files.
-	** NOTE: This header should contain the function 
+	** NOTE: This header should contain the function
 	** 			 prototypes for all execution functions */
 	#include "../Include/Emulator_Protos.h"
 #endif  /* End Emulator Mode */
@@ -43,7 +43,7 @@
 */
 void Init_Emulator( CONTROL_TYPE *p_control )
 {
-  LOG_PRINT("> Initializing\n");
+  LOG_PRINT("> Initializing Emulator\n");
 
   p_control->timestamp      = 0;
   p_control->timestamp_old  = 0;
@@ -111,7 +111,7 @@ void Read_Sensors( CONTROL_TYPE				*p_control,
 ** DESCRIPTION:
 **		This function emulates the delay function
 **		in Arduino.
-**		This function is uneccessary and shouldn't 
+**		This function is uneccessary and shouldn't
 **		be called.
 */
 void delay(unsigned int mseconds)
