@@ -119,19 +119,23 @@ int main( void )
 	************************************************************/
 
 	/* Set input data file and (optional) output file */
-	g_control.emu_data.InputFile  = ".\\Data\\BinaryData\\Subject3_2\\F4_2.bin";
-	g_control.emu_data.OutputFile = "C:\\Users\\Christopher Harris\\Desktop\\C_testing.txt";
+	//g_control.emu_data.InputFile  = ".\\Data\\BinaryData\\Subject3_2\\F4_2.bin";
+  g_control.emu_data.InputFile  = "F:\\Research_Data\\Original\\Subject3_3\\Subject3_04040.bin";
 
-  long int count = 1.0;
+	g_control.emu_data.OutputFile = "F:\\MatlabWorkspace\\C Testing\\C_testing_2.bin";
+
+  long unsigned int count = 0;
+  //long long unsigned int count = 0;
+  //float count = 0;
 	bool ret;
 	char junk;
 
-	/* Used in cases I want to write out to
+	/* Used in cases I want to write the logs out to
 	** a file rather than stdout */
   //SET_EMULATION_stdout(stdout);
 
 	/* Initialize the control structure */
-  Common_Init( &g_control );
+  Common_Init( &g_control, &g_sensor_state );
 
 	/* Open input file */
   g_control.emu_data.InputFID = fopen(g_control.emu_data.InputFile,"rb");
@@ -142,11 +146,14 @@ int main( void )
 
   /* If desired, open output file to write debug data
   ** TODO: This could easily be expanded to be an execution log file */
-  g_control.emu_data.OutputFID 	= fopen(g_control.emu_data.OutputFile,"w");
+  g_control.emu_data.OutputFID 	= fopen(g_control.emu_data.OutputFile,"wb");
 	if( g_control.emu_data.OutputFID==NULL )
   {
   	fprintf(stderr,"ERROR : Opening Output Data file %s : File Handle Null",g_control.emu_data.OutputFile);
   }
+
+	LOG_PRINTLN("Input File : %s",g_control.emu_data.InputFile);
+	LOG_PRINTLN("Output File : %s",g_control.emu_data.OutputFile);
 
   /* Read all active sensors */
   Read_Sensors( &g_control, &g_sensor_state );
@@ -166,7 +173,23 @@ int main( void )
   /* Initialize Walking Incline and Speed Estimator */
   if( g_control.WISE_on==1 ){ WISE_Init( &g_control, &g_sensor_state, &g_wise_state ); }
 
+  LOG_PRINTLN("sizeof(count) : %d", sizeof(count));
+  LOG_PRINTLN("sizeof(g_control.timestamp) : %d", sizeof(g_control.timestamp));
+  LOG_PRINTLN("sizeof(g_control.G_Dt) : %d", sizeof(g_control.G_Dt));
+  LOG_PRINTLN("sizeof(g_sensor_state.pitch) : %d", sizeof(g_sensor_state.pitch));
+  LOG_PRINTLN("sizeof(g_gapa_state.phi) : %d", sizeof(g_gapa_state.phi));
+  LOG_PRINTLN("sizeof(g_gapa_state.PHI) : %d", sizeof(g_gapa_state.PHI));
+  LOG_PRINTLN("sizeof(g_gapa_state.nu) : %d", sizeof(g_gapa_state.nu));
+  //getchar();
 
+  fwrite( &(count), 1, sizeof(count), g_control.emu_data.OutputFID );
+  fwrite( &(g_control.timestamp), 1, sizeof(g_control.timestamp), g_control.emu_data.OutputFID );
+  fwrite( &(g_control.G_Dt), 1, sizeof(g_control.G_Dt), g_control.emu_data.OutputFID );
+  fwrite( &(g_sensor_state.pitch), 1, sizeof(g_sensor_state.pitch), g_control.emu_data.OutputFID );
+  fwrite( &(g_gapa_state.phi), 1, sizeof(g_gapa_state.phi), g_control.emu_data.OutputFID );
+  fwrite( &(g_gapa_state.PHI), 1, sizeof(g_gapa_state.PHI), g_control.emu_data.OutputFID );
+  fwrite( &(g_gapa_state.nu_normalized), 1, sizeof(g_gapa_state.nu_normalized), g_control.emu_data.OutputFID );
+	fwrite( &(g_sensor_state.gyro_mAve), 1, sizeof(g_sensor_state.gyro_mAve), g_control.emu_data.OutputFID );
 
   //fprintf(g_control.emu_data.OutputFID,"%f\n",g_sensor_state.pitch);
   //fprintf(g_control.emu_data.OutputFID,"%lu\n",g_control.emu_data.timestamp);
@@ -178,6 +201,7 @@ int main( void )
 	************************************************************/
 
 	/* We execute until EOF */
+	count = 1;
   while( getc(g_control.emu_data.InputFID) != EOF )
   {
   	/* Rewind getc (from above) */
@@ -189,7 +213,7 @@ int main( void )
   	/* Update the timestamp */
   	Update_Time( &g_control );
 
-  	LOG_PRINTLN("(%ld) TIME:%lu DT:%f",count, g_control.timestamp, g_control.G_Dt);
+  	//LOG_PRINTLN("(%ld) TIME:%lu DT:%f",count, g_control.timestamp, g_control.G_Dt);
 
     /* If in calibration mode,
 		** call calibration function */
@@ -218,10 +242,20 @@ int main( void )
 			}
 		}
 
-    LOG_PRINTLN("Pitch:%f", g_sensor_state.pitch);
-    LOG_PRINTLN("phi:%6.3f PHI:%6.3f Nu:%6.3f", g_gapa_state.phi, g_gapa_state.PHI, g_gapa_state.nu);
+    //LOG_PRINTLN("Pitch:%f", g_sensor_state.pitch);
+    //LOG_PRINTLN("phi:%6.3f PHI:%6.3f Nu:%6.3f", g_gapa_state.phi, g_gapa_state.PHI, g_gapa_state.nu);
 
-    getchar();
+
+    fwrite( &(count), 1, sizeof(count), g_control.emu_data.OutputFID );
+    fwrite( &(g_control.timestamp), 1, sizeof(g_control.timestamp), g_control.emu_data.OutputFID );
+    fwrite( &(g_control.G_Dt), 1, sizeof(g_control.G_Dt), g_control.emu_data.OutputFID );
+    fwrite( &(g_sensor_state.pitch), 1, sizeof(g_sensor_state.pitch), g_control.emu_data.OutputFID );
+    fwrite( &(g_gapa_state.phi), 1, sizeof(g_gapa_state.phi), g_control.emu_data.OutputFID );
+    fwrite( &(g_gapa_state.PHI), 1, sizeof(g_gapa_state.PHI), g_control.emu_data.OutputFID );
+    fwrite( &(g_gapa_state.nu_normalized), 1, sizeof(g_gapa_state.nu_normalized), g_control.emu_data.OutputFID );
+    fwrite( &(g_sensor_state.gyro_mAve), 1, sizeof(g_sensor_state.gyro_mAve), g_control.emu_data.OutputFID );
+
+    //getchar();
 
     count++;
   }

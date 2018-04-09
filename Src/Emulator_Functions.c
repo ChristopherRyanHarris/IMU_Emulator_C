@@ -58,8 +58,8 @@ void Init_Emulator( CONTROL_TYPE *p_control )
 /*************************************************
 ** FUNCTION: Read_Sensors
 ** VARIABLES:
-**		[I ]	CONTROL_TYPE		*p_control
-**		[IO]	DSP_COMMON_TYPE	*p_dsp_state
+**		[I ]	CONTROL_TYPE			*p_control
+**		[IO]	SENSOR_STATE_TYPE	*p_sensor_state
 ** RETURN:
 **		NONE
 ** DESCRIPTION:
@@ -70,6 +70,9 @@ void Read_Sensors( CONTROL_TYPE				*p_control,
   float temp;
   int   count;
 
+	float gyro_mag;
+	float accel_mag;
+
   count = fread(&temp,sizeof(float),1,p_control->emu_data.InputFID);
   if ( count != 1 )
   {
@@ -79,7 +82,7 @@ void Read_Sensors( CONTROL_TYPE				*p_control,
   }
 
   //Format:1
-  // Data Colleciton: 1
+  // Data Collection: 1
   // Format:
   //   14x[float32] 14x[float32] ....
   //   [Timestamp][accel1][accel2][accel3][gyro1][gyro2][gyro3][yaw][pitch][roll][aest_ave1][aest_ave2][vest_ave1][vest_ave2]
@@ -90,7 +93,7 @@ void Read_Sensors( CONTROL_TYPE				*p_control,
 
 
   // Format: 2
-  // Data collecion: 2
+  // Data Collection: 2
   //   10x[float32] 10x[float32] ...
   //   [1]        [2]     [3]     [4]     [5]    [6]    [7]    [8]  [9]    [10]
   //   [Timestamp][accel1][accel2][accel3][gyro1][gyro2][gyro3][yaw][pitch][roll]
@@ -98,6 +101,44 @@ void Read_Sensors( CONTROL_TYPE				*p_control,
   fread(&p_sensor_state->accel[0],sizeof(float),3,p_control->emu_data.InputFID);
   fread(&p_sensor_state->gyro[0],sizeof(float),3,p_control->emu_data.InputFID);
   fseek(p_control->emu_data.InputFID,sizeof(float)*3,SEEK_CUR);
+
+  /* Increment sample number count */
+  p_control->SampleNumber++;
+
+  /* Update gyro stats */
+  gyro_mag  = Vector_Magnitude ( &p_sensor_state->gyro[0] );
+  if( p_control->SampleNumber == 1 )
+  {
+  	p_sensor_state->gyro_Ave = gyro_mag;
+  	p_sensor_state->gyro_mAve = gyro_mag;
+	  p_sensor_state->gyro_M2   = gyro_mag;
+	  p_sensor_state->gyro_sVar = 0.0;
+	  p_sensor_state->gyro_pVar = 0.0;
+	}
+	temp = p_sensor_state->gyro_Ave;
+	p_sensor_state->gyro_Ave  = Rolling_Mean( p_control->SampleNumber, p_sensor_state->gyro_Ave, gyro_mag );
+	p_sensor_state->gyro_mAve = Windowed_Mean( p_sensor_state->gyro_mAve, gyro_mag, p_control->SampleNumber, 0.005  );
+	p_sensor_state->gyro_M2   = Rolling_SumOfSquares( temp, p_sensor_state->gyro_mAve, gyro_mag, p_sensor_state->gyro_M2 );
+	p_sensor_state->gyro_sVar = Rolling_Sample_Variance( p_control->SampleNumber, p_sensor_state->gyro_M2 );
+	p_sensor_state->gyro_pVar = Rolling_Population_Variance( p_control->SampleNumber, p_sensor_state->gyro_M2 );
+
+  /* Update accel stats */
+  accel_mag = Vector_Magnitude ( &p_sensor_state->accel[0] );
+  if( p_control->SampleNumber == 1 )
+  {
+  	p_sensor_state->accel_Ave  = accel_mag;
+  	p_sensor_state->accel_mAve = accel_mag;
+	  p_sensor_state->accel_M2   = accel_mag;
+	  p_sensor_state->accel_sVar = 0.0;
+	  p_sensor_state->accel_pVar = 0.0;
+  }
+	temp = p_sensor_state->accel_Ave;
+	p_sensor_state->accel_Ave  = Rolling_Mean( p_control->SampleNumber, p_sensor_state->accel_Ave, accel_mag );
+	p_sensor_state->accel_mAve = Windowed_Mean( p_sensor_state->accel_mAve, accel_mag, p_control->SampleNumber, 0.005  );
+	p_sensor_state->accel_M2   = Rolling_SumOfSquares( temp, p_sensor_state->accel_mAve, accel_mag, p_sensor_state->accel_M2 );
+	p_sensor_state->accel_sVar = Rolling_Sample_Variance( p_control->SampleNumber, p_sensor_state->accel_M2 );
+	p_sensor_state->accel_pVar = Rolling_Population_Variance( p_control->SampleNumber, p_sensor_state->accel_M2 );
+
 
 } /* End Read_Sensors */
 
@@ -111,7 +152,7 @@ void Read_Sensors( CONTROL_TYPE				*p_control,
 ** DESCRIPTION:
 **		This function emulates the delay function
 **		in Arduino.
-**		This function is uneccessary and shouldn't
+**		This function is unnecessary and should't
 **		be called.
 */
 void delay(unsigned int mseconds)

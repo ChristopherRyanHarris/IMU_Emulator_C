@@ -52,8 +52,8 @@ void delay(unsigned int mseconds);
 /*************************************************
 ** COMMON_FUNCTIONS */
 
-void Common_Init(
-			CONTROL_TYPE 			*p_control );
+void Common_Init ( CONTROL_TYPE 			*p_control, 
+									 SENSOR_STATE_TYPE 	*p_sensor_state);
 
 void Update_Time(
 			CONTROL_TYPE 			*p_control );
@@ -262,6 +262,10 @@ uint8_t f_CheckSum(
 /*************************************************
 ** Math */
 
+
+float Vector_Magnitude( 
+			const float v1[3] );
+
 float Vector_Dot_Product(
 			const float v1[3],
 			const float v2[3] );
@@ -296,11 +300,19 @@ float Rolling_Mean(
 			float 		m,
 			float 		x );
 
-float Rolling_Variance(
+float Rolling_SumOfSquares(
 			const float m_prev,
 			const float m,
 			float 			x,
-			float 			S );
+			float 			M2 );
+
+float Rolling_Sample_Variance(
+      const int N,
+      const float M2 );
+
+float Rolling_Population_Variance(
+      const int N,
+      const float M2 );
 
 float Windowed_Mean(
 			float m,

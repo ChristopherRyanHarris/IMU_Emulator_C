@@ -232,18 +232,41 @@ void GaPA_Update( CONTROL_TYPE			*p_control,
 	p_gapa_state->nu = f_atan2( leftParam, rightParam );
 
 	/* Detect the end of gait */
-	if( fabs(p_gapa_state->nu-p_gapa_state->nu_prev) > p_control->gapa_prms.gait_end_threshold )
+	if( (FABS(p_gapa_state->nu-p_gapa_state->nu_prev)>p_control->gapa_prms.gait_end_threshold) &&
+      (p_sensor_state->gyro_mAve>p_control->gapa_prms.min_gyro) )
 	{
 		p_gapa_state->z_phi = p_gapa_state->phi_max;
 		if(p_gapa_state->z_phi==0){p_gapa_state->z_phi=1;}
+		p_gapa_state->phi_max = FABS( p_gapa_state->phi );
+
 		p_gapa_state->z_PHI = p_gapa_state->PHI_max;
 		if(p_gapa_state->z_PHI==0){p_gapa_state->z_PHI=1;}
+		p_gapa_state->PHI_max = FABS( p_gapa_state->PHI );
 
-		p_gapa_state->phi_max = fabs( p_gapa_state->phi );
-		p_gapa_state->PHI_max = fabs( p_gapa_state->PHI );
+		/* Mark the end of gain flag
+		** This will indicate when we believe we have completed a cycle. */
+		p_gapa_state->Gait_End = TRUE;
 	}
 
-	/* If no motion, reset phase variables */
+	/* Reset phase variables */
+	if( (p_sensor_state->gyro_mAve<p_control->gapa_prms.min_gyro) )
+	{
+		p_gapa_state->z_PHI   = 1.5;
+		p_gapa_state->PHI_max = 0.0;
+		p_gapa_state->PHI     = 0.0;
+		p_gapa_state->PHIn    = 0.0;
+
+		p_gapa_state->z_phi   = 0.5;
+		p_gapa_state->phi_max = 0.0;
+		p_gapa_state->phi     = 0.0;
+		p_gapa_state->phin    = 0.0;
+		
+		p_gapa_state->nu_normalized = 0.0;
+	}
+	else
+	{
+		p_gapa_state->nu_normalized = (p_gapa_state->nu+PI)/(TWOPI);
+	}
 
 }/* End GaPA_Update */
 

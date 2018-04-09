@@ -107,6 +107,7 @@
 ** variables */
 typedef struct
 {
+	
   float yaw;
   float pitch;
   float roll;
@@ -120,10 +121,20 @@ typedef struct
   float gyro[3];
   float mag[3]; /* not used */
 
-  float gyro_ave[3];
-  float gyro_var[3];
-  float gyro_std[3];
-
+	/* Stats are computed from
+	** magnitudes */
+  float gyro_Ave;
+  float gyro_mAve;
+  float gyro_M2;
+  float gyro_sVar;
+  float gyro_pVar;
+  
+  float accel_Ave;
+  float accel_mAve;
+  float accel_M2;
+  float accel_sVar;
+  float accel_pVar;
+  
   float std_time;
 
 } SENSOR_STATE_TYPE;
@@ -154,6 +165,10 @@ typedef struct
 ** execution. */
 typedef struct
 {
+	/* Full count of number of samples */
+	unsigned long int SampleNumber;
+	bool SampleNumberOverflow;
+	
 	/* Common exe parameters */
   unsigned long timestamp;
   unsigned long timestamp_old;

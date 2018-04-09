@@ -66,7 +66,7 @@
 ** PITCH_O:1 - Pitch orientation #1. Angle x-axis w/ Horizontal Plane  +Rot:Aft-Down    0:Nadir0/Zenith down. +90:Aft down   -90:Fore down
 ** PITCH_O:2 - Pitch orientation #2. Angle y-axis w/ Horizontal Plane  +Rot:Port-Down   0:Fore/Aft down       +90:Port down  -90:Starboard down
 ** PITCH_O:3 - Pitch orientation #3. Angle z-axis w/ Horizontal Plane  +Rot:Nadir-Down  0:Fore/Aft down       +90:Nadir down -90:Zenith down */
-#define PITCH_O  2
+#define PITCH_O  1
 
 /* Pitch rotation convention
 ** This sets the sign of rotation for pitch
@@ -268,6 +268,7 @@
 ******************************************************************/
 // Gain for gyroscope (ITG-3200)
 #define GYRO_GAIN 0.06957 // Same gain on all axes
+//#define GYRO_GAIN 0.001214
 #define GYRO_AVERAGE_OFFSET_X ((float) 0.0)
 #define GYRO_AVERAGE_OFFSET_Y ((float) 0.0)
 #define GYRO_AVERAGE_OFFSET_Z ((float) 0.0)
