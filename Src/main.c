@@ -190,6 +190,8 @@ int main( void )
   fwrite( &(g_gapa_state.PHI), 1, sizeof(g_gapa_state.PHI), g_control.emu_data.OutputFID );
   fwrite( &(g_gapa_state.nu_normalized), 1, sizeof(g_gapa_state.nu_normalized), g_control.emu_data.OutputFID );
 	fwrite( &(g_sensor_state.gyro_mAve), 1, sizeof(g_sensor_state.gyro_mAve), g_control.emu_data.OutputFID );
+  fwrite( &(g_gapa_state.z_phi), 1, sizeof(g_gapa_state.z_phi), g_control.emu_data.OutputFID );
+  fwrite( &(g_gapa_state.z_PHI), 1, sizeof(g_gapa_state.z_PHI), g_control.emu_data.OutputFID );
 
   //fprintf(g_control.emu_data.OutputFID,"%f\n",g_sensor_state.pitch);
   //fprintf(g_control.emu_data.OutputFID,"%lu\n",g_control.emu_data.timestamp);
@@ -236,7 +238,7 @@ int main( void )
 	  /* Estimate Walking Speed and Incline */
 	  if( g_control.WISE_on==1 )
 	  {
-	  	if( ((g_dcm_state.gyro_std[0]+g_dcm_state.gyro_std[1]+g_dcm_state.gyro_std[2])/3 > MOVE_MIN_GYRO_STD) )
+	  	if( (g_sensor_state.gyro_mAve<g_control.gapa_prms.min_gyro) )
 			{
 				WISE_Update(&g_control, &g_sensor_state, &g_wise_state );
 			}
@@ -254,6 +256,8 @@ int main( void )
     fwrite( &(g_gapa_state.PHI), 1, sizeof(g_gapa_state.PHI), g_control.emu_data.OutputFID );
     fwrite( &(g_gapa_state.nu_normalized), 1, sizeof(g_gapa_state.nu_normalized), g_control.emu_data.OutputFID );
     fwrite( &(g_sensor_state.gyro_mAve), 1, sizeof(g_sensor_state.gyro_mAve), g_control.emu_data.OutputFID );
+    fwrite( &(g_gapa_state.z_phi), 1, sizeof(g_gapa_state.z_phi), g_control.emu_data.OutputFID );
+    fwrite( &(g_gapa_state.z_PHI), 1, sizeof(g_gapa_state.z_PHI), g_control.emu_data.OutputFID );
 
     //getchar();
 

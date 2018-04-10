@@ -215,13 +215,9 @@
 
 /* Calibration Macros
 ******************************************************************/
-//#define TO_RAD(x) (x * 0.01745329252)  // deg to rad: *pi/180
-//#define TO_DEG(x) (x * 57.2957795131)  // rad to deg: *180/pi
 
 /* Movement Detection Thresholds
 ******************************************************************/
-#define MOVE_MIN_GYRO_STD 10000 /* Minimum average gyro std threshold */
-#define MOVE_RESET_RATE (TIME_RESOLUTION*5) /* Reset the movement detection window every 5s */
 
 /* Accelerometer Calibration
 ******************************************************************/

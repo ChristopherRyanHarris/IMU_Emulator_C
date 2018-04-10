@@ -32,6 +32,9 @@
 #define GAPA_MIN_GYRO (500)
 #define GAPA_GAIT_END_THRESH 1.5708
 
+#define GAPA_DEFAULT_Z_phi 0.5f
+#define GAPA_DEFAULT_Z_PHI 1.0f
+
 
 /*******************************************************************
 ** Tyedefs
@@ -89,6 +92,9 @@ typedef struct
 
 	float PHImw_alpha;
 	float phimw_alpha;
+
+	float default_z_phi;
+	float default_z_PHI;
 
 	float min_gyro;
 	float gait_end_threshold;
