@@ -425,7 +425,7 @@
 	"../Include/Common_Config.h"
 	"../Include/Emulator_Protos.h"
 
-1523231376 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\common_config.h
+1523493425 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\common_config.h
 	<math.h>
 	<stdio.h>
 	<stdio.h>
@@ -450,9 +450,6 @@
 	"./WISE_Config.h"
 	"./Communication_Config.h"
 	"./Math.h"
-	"./IMU10736_Config.h"
-	<SparkFunMPU9250-DMP.h>
-	"./IMU9250_Config.h"
 
 1522626283 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\calibration_config.h
 
@@ -460,7 +457,7 @@
 
 1522635336 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\dcm_config.h
 
-1523235731 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\gapa_config.h
+1523669310 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\gapa_config.h
 
 1522626283 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\wise_config.h
 
@@ -470,9 +467,9 @@
 
 1522626283 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\emulator_config.h
 
-1522626283 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\imu10736_config.h
+1523668813 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\imu10736_config.h
 
-1522636817 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\imu9250_config.h
+1523669100 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\imu9250_config.h
 	"../Include/Math.h"
 
 1523230381 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\emulator_protos.h
@@ -507,7 +504,7 @@
 	"../Include/Common_Config.h"
 	"../Include/Emulator_Protos.h"
 
-1523318968 source:c:\users\christopher harris\documents\11.githubp\imu_emulator_c\src\gapa_functions.c
+1523319264 source:c:\users\christopher harris\documents\11.githubp\imu_emulator_c\src\gapa_functions.c
 	"../Include/Common_Config.h"
 	"../Include/Emulator_Protos.h"
 
@@ -527,7 +524,7 @@
 	"../Include/Common_Config.h"
 	"../Include/Emulator_Protos.h"
 
-1523316992 source:c:\users\christopher harris\documents\11.githubp\imu_emulator_c\src\main.c
+1523668994 source:c:\users\christopher harris\documents\11.githubp\imu_emulator_c\src\main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>

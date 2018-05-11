@@ -121,8 +121,9 @@ int main( void )
 	/* Set input data file and (optional) output file */
 	//g_control.emu_data.InputFile  = ".\\Data\\BinaryData\\Subject3_2\\F4_2.bin";
   g_control.emu_data.InputFile  = "F:\\Research_Data\\Original\\Subject3_3\\Subject3_04040.bin";
+  //g_control.emu_data.InputFile  = "F:\\Research_Data\\Original\\Subject3_3\\Subject3_031310.bin";
 
-	g_control.emu_data.OutputFile = "F:\\MatlabWorkspace\\C Testing\\C_testing_2.bin";
+	g_control.emu_data.OutputFile = "F:\\MatlabWorkspace\\C Testing\\C_testing_4.bin";
 
   long unsigned int count = 0;
   //long long unsigned int count = 0;

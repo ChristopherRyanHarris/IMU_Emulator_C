@@ -55,13 +55,13 @@
 	#include "./Communication_Config.h"
 	#include "./Math.h"
 
-	#ifdef _IMU10736_
-		#include "./IMU10736_Config.h"
-	#endif
-	#ifdef _IMU9250_
-    #include <SparkFunMPU9250-DMP.h>
-		#include "./IMU9250_Config.h"
-	#endif
+//	#ifdef _IMU10736_
+//		#include "./IMU10736_Config.h"
+//	#endif
+//	#ifdef _IMU9250_
+//    #include <SparkFunMPU9250-DMP.h>
+//		#include "./IMU9250_Config.h"
+//	#endif
 #endif
 
 
