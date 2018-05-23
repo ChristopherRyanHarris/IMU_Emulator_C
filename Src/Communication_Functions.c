@@ -45,10 +45,12 @@
 ** 		which will correspond to a given type of data being
 ** requested by the master
 */
-void f_RespondToInput( CONTROL_TYPE 			*p_control,
-											 SENSOR_STATE_TYPE 	*p_sensor_state,
-											 CALIBRATION_TYPE		*p_calibration,
-                       int nBytesIn )
+void 
+f_RespondToInput( 
+  CONTROL_TYPE 			  *p_control,
+	SENSOR_STATE_TYPE 	*p_sensor_state,
+	CALIBRATION_TYPE		*p_calibration,
+  int                  nBytesIn )
 {
   int i;
   unsigned char RequestByte;
@@ -80,7 +82,7 @@ void f_RespondToInput( CONTROL_TYPE 			*p_control,
     RequestByte = COMM_READ;
 
     /* Some Log outputs (usb) */
-  sprintf(fastlog,"> Request Code (HEX): %x",RequestByte); LOG_PRINTLN( fastlog );
+    sprintf(fastlog,"> Request Code (HEX): %x",RequestByte); LOG_PRINTLN( fastlog );
 
     /* Respond the the request appropriately
     ** The packet architecture allows for multiple
@@ -91,14 +93,12 @@ void f_RespondToInput( CONTROL_TYPE 			*p_control,
       **   Need to add cases for things like re-locking and
       **   other error codes for robustness */
 
-      case 0xB1: /* 0xB# : Debug */
-        /* Packet type 11
+      case INPUT_D0:
+        /* Packet type D0::208
         ** Debug test byte
         ** Data buffer
         **   1 x 16 bit integer
         **   Ints are signed */
-
-        /* Some Log outputs (usb) */
   			sprintf(fastlog,"\tReceived Debug Request: %x",RequestByte); LOG_PRINTLN( fastlog );
         Response.PacketType     = 11;
         Response.Buffer_nBytes  = sizeof(uint8_t)*2*1;
@@ -108,8 +108,8 @@ void f_RespondToInput( CONTROL_TYPE 			*p_control,
         f_SendPacket( Response );
         break;
 
-      case 0xB2:
-        /* Packet type 12
+      case INPUT_D1:
+        /* Packet type D1::209
         ** Debug test 32 bit float
         ** Data buffer
         **   1 x 32 bit float
@@ -123,8 +123,8 @@ void f_RespondToInput( CONTROL_TYPE 			*p_control,
         f_SendPacket( Response );
         break;
 
-      case 0xA1:
-        /* Packet type 1
+      case INPUT_B0:
+        /* Packet type B0::176
         ** Roll pitch yaw data
         ** Data buffer:
         **    3 x 16 bit fixed point floats
@@ -143,8 +143,8 @@ void f_RespondToInput( CONTROL_TYPE 			*p_control,
         f_SendPacket( Response );
         break;
 
-      case 0xA2:
-        /* Packet type 2
+      case INPUT_B1:
+        /* Packet type B0::177
         ** Roll pitch yaw data
         ** Data buffer:
         **    3 x 32 bit floats
@@ -161,8 +161,8 @@ void f_RespondToInput( CONTROL_TYPE 			*p_control,
         f_SendPacket( Response );
         break;
 
-      case 0x62:
-        /* DEBUG - Toggle Output
+      case INPUT_A0:
+        /* Packet type A0::160
         ** Toggles calibration output mode
         ** Used to switch between gyro and accel
         ** calibration output
@@ -173,15 +173,17 @@ void f_RespondToInput( CONTROL_TYPE 			*p_control,
         else { p_control->output_mode = (p_control->output_mode+1)%NUM_COM_MODES; }
         break;
 
-      case 0x63:
-        /* DEBUG - Reset Calibration Variables
+      case INPUT_A1:
+        /* Packet type A1::161
+        ** Reset Calibration Variables
         ** Resets all calibration states */
   			sprintf(fastlog,"\t> Received Calibration Reset Request ... Case : %d",RequestByte); LOG_PRINTLN( fastlog );
         Calibration_Init( p_control, p_calibration );
         break;
 
-      case 0x64:
-        /* WISE - Reset WISE state variables
+      case INPUT_A2:
+        /* Packet type A2::162
+        ** WISE - Reset WISE state variables
         ** Simulate heel strike */
   			sprintf(fastlog,"\t> Received WISE Reset Request ... Case : %d",RequestByte); LOG_PRINTLN( fastlog );
         //WISE_Reset( p_control, p_wise_state );

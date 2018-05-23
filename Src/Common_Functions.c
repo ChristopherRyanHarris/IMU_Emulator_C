@@ -42,8 +42,10 @@
 ** 		are the same across all platforms and which are common
 ** 		across all algorithm variants
 */
-void Common_Init ( CONTROL_TYPE 			*p_control, 
-									 SENSOR_STATE_TYPE 	*p_sensor_state)
+void 
+Common_Init ( 
+  CONTROL_TYPE 			*p_control, 
+	SENSOR_STATE_TYPE *p_sensor_state )
 {
   LOG_PRINTLN("> Initializing Common Parameters");
 
@@ -67,7 +69,7 @@ void Common_Init ( CONTROL_TYPE 			*p_control,
 		p_control->emu_data.OutputFID = NULL;
 	#endif
 
-
+  
 	p_control->verbose        = DEBUG;
 	p_control->calibration_on = CALIBRATION_MODE;
 	p_control->DSP_on         = DSP_ON;
@@ -83,19 +85,19 @@ void Common_Init ( CONTROL_TYPE 			*p_control,
 	p_control->sensor_prms.sample_rate = TIME_SR;
 	
 	/* Initialize stats */
-  p_sensor_state->gyro_Ave = 0.0;
+  p_sensor_state->gyro_Ave  = 0.0;
   p_sensor_state->gyro_mAve = 0.0;
   p_sensor_state->gyro_M2   = 0.0;
   p_sensor_state->gyro_sVar = 0.0;
   p_sensor_state->gyro_pVar = 0.0;
   
-  p_sensor_state->accel_Ave = 0.0;
+  p_sensor_state->accel_Ave  = 0.0;
   p_sensor_state->accel_mAve = 0.0;
   p_sensor_state->accel_M2   = 0.0;
   p_sensor_state->accel_sVar = 0.0;
   p_sensor_state->accel_pVar = 0.0;
 	
-} /* End Common_Init*/
+} /* End Common_Init */
 
 
 /*************************************************
@@ -109,7 +111,8 @@ void Common_Init ( CONTROL_TYPE 			*p_control,
 ** 		Delta time (s) is used to determine the state
 ** 		estimate in the filter.
 */
-void Update_Time( CONTROL_TYPE *p_control )
+void 
+Update_Time( CONTROL_TYPE *p_control )
 {
 
   #if EXE_MODE==1 /* Emulator Mode */
@@ -118,6 +121,7 @@ void Update_Time( CONTROL_TYPE *p_control )
   	p_control->timestamp     = p_control->emu_data.timestamp;
 
   #else /* Real Time mode */
+    /* Timestam is read from system */
   	float minTime = (float) (TIME_RESOLUTION / (TIME_SR+1.0) ); /* Set Sampling Rate */
   	while( (TIME_FUPDATE - p_control->timestamp) < (minTime) ) {}
   	/* Update delta T */
@@ -126,7 +130,7 @@ void Update_Time( CONTROL_TYPE *p_control )
 
   #endif /* End Emulator Mode */
 
-	/* Get delta t */
+	/* Get delta_t */
   if( p_control->timestamp_old > 0 )
 	{
 		p_control->G_Dt = (float) ( (p_control->timestamp - p_control->timestamp_old) / TIME_RESOLUTION ) ;

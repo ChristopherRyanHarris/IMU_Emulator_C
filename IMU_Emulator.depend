@@ -461,7 +461,7 @@
 
 1522626283 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\wise_config.h
 
-1522626283 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\communication_config.h
+1526699741 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\communication_config.h
 
 1523234736 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\math.h
 
@@ -484,11 +484,11 @@
 	"../Include/WISE_Config.h"
 	"../Include/Communication_Config.h"
 
-1523231399 source:c:\users\christopher harris\documents\11.githubp\imu_emulator_c\src\common_functions.c
+1526613904 source:c:\users\christopher harris\documents\11.githubp\imu_emulator_c\src\common_functions.c
 	"../Include/Common_Config.h"
 	"../Include/Emulator_Protos.h"
 
-1522626284 source:c:\users\christopher harris\documents\11.githubp\imu_emulator_c\src\communication_functions.c
+1526617709 source:c:\users\christopher harris\documents\11.githubp\imu_emulator_c\src\communication_functions.c
 	"../Include/Common_Config.h"
 	"../Include/Emulator_Protos.h"
 
@@ -524,7 +524,7 @@
 	"../Include/Common_Config.h"
 	"../Include/Emulator_Protos.h"
 
-1523668994 source:c:\users\christopher harris\documents\11.githubp\imu_emulator_c\src\main.c
+1526699569 source:c:\users\christopher harris\documents\11.githubp\imu_emulator_c\src\main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
