@@ -48,11 +48,17 @@ void Read_Sensors(
 
 void delay(unsigned int mseconds);
 
+void LogInfoToFile( CONTROL_TYPE         *p_control,
+                    OUTPUT_LOG_FILE_TYPE *log_file,
+                    char*                 msg  );
 
+void GetNextLogFileName( CONTROL_TYPE          *p_control,
+                         OUTPUT_LOG_FILE_TYPE  *log_file );
+                         
 /*************************************************
 ** COMMON_FUNCTIONS */
 
-void Common_Init ( CONTROL_TYPE 			*p_control, 
+void Common_Init ( CONTROL_TYPE 			*p_control,
 									 SENSOR_STATE_TYPE 	*p_sensor_state);
 
 void Update_Time(
@@ -217,9 +223,10 @@ void Estimate_Error(
 ** LOGGING_Functions */
 
 void Debug_LogOut(
-			CONTROL_TYPE			*p_control,
-			SENSOR_STATE_TYPE	*p_sensor_state,
-			WISE_STATE_TYPE		*p_wise_state );
+      CONTROL_TYPE       *p_control,
+      SENSOR_STATE_TYPE  *p_sensor_state,
+      GAPA_STATE_TYPE    *p_gapa_state,
+      WISE_STATE_TYPE    *p_wise_state );
 
 void Cal_LogOut(
       CONTROL_TYPE			 *p_control,
@@ -263,7 +270,7 @@ uint8_t f_CheckSum(
 ** Math */
 
 
-float Vector_Magnitude( 
+float Vector_Magnitude(
 			const float v1[3] );
 
 float Vector_Dot_Product(
