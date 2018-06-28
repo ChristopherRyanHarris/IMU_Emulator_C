@@ -52,12 +52,7 @@ void f_RespondToInput( CONTROL_TYPE       *p_control,
 {
   int i;
   unsigned char RequestByte;
-
-
-  /* Debug Logging */
-  //char fastlog[500];
-
-
+  
   /* uint16_t Packet_nBytes;
   ** uint16_t nBytes;
   ** uint8_t Buffer[50];
@@ -130,7 +125,6 @@ void f_RespondToInput( CONTROL_TYPE       *p_control,
         **    3 x 16 bit fixed point floats
         **    Each element is shifted 7 bits
         **    floats are signed */
-
         /* Some Log outputs (usb) */
         LOG_INFO( "\tReceived Roll Pitch request ... Case : %d", RequestByte );
         Response.PacketType     = 1;
@@ -215,10 +209,7 @@ void f_SendPacket( COMMUNICATION_PACKET_TYPE Response )
   uint8_t Packet[100];
   int ret;
   int i;
-
-  /* Debug Logging */
-  //char fastlog[500];
-
+  
   /* Initialize the array */
   for( ret=0; ret<100; ret++) Packet[ret] = 0;
 
@@ -350,10 +341,7 @@ void f_Handshake( CONTROL_TYPE *p_control )
   uint8_t IncomingByte;
   uint8_t JunkByte;
   int     nBytesIn;
-
-  /* Debug Logging */
-  //char fastlog[500];
-
+  
   LOG_INFO( "> Using BaudLockChar (int):%i", BaudLockChar );
   LOG_INFO( "> Using ConfirmChar (int):%i",  ConfirmChar );
   LOG_INFO( "> Using FailChar (int):%i",     FailChar );

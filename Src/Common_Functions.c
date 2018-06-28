@@ -45,8 +45,6 @@
 void Common_Init ( CONTROL_TYPE       *p_control,
                    SENSOR_STATE_TYPE  *p_sensor_state)
 {
-  //char buffer[50];
-
   LOG_INFO( "> Initializing Common Parameters");
 
   /* Initialize sample counter */
@@ -70,51 +68,156 @@ void Common_Init ( CONTROL_TYPE       *p_control,
   #endif
 
   p_control->verbose = DEBUG;
-
-  /* Set file parameters */
-  /* TO DO : Clean this up */
-  strcpy( p_control->log_info_file.file_prefix, LOG_INFO_FILE_PREFIX );
-  strcpy( p_control->log_info_file.file_suffix, LOG_INFO_FILE_SUFFIX );
-  strcpy( p_control->log_data_file.file_prefix, LOG_DATA_FILE_PREFIX );
-  strcpy( p_control->log_data_file.file_suffix, LOG_DATA_FILE_SUFFIX );
-
+  
   #if( EXE_MODE==0 ) /* 0 : IMU Mode */
+  {
     if( ENABLE_SD_LOGGING==TRUE )
     {
       LOG_INFO( " > SD Logging enabled");
-
+      
+      /* Connect to SD Card */
       p_control->SDCardPresent = (SD.begin(SD_PIN));
-      p_control->LogBufferLen  = 0;
-      p_control->LogBuffer[0]  = '\0';
+      
+      /* Init Log Info */
+      strcpy( p_control->log_info_file.file_prefix, LOG_INFO_FILE_PREFIX );
+      strcpy( p_control->log_info_file.file_suffix, LOG_INFO_FILE_SUFFIX );
+      p_control->log_info_file.LogBufferLen  = 0;
+      p_control->log_info_file.LogBuffer[0]  = '\0';
+      
+      /* Init Log Data */
+      p_control->log_data_file.LogBufferLen  = 0;
+      strcpy( p_control->log_data_file.file_prefix, LOG_DATA_FILE_PREFIX );
+      strcpy( p_control->log_data_file.file_suffix, LOG_DATA_FILE_SUFFIX );
+      
+      /* Open Files */
       if( p_control->SDCardPresent==TRUE )
       {
         LOG_INFO( " > SD Card Detected");
 
-        p_control->LogFileIdx = 0;
-        GetNextLogFileName( p_control );
-        LOG_INFO( " > Using File %s", p_control->LogFileName);
-
-        p_control->LogFile_fh = SD.open( p_control->LogFileName, FILE_WRITE );
-        if( p_control->LogFile_fh!=NULL )
+        /* Open Log Info File */
+        p_control->log_info_file.LogFileIdx = 0;
+        GetNextLogFileName( p_control, &p_control->log_info_file );
+        LOG_INFO( " > Using Log Info File %s", p_control->log_info_file.LogFileName);
+        p_control->log_info_file.LogFile_fh = FILE_OPEN_WRITE( p_control->log_info_file.LogFileName );
+        if( p_control->log_info_file.LogFile_fh!=NULL )
         {
-          LOG_INFO( " > Open Successful");
-          //p_control->LogFile_fh.close();
-          // p_control->LogFile_fh=SD.open( p_control->LogFileName, FILE_WRITE );
-          //      p_control->LogFile_fh.close();
+          LOG_INFO( " > Log Info Open Successful");
+          p_control->log_info_file.enabled = TRUE;
         }
         else
         {
-          LOG_INFO( " > Open Failed, Disabline SD Logging" );
-          p_control->SDCardPresent = FALSE;
+          LOG_INFO( " > Log Info Open Failed, Disabline SD Logging" );
+          p_control->SDCardPresent         = FALSE;
+          p_control->log_info_file.enabled = FALSE;
+        }
+        
+        /* Open Log Data File */
+        p_control->log_data_file.LogFileIdx = 0;
+        GetNextLogFileName( p_control, &p_control->log_data_file );
+        LOG_INFO( " > Using Log Data File %s", p_control->log_data_file.LogFileName);
+        p_control->log_data_file.LogFile_fh = FILE_OPEN_WRITE( p_control->log_data_file.LogFileName );
+        if( p_control->log_data_file.LogFile_fh!=NULL )
+        {
+          LOG_INFO( " > Log Data Open Successful");
+          p_control->log_data_file.enabled = TRUE;
+        }
+        else
+        {
+          LOG_INFO( " > Log Data Open Failed, Disabline SD Logging" );
+          p_control->SDCardPresent         = FALSE;
+          p_control->log_data_file.enabled = FALSE;
+        }
+        
+        /* Close both files if either failed */
+        if( (p_control->SDCardPresent==FALSE) ||
+            (p_control->log_info_file.enabled==FALSE) ||
+            (p_control->log_data_file.enabled==FALSE) )
+        {
+          LOG_INFO( " > Fail Detected in opening file. Disabling SD Logging" );
+          p_control->SDCardPresent         = FALSE;
+          p_control->log_info_file.enabled = FALSE;
+          p_control->log_data_file.enabled = FALSE;
+          FILE_CLOSE(p_control->log_info_file.LogFile_fh);
+          FILE_CLOSE(p_control->log_data_file.LogFile_fh);
         }
       }
       else
       {
         LOG_INFO( " > SD Card Not Detected, Disabling SD Logging" );
-      }
-    }
+        p_control->SDCardPresent         = FALSE;
+        p_control->log_data_file.enabled = FALSE;
+        p_control->log_info_file.enabled = FALSE;
+      } /* End if  p_control->SDCardPresent==TRUE */
+    } /* End if ENABLE_SD_LOGGING==TRUE */
+  } /* End if EXE_MODE==0 :: IMU Mode */
   #else
-    /* TO DO : Add emulator file open calls here */
+  {
+    /* EXE_MODE==1 :: Emulation Mode */
+    #if( ENABLE_C_FILE_LOGGING==1 )
+    {
+      LOG_INFO( " > File Logging enabled");
+      
+      /* Init Log Info */
+      strcpy( p_control->log_info_file.file_prefix, LOG_INFO_FILE_PREFIX );
+      strcpy( p_control->log_info_file.file_suffix, LOG_INFO_FILE_SUFFIX );
+      p_control->log_info_file.LogBufferLen  = 0;
+      p_control->log_info_file.LogBuffer[0]  = '\0';
+      
+      /* Init Log Data */
+      p_control->log_data_file.LogBufferLen  = 0;
+      strcpy( p_control->log_data_file.file_prefix, LOG_DATA_FILE_PREFIX );
+      strcpy( p_control->log_data_file.file_suffix, LOG_DATA_FILE_SUFFIX );
+      
+      /* 
+      ** Open Files 
+      */
+
+      /* Open Log Info File */
+      p_control->log_info_file.LogFileIdx = 0;
+      GetNextLogFileName( p_control, &p_control->log_info_file );
+      LOG_INFO( " > Using Log Info File %s", p_control->log_info_file.LogFileName);
+      p_control->log_info_file.LogFile_fh = FILE_OPEN_WRITE( p_control->log_info_file.LogFileName );
+      if( p_control->log_info_file.LogFile_fh!=NULL )
+      {
+        LOG_INFO( " > Log Info Open Successful");
+        p_control->log_info_file.enabled = TRUE;
+      }
+      else
+      {
+        LOG_INFO( " > Log Info Open Failed, Disabline File Logging" );
+        p_control->log_info_file.enabled = FALSE;
+      }
+      
+      /* Open Log Data File */
+      p_control->log_data_file.LogFileIdx = 0;
+      GetNextLogFileName( p_control, &p_control->log_data_file );
+      LOG_INFO( " > Using Log Data File %s", p_control->log_data_file.LogFileName);
+      //p_control->log_data_file.LogFile_fh = SD.open( p_control->log_data_file.LogFileName, FILE_WRITE );
+      if( p_control->log_data_file.LogFile_fh!=NULL )
+      {
+        LOG_INFO( " > Log Data Open Successful");
+        p_control->log_data_file.enabled = TRUE;
+      }
+      else
+      {
+        LOG_INFO( " > Log Data Open Failed, Disabline File Logging" );
+        p_control->log_data_file.enabled = FALSE;
+      }
+      
+      /* Close both files if either failed */
+      if( (p_control->log_info_file.enabled==FALSE) ||
+          (p_control->log_data_file.enabled==FALSE) )
+      {
+        LOG_INFO( " > Fail Detected in opening file. Disabling File Logging" );
+        p_control->log_info_file.enabled = FALSE;
+        p_control->log_data_file.enabled = FALSE;
+        FILE_CLOSE(p_control->log_info_file.LogFile_fh);
+        FILE_CLOSE(p_control->log_data_file.LogFile_fh);
+      }
+      
+    } /* End if ENABLE_C_FILE_LOGGING==1 */
+    #endif
+  } /* End if EXE_MODE==1 :: Emulation mode */
   #endif
 
   p_control->calibration_on = CALIBRATION_MODE;

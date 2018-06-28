@@ -216,9 +216,6 @@ void DCM_Filter( CONTROL_TYPE       *p_control,
                  DCM_STATE_TYPE     *p_dcm_state,
                  SENSOR_STATE_TYPE  *p_sensor_state )
 {
-  //int i;
-
-  //float temp;
   float error = 0;
   float renorm = 0;
 

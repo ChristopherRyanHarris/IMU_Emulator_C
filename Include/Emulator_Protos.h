@@ -39,52 +39,66 @@
 /*************************************************
 ** Emulator Functions */
 
-void Init_Emulator(
+void 
+Init_Emulator(
 			CONTROL_TYPE			*p_control );
 
-void Read_Sensors(
+void 
+Read_Sensors(
 			CONTROL_TYPE			*p_control,
 			SENSOR_STATE_TYPE	*p_sensor_state );
 
-void delay(unsigned int mseconds);
+void 
+delay( unsigned int mseconds );
 
-void LogInfoToFile( CONTROL_TYPE         *p_control,
-                    OUTPUT_LOG_FILE_TYPE *log_file,
-                    char*                 msg  );
+void 
+LogInfoToFile( 
+      CONTROL_TYPE         *p_control,
+      OUTPUT_LOG_FILE_TYPE *log_file,
+      char*                 msg  );
 
-void GetNextLogFileName( CONTROL_TYPE          *p_control,
-                         OUTPUT_LOG_FILE_TYPE  *log_file );
+void 
+GetNextLogFileName( 
+      CONTROL_TYPE          *p_control,
+      OUTPUT_LOG_FILE_TYPE  *log_file );
                          
 /*************************************************
 ** COMMON_FUNCTIONS */
 
-void Common_Init ( CONTROL_TYPE 			*p_control,
-									 SENSOR_STATE_TYPE 	*p_sensor_state);
+void 
+Common_Init( 
+      CONTROL_TYPE   			*p_control,
+			SENSOR_STATE_TYPE 	*p_sensor_state);
 
 void Update_Time(
-			CONTROL_TYPE 			*p_control );
+			CONTROL_TYPE *p_control );
 
 
 /*************************************************
 ** DSP_Functions */
 
-void DSP_Filter_Init(
+void 
+DSP_Filter_Init(
 			CONTROL_TYPE			*p_control,
 			DSP_STATE_TYPE		*p_dsp_state );
 
-void DSP_Update(
+void 
+DSP_Update(
 			CONTROL_TYPE			*p_control,
 			DSP_STATE_TYPE		*p_dsp_state,
 			SENSOR_STATE_TYPE *p_sensor_state );
 
-void DSP_Shift (
+void 
+DSP_Shift (
 			CONTROL_TYPE			*p_control,
 			DSP_STATE_TYPE		*p_dsp_state );
-void IIR_Filter(
+void 
+IIR_Filter(
 			CONTROL_TYPE			*p_control,
 			DSP_STATE_TYPE		*p_dsp_state,
 			SENSOR_STATE_TYPE *p_sensor_state );
-void FIR_Filter(
+void 
+FIR_Filter(
 			CONTROL_TYPE			*p_control,
 			DSP_STATE_TYPE		*p_dsp_state,
 			SENSOR_STATE_TYPE *p_sensor_state );
@@ -93,11 +107,13 @@ void FIR_Filter(
 /*************************************************
 ** CAL_Functions */
 
-void Calibration_Init(
+void 
+Calibration_Init(
 			CONTROL_TYPE			*p_control,
 			CALIBRATION_TYPE 	*p_calibration );
 
-void Calibrate(
+void 
+Calibrate(
 			CONTROL_TYPE			*p_control,
 			CALIBRATION_TYPE	*p_calibration,
 			SENSOR_STATE_TYPE	*p_sensor_state );
@@ -106,27 +122,32 @@ void Calibrate(
 /*************************************************
 ** DCM_Functions */
 
-void DCM_Init(
+void 
+DCM_Init(
 			CONTROL_TYPE			*p_control,
 			DCM_STATE_TYPE		*p_dcm_state,
 			SENSOR_STATE_TYPE	*p_sensor_state );
 
-void Init_Rotation_Matrix(
+void 
+Init_Rotation_Matrix(
 			CONTROL_TYPE			*p_control,
 			DCM_STATE_TYPE		*p_dcm_state,
 			SENSOR_STATE_TYPE	*p_sensor_state );
 
-void DCM_Filter(
+void 
+DCM_Filter(
 			CONTROL_TYPE			*p_control,
 			DCM_STATE_TYPE		*p_dcm_state,
 			SENSOR_STATE_TYPE	*p_sensor_state );
 
-void Reset_Sensor_Fusion(
+void 
+Reset_Sensor_Fusion(
 			CONTROL_TYPE			*p_control,
 			DCM_STATE_TYPE		*p_dcm_state,
 			SENSOR_STATE_TYPE	*p_sensor_state );
 
-void Set_Sensor_Fusion(
+void 
+Set_Sensor_Fusion(
 			CONTROL_TYPE			*p_control,
 			SENSOR_STATE_TYPE	*p_sensor_state );
 
@@ -134,40 +155,48 @@ void Set_Sensor_Fusion(
 /*************************************************
 ** GaPA_Functions */
 
-void GaPA_Init(
+void 
+GaPA_Init(
 			CONTROL_TYPE			*p_control,
 			GAPA_STATE_TYPE		*p_gapa_state );
 
-void GaPA_Reset(
+void 
+GaPA_Reset(
 			CONTROL_TYPE			*p_control,
 			GAPA_STATE_TYPE		*p_gapa_state );
 
-void GaPA_Update(
+void 
+GaPA_Update(
 			CONTROL_TYPE			*p_control,
 			SENSOR_STATE_TYPE *p_sensor_state,
 			GAPA_STATE_TYPE		*p_gapa_state );
 
-void TrackPhiVariables(
+void 
+TrackPhiVariables(
 			GAPA_STATE_TYPE		*p_gapa_state );
 
-void calc_SftPrmLeft(
+void 
+calc_SftPrmLeft(
 			float	*GAMMA,
 			float	PHI_max,
 			float PHI_min );
 
-void calc_SftPrmRight(
+void 
+calc_SftPrmRight(
 			float	*gamma,
 			float	phi_max,
 			float phi_min );
 
-void calc_ScaleFactor(
+void 
+calc_ScaleFactor(
 			float *z,
 			float phi_max,
 			float phi_min,
 			float PHI_max,
 			float PHI_min );
 
-void calc_PhaseAngle(
+void 
+calc_PhaseAngle(
 			float* nu,
 			float z,
 			float PHI,
@@ -179,41 +208,49 @@ void calc_PhaseAngle(
 /*************************************************
 ** WISE_Functions */
 
-void WISE_Init(
+void 
+WISE_Init(
 			CONTROL_TYPE			*p_control,
 			SENSOR_STATE_TYPE	*p_sensor_state,
 			WISE_STATE_TYPE		*p_wise_state );
 
-void WISE_Reset(
+void 
+WISE_Reset(
 			CONTROL_TYPE			*p_control,
 			WISE_STATE_TYPE		*p_wise_state );
 
-void WISE_Update(
-			CONTROL_TYPE			*p_control,
-			SENSOR_STATE_TYPE	*p_sensor_state,
-			WISE_STATE_TYPE		*p_wise_state );
-
-void Map_Accel_2D(
+void 
+WISE_Update(
 			CONTROL_TYPE			*p_control,
 			SENSOR_STATE_TYPE	*p_sensor_state,
 			WISE_STATE_TYPE		*p_wise_state );
 
-void Integrate_Accel_2D(
+void 
+Map_Accel_2D(
 			CONTROL_TYPE			*p_control,
 			SENSOR_STATE_TYPE	*p_sensor_state,
 			WISE_STATE_TYPE		*p_wise_state );
 
-void Adjust_Velocity(
+void 
+Integrate_Accel_2D(
 			CONTROL_TYPE			*p_control,
 			SENSOR_STATE_TYPE	*p_sensor_state,
 			WISE_STATE_TYPE		*p_wise_state );
 
-void Adjust_Incline(
+void 
+Adjust_Velocity(
 			CONTROL_TYPE			*p_control,
 			SENSOR_STATE_TYPE	*p_sensor_state,
 			WISE_STATE_TYPE		*p_wise_state );
 
-void Estimate_Error(
+void 
+Adjust_Incline(
+			CONTROL_TYPE			*p_control,
+			SENSOR_STATE_TYPE	*p_sensor_state,
+			WISE_STATE_TYPE		*p_wise_state );
+
+void 
+Estimate_Error(
 			CONTROL_TYPE			*p_control,
 			SENSOR_STATE_TYPE	*p_sensor_state,
 			WISE_STATE_TYPE		*p_wise_state );
@@ -222,18 +259,21 @@ void Estimate_Error(
 /*************************************************
 ** LOGGING_Functions */
 
-void Debug_LogOut(
+void 
+Debug_LogOut(
       CONTROL_TYPE       *p_control,
       SENSOR_STATE_TYPE  *p_sensor_state,
       GAPA_STATE_TYPE    *p_gapa_state,
       WISE_STATE_TYPE    *p_wise_state );
 
-void Cal_LogOut(
+void 
+Cal_LogOut(
       CONTROL_TYPE			 *p_control,
 			SENSOR_STATE_TYPE  *p_sensor_state,
 			CALIBRATION_TYPE	 *p_calibration );
 
-void FltToStr(
+void 
+FltToStr(
       float value,
       int   precision,
       char  *StrBuffer );
@@ -242,26 +282,33 @@ void FltToStr(
 /*************************************************
 ** Communication_Functions */
 
-void f_SendData( int nBytesIn );
+void 
+f_SendData( int nBytesIn );
 
-void f_SendPacket( COMMUNICATION_PACKET_TYPE Response );
+void 
+f_SendPacket( COMMUNICATION_PACKET_TYPE Response );
 
-void f_WriteIToPacket(
+void 
+f_WriteIToPacket(
 			uint8_t 			*Packet,
 			uint16_t 			InputBuffer );
 
-void f_WriteFToPacket_u16(
+void 
+f_WriteFToPacket_u16(
 			unsigned char *Packet,
 			float 				Input );
 
-void f_WriteFToPacket_s32(
+void 
+f_WriteFToPacket_s32(
 			unsigned char *Packet,
 			float 				Input );
 
-void f_Handshake(
+void 
+f_Handshake(
 			CONTROL_TYPE 	*p_control );
 
-uint8_t f_CheckSum(
+uint8_t 
+f_CheckSum(
 			unsigned char *p_Buffer,
 			uint16_t 			nBytes );
 
@@ -270,70 +317,85 @@ uint8_t f_CheckSum(
 ** Math */
 
 
-float Vector_Magnitude(
+float 
+Vector_Magnitude(
 			const float v1[3] );
 
-float Vector_Dot_Product(
+float 
+Vector_Dot_Product(
 			const float v1[3],
 			const float v2[3] );
 
-void Vector_Cross_Product(
+void 
+Vector_Cross_Product(
 			const float v1[3],
 			const float v2[3],
 			float 			out[3] );
 
-void Vector_Scale(
+void 
+Vector_Scale(
 			const float v[3],
 			float 			scale,
 			float 			out[3] );
 
-void Vector_Add(
+void 
+Vector_Add(
 			const float v1[3],
 			const float v2[3],
 			float 			out[3] );
 
-void Matrix_Multiply(
+void 
+Matrix_Multiply(
 			const float m1[3][3],
 			const float m2[3][3],
 			float 			out[3][3] );
 
-void Matrix_Vector_Multiply(
+void 
+Matrix_Vector_Multiply(
 			const float m[3][3],
 			const float v[3],
 			float 			out[3] );
 
-float Rolling_Mean(
+float 
+Rolling_Mean(
 			const int n,
 			float 		m,
 			float 		x );
 
-float Rolling_SumOfSquares(
+float 
+Rolling_SumOfSquares(
 			const float m_prev,
 			const float m,
 			float 			x,
 			float 			M2 );
 
-float Rolling_Sample_Variance(
+float 
+Rolling_Sample_Variance(
       const int N,
       const float M2 );
 
-float Rolling_Population_Variance(
+float 
+Rolling_Population_Variance(
       const int N,
       const float M2 );
 
-float Windowed_Mean(
+float 
+Windowed_Mean(
 			float m,
 			float x,
 			int 	n,
 			float a );
 
-float f_asin( float x );
+float 
+f_asin( float x );
 
-float f_atan2(
+float 
+f_atan2(
 			float y,
 			float x );
 
-void calc_circle_center(
+void 
+calc_circle_center(
 			float p1[2],
 			float p2[2],
 			float p3[2],

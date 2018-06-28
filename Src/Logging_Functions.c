@@ -276,11 +276,8 @@ void FltToStr( float value,
   }
 }
 
-#if( EXE_MODE==0 ) /* 0:IMU Mode */
-/* TO DO : Move this function */
-
 /*************************************************
-** FUNCTION: LogInfoToSDFile
+** FUNCTION: LogInfoToFile
 ** VARIABLES:
 **    [I ]  CONTROL_TYPE         *p_control
 **    [I ]  OUTPUT_LOG_FILE_TYPE *log_file,
@@ -296,17 +293,19 @@ void FltToStr( float value,
 **    Note, this function pairs with the LOG_INFO macro.
 **    For the LOG_DATA pair, see LogDataToSDFile.
 */
-void LogInfoToSDFile( CONTROL_TYPE         *p_control,
-                      OUTPUT_LOG_FILE_TYPE *log_file,
-                      char*                 msg  )
+void LogInfoToFile( CONTROL_TYPE         *p_control,
+                    OUTPUT_LOG_FILE_TYPE *log_file,
+                    char*                 msg  )
 {
+  long int size_bytes;
+
   /* Add message to output buffer */
   log_file->LogBufferLen += strlen( msg );
   strcat( log_file->LogBuffer, msg );
   strcat( log_file->LogBuffer, "\n" );
 
   /* If buffer has reached designated size ...*/
-  if( log_file->LogBufferLen>MAX_LOG_BUFFER_SIZE )
+  if( log_file->LogBufferLen > MAX_LOG_BUFFER_STORE )
   {
     /* If the filehandle is valid ...
     ** NOTE : File is kept open during execution
@@ -315,37 +314,51 @@ void LogInfoToSDFile( CONTROL_TYPE         *p_control,
     {
       /* Get current file size */
       //size_bytes = ftell(log_file->LogFile_fh);
+      size_bytes = FILE_SIZE_BYTES(log_file->LogFile_fh);
 
       /* If the filesize is larger than the designated
       ** max, close file and open next index */
-      if( log_file->LogFile_fh.size()>SD_MAX_FILE_SIZE )
+      //if( log_file->LogFile_fh.size()>SD_MAX_FILE_SIZE )
+      if( size_bytes>LOG_FILE_MAX_IDX )
       {
-        log_file->LogFile_fh.close();
-        GetNextLogFileName( log_file );
+        //log_file->LogFile_fh.close();
+        FILE_CLOSE( log_file->LogFile_fh );
+        GetNextLogFileName( p_control, log_file );
 
         if( p_control->SDCardPresent==TRUE )
         {
-          log_file->LogFile_fh = SD.open( log_file->LogFileName, FILE_WRITE );
+          //log_file->LogFile_fh = SD.open( log_file->LogFileName, FILE_WRITE );
+          log_file->LogFile_fh = FILE_OPEN_WRITE( log_file->LogFileName );
         }
+
       }
       if( log_file->LogFile_fh==NULL )
       {
-        p_control->SDCardPresent = FALSE;
+        log_file->enabled        = FALSE;
+        #if( EXE_MODE==0 ) /* 0 : IMU Mode */
+          p_control->SDCardPresent = FALSE;
+        #endif
       }
       else
       {
-        log_file->LogFile_fh.print( log_file->LogBuffer );
-        log_file->LogFile_fh.flush();
+        //log_file->LogFile_fh.print( log_file->LogBuffer );
+        //log_file->LogFile_fh.flush();
+        FILE_PRINT_TO_FILE( log_file->LogFile_fh, log_file->LogBuffer );
+        FILE_FLUSH( log_file->LogFile_fh );
+
         log_file->LogBuffer[0] = '\0';
         log_file->LogBufferLen = 0;
       }
     }
     else
     {
-      p_control->SDCardPresent = FALSE;
+      log_file->enabled        = FALSE;
+      #if( EXE_MODE==0 ) /* 0 : IMU Mode */
+        p_control->SDCardPresent = FALSE;
+      #endif
     }
   }
-} /* End LogInfoToSDFile() */
+} /* End LogInfoToFile() */
 
 
 
@@ -363,8 +376,8 @@ void LogInfoToSDFile( CONTROL_TYPE         *p_control,
 **    This function creates a filename which does not
 **    exist on the card, to which we will log our data.
 */
-void GetNextLogFileName( CONTROL_TYPE          *p_control, 
-                         OUTPUT_LOG_FILE_TYPE *log_file )
+void GetNextLogFileName( CONTROL_TYPE          *p_control,
+                         OUTPUT_LOG_FILE_TYPE  *log_file )
 {
   int  i;
 
@@ -375,16 +388,12 @@ void GetNextLogFileName( CONTROL_TYPE          *p_control,
     LOG_INFO( " > Trying File %s", log_file->LogFileName );
 
     /* If the file name doesn't exist, return it */
-    if( !SD.exists(log_file->LogFileName) )
+    //if( !SD.exists(log_file->LogFileName) )
+    if( ! FILE_EXISTS_FLAG(log_file->LogFileName) )
     {
       LOG_INFO( " > File %s Available", log_file->LogFileName );
       log_file->LogFileIdx = i + 1;
       break;
     }
   }
-} /* End GetNextLogFileName() */
-
-
-
-#endif
-
+} /* End GetNextLogF */

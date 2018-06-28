@@ -24,22 +24,6 @@
 ** Macros *********************************************************
 ********************************************************************/
 
-//#define SET_EMULATION_stdout(x) freopen((x), "w", stdout)
-#define SET_EMULATION_stdout(x) dup2((x), 1);
-
-//#define LOG_HEADER fprintf(stdout,"[%15s:%4d] ",__func__,__LINE__);
-//#define LOG_INFO(...) LOG_HEADER;fprintf(stdout,__VA_ARGS__);fprintf(stdout,"\n");
-//#define LOG_INFO(...) LOG_HEADER;fprintf(stdout,__VA_ARGS__);
-
-//#define ERR_HEADER fprintf(stderr,"[%15s:%4d] <ERROR> ",__func__,__LINE__);
-//#define ERR_PRINTLN(...) ERR_HEADER;fprintf(stderr,__VA_ARGS__);fprintf(stderr,"\n");
-//#define ERR_PRINT(...) ERR_HEADER;fprintf(stderr,__VA_ARGS__);
-
-//#define COMM_PRINT(x)  LOG_HEADER;fprintf(stdout,"[COMM PRINT]: %c\n",x);
-//#define COMM_WRITE(x,y)  LOG_HEADER;fprintf(stdout,"[COMM WRITE]: %d (len:%d)",*x,y);
-//#define COMM_AVAILABLE (0)
-//#define COMM_READ (-1) /*Serail.read() returns "-1" if no data */
-
 /*******************************************************************
 ** Typedefs ********************************************************
 ********************************************************************/

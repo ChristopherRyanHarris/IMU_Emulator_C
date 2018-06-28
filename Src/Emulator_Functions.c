@@ -122,7 +122,6 @@ void Read_Sensors( CONTROL_TYPE				*p_control,
   }
   DATA_READ( &temp, sizeof(float), 1, p_control->emu_data.InputFID);
   p_control->emu_data.timestamp = (unsigned long)temp;
-  //p_control->timestamp = p_control->emu_data.timestamp;
   DATA_READ( &p_sensor_state->accel[0], sizeof(float), 3, p_control->emu_data.InputFID );
   DATA_READ( &p_sensor_state->gyro[0],  sizeof(float), 3, p_control->emu_data.InputFID );
   DATA_READ( &temp,  sizeof(float), 1, p_control->emu_data.InputFID ); /* yaw */
@@ -156,10 +155,10 @@ void Read_Sensors( CONTROL_TYPE				*p_control,
 //  LOG_INFO( "orientation_RRC: %f",                p_control->meta_packet.orientation_RRC  );
 //  LOG_INFO( "orientation_ZR: %f",                 p_control->meta_packet.orientation_ZR  );
 
-  getchar();
-
   /* Increment sample number count */
   p_control->SampleNumber++;
+
+  /* TO DO : Move these computations to math */
 
   /* Update gyro stats */
   gyro_mag  = Vector_Magnitude ( &p_sensor_state->gyro[0] );
@@ -217,95 +216,101 @@ void delay(unsigned int mseconds)
 }
 
 
-/*************************************************
-** FUNCTION: LogInfoToFile
-** VARIABLES:
-**    [I ]  CONTROL_TYPE         *p_control
-**    [I ]  OUTPUT_LOG_FILE_TYPE *log_file,
-**    [I ]  char*                 message
-** RETURN:
-**    void
-** DESCRIPTION:
-**    This is a helper function.
-**    It is used for logging to a local txt file
-**    This function will add data to the output buffers
-**    and (when the buffer has reached the defined length)
-**    write the buffer to the appropriate output file.
-**    NOTE: This function pairs with the LOG_INFO macro.
-**          For the LOG_DATA pair, see LogDataToFile.
-**    NOTE: This function replaces the IMU_MODE function
-**          LogInfoToSDFile.
-*/
-void LogInfoToFile( CONTROL_TYPE         *p_control,
-                    OUTPUT_LOG_FILE_TYPE *log_file,
-                    char*                 msg  )
-{
-  long int size_bytes;
+///*************************************************
+//** FUNCTION: LogInfoToFile
+//** VARIABLES:
+//**    [I ]  CONTROL_TYPE         *p_control
+//**    [I ]  OUTPUT_LOG_FILE_TYPE *log_file,
+//**    [I ]  char*                 message
+//** RETURN:
+//**    void
+//** DESCRIPTION:
+//**    This is a helper function.
+//**    It is used for logging to a local txt file
+//**    This function will add data to the output buffers
+//**    and (when the buffer has reached the defined length)
+//**    write the buffer to the appropriate output file.
+//**    NOTE: This function pairs with the LOG_INFO macro.
+//**          For the LOG_DATA pair, see LogDataToFile.
+//**    NOTE: This function replaces the IMU_MODE function
+//**          LogInfoToFile.
+//*/
+//void LogInfoToFile( CONTROL_TYPE         *p_control,
+//                    OUTPUT_LOG_FILE_TYPE *log_file,
+//                    char*                 msg  )
+//{
+//  long int size_bytes;
+//
+//  /* Add message to output buffer */
+//  log_file->LogBufferLen += strlen( msg );
+//  strcat( log_file->LogBuffer, msg );
+//  strcat( log_file->LogBuffer, "\n" );
+//
+//  /* If buffer has reached designated size ...*/
+//  if( log_file->LogBufferLen>MAX_LOG_BUFFER_SIZE )
+//  {
+//    /* NOTE : File is kept open during execution
+//    **        First open is in common_init */
+//
+//    /* Get current file size */
+//    //size_bytes = ftell( log_file->LogFile_fh );
+//    size_bytes = FILE_SIZE_BYTES(log_file->LogFile_fh);
+//
+//    /* If the filesize is larger than the designated
+//    ** max, close file and open next index */
+//    if( size_bytes>MAX_OUTPUT_FILE_SIZE )
+//    {
+//      //fclose( log_file->LogFile_fh );
+//      FILE_CLOSE( log_file->LogFile_fh );
+//      GetNextLogFileName( p_control, log_file );
+//
+//      //log_file->LogFile_fh = fopen( log_file->LogFileName, "w" );
+//      log_file->LogFile_fh = FILE_OPEN_WRITE( log_file->LogFileName );
+//    }
+//
+//    /* Print to file */
+//    //fprintf( log_file->LogFile_fh, log_file->LogBuffer );
+//    //fflush( log_file->LogFile_fh );
+//    FILE_PRINT_TO_FILE( log_file->LogFile_fh, log_file->LogBuffer );
+//    FILE_FLUSH(_fh);
+//
+//    log_file->LogBuffer[0] = '\0';
+//    log_file->LogBufferLen = 0;
+//  }
+//} /* End LogInfoToFile() */
 
-  /* Add message to output buffer */
-  log_file->LogBufferLen += strlen( msg );
-  strcat( log_file->LogBuffer, msg );
-  strcat( log_file->LogBuffer, "\n" );
-
-  /* If buffer has reached designated size ...*/
-  if( log_file->LogBufferLen>MAX_LOG_BUFFER_SIZE )
-  {
-    /* NOTE : File is kept open during execution
-    **        First open is in common_init */
-
-    /* Get current file size */
-    size_bytes = ftell( log_file->LogFile_fh );
-
-    /* If the filesize is larger than the designated
-    ** max, close file and open next index */
-    if( size_bytes>MAX_OUTPUT_FILE_SIZE )
-    {
-      fclose( log_file->LogFile_fh );
-      GetNextLogFileName( p_control, log_file );
-
-      log_file->LogFile_fh = fopen( log_file->LogFileName, "w" );
-    }
-
-    /* Print to file */
-    fprintf( log_file->LogFile_fh, log_file->LogBuffer );
-    fflush( log_file->LogFile_fh );
-
-    log_file->LogBuffer[0] = '\0';
-    log_file->LogBufferLen = 0;
-  }
-} /* End LogInfoToFile() */
-
-/*************************************************
-** FUNCTION: GetNextLogFileName
-** VARIABLES:
-**    [I ]  CONTROL_TYPE      *p_control
-** RETURN:
-**    void
-** DESCRIPTION:
-**    This is a helper function.
-**    It is used for logging to an SD card.
-**    This function creates a filename which does not
-**    exist on the card, to which we will log our data.
-*/
-void GetNextLogFileName( CONTROL_TYPE          *p_control,
-                         OUTPUT_LOG_FILE_TYPE  *log_file )
-{
-  int  i;
-
-  for( i=log_file->LogFileIdx; i<LOG_FILE_MAX_IDX; i++ )
-  {
-    /* Construct a file with PREFIX[Index].SUFFIX */
-    sprintf( log_file->LogFileName, "%s%i.%s", log_file->file_prefix, i, log_file->file_suffix );
-    LOG_INFO( " > Trying File %s", log_file->LogFileName );
-
-    /* If the file name doesn't exist, return it */
-    if( fopen(log_file->LogFileName, "r") == NULL )
-    {
-      LOG_INFO( " > File %s Available", log_file->LogFileName );
-      log_file->LogFileIdx = i + 1;
-      break;
-    }
-  }
-} /* End GetNextLogFileName() */
+///*************************************************
+//** FUNCTION: GetNextLogFileName
+//** VARIABLES:
+//**    [I ]  CONTROL_TYPE      *p_control
+//** RETURN:
+//**    void
+//** DESCRIPTION:
+//**    This is a helper function.
+//**    It is used for logging to an SD card.
+//**    This function creates a filename which does not
+//**    exist on the card, to which we will log our data.
+//*/
+//void GetNextLogFileName( CONTROL_TYPE          *p_control,
+//                         OUTPUT_LOG_FILE_TYPE  *log_file )
+//{
+//  int  i;
+//
+//  for( i=log_file->LogFileIdx; i<LOG_FILE_MAX_IDX; i++ )
+//  {
+//    /* Construct a file with PREFIX[Index].SUFFIX */
+//    sprintf( log_file->LogFileName, "%s%i.%s", log_file->file_prefix, i, log_file->file_suffix );
+//    LOG_INFO( " > Trying File %s", log_file->LogFileName );
+//
+//    /* If the file name doesn't exist, return it */
+//    //if( fopen(log_file->LogFileName, "r") == NULL )
+//    if( ! FILE_EXISTS_FLAG(log_file->LogFileName) )
+//    {
+//      LOG_INFO( " > File %s Available", log_file->LogFileName );
+//      log_file->LogFileIdx = i + 1;
+//      break;
+//    }
+//  }
+//} /* End GetNextLogFileName() */
 
 #endif /* End EXE_MODE (Emulation mode) */
