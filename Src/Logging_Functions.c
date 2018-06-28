@@ -116,7 +116,7 @@ void Debug_LogOut( CONTROL_TYPE       *p_control,
       break;
   }
 
-  LOG_DATA(LogBuffer);
+  LOG_INFO(LogBuffer);
 } /* End Debug_LogOut */
 
 
@@ -230,7 +230,7 @@ void Cal_LogOut( CONTROL_TYPE      *p_control,
       break;
   }
 
-  LOG_DATA(LogBuffer);
+  LOG_INFO(LogBuffer);
 } /* End Cal_LogOut */
 
 
@@ -277,7 +277,7 @@ void FltToStr( float value,
 }
 
 /*************************************************
-** FUNCTION: LogInfoToFile
+** FUNCTION: LogToFile
 ** VARIABLES:
 **    [I ]  CONTROL_TYPE         *p_control
 **    [I ]  OUTPUT_LOG_FILE_TYPE *log_file,
@@ -286,23 +286,47 @@ void FltToStr( float value,
 **    void
 ** DESCRIPTION:
 **    This is a helper function.
-**    It is used for logging to an SD card.
+**    It is used for logging to a file (SD or local).
 **    This function will add data to the output buffers
 **    and (when the buffer has reached the defined length)
 **    write the buffer to the appropriate output file.
-**    Note, this function pairs with the LOG_INFO macro.
-**    For the LOG_DATA pair, see LogDataToSDFile.
 */
-void LogInfoToFile( CONTROL_TYPE         *p_control,
-                    OUTPUT_LOG_FILE_TYPE *log_file,
-                    char*                 msg  )
+void LogToFile( CONTROL_TYPE         *p_control,
+                OUTPUT_LOG_FILE_TYPE *log_file,
+                char*                 msg  )
 {
   long int size_bytes;
 
+  
+  if( log_file->type==1 ) /* type 0:txt */
+  {
+    LOG_INFO( " HERE2 : size : %d", log_file->size );
+  }
+  
+  /* If logging to file is disabled,
+  ** send to default out (wither uart or stdout)
+  ** Only works with txt logging */
+  if( log_file->enabled==FALSE )
+  {
+    if( log_file->type==0 ) /* type 0:txt */
+    {
+      LOG_INFO_DEFAULT( msg );
+    }
+    return;
+  }
+
   /* Add message to output buffer */
-  log_file->LogBufferLen += strlen( msg );
-  strcat( log_file->LogBuffer, msg );
-  strcat( log_file->LogBuffer, "\n" );
+  if( log_file->type==0 ) /* type 0:txt */
+  {
+    log_file->LogBufferLen += strlen( msg );
+    strcat( log_file->LogBuffer, msg );
+  }
+  else
+  {
+    LOG_INFO( " HERE3 : size : %d", log_file->size );
+    memcpy( &log_file->LogBuffer[log_file->LogBufferLen], msg, log_file->size );
+    log_file->LogBufferLen += log_file->size;
+  }
 
   /* If buffer has reached designated size ...*/
   if( log_file->LogBufferLen > MAX_LOG_BUFFER_STORE )
@@ -313,24 +337,31 @@ void LogInfoToFile( CONTROL_TYPE         *p_control,
     if( log_file->LogFile_fh!=NULL )
     {
       /* Get current file size */
-      //size_bytes = ftell(log_file->LogFile_fh);
       size_bytes = FILE_SIZE_BYTES(log_file->LogFile_fh);
 
       /* If the filesize is larger than the designated
       ** max, close file and open next index */
-      //if( log_file->LogFile_fh.size()>SD_MAX_FILE_SIZE )
-      if( size_bytes>LOG_FILE_MAX_IDX )
+      if( size_bytes>MAX_OUTPUT_FILE_SIZE )
       {
-        //log_file->LogFile_fh.close();
-        FILE_CLOSE( log_file->LogFile_fh );
-        GetNextLogFileName( p_control, log_file );
-
-        if( p_control->SDCardPresent==TRUE )
+        if( log_file->LogFileIdx>LOG_FILE_MAX_IDX )
         {
-          //log_file->LogFile_fh = SD.open( log_file->LogFileName, FILE_WRITE );
-          log_file->LogFile_fh = FILE_OPEN_WRITE( log_file->LogFileName );
+          FILE_CLOSE( log_file->LogFile_fh );
+          log_file->enabled = FALSE;
         }
+        else
+        {
+          FILE_CLOSE( log_file->LogFile_fh );
+          GetNextLogFileName( p_control, log_file );
 
+          if( log_file->type==0 ) /* type 0:txt */
+          {
+            log_file->LogFile_fh = FILE_OPEN_WRITE( log_file->LogFileName );
+          }
+          else /* type 1:bin */
+          {
+            log_file->LogFile_fh = FILE_OPEN_WRITE_B( log_file->LogFileName );
+          }
+        }
       }
       if( log_file->LogFile_fh==NULL )
       {
@@ -341,10 +372,15 @@ void LogInfoToFile( CONTROL_TYPE         *p_control,
       }
       else
       {
-        //log_file->LogFile_fh.print( log_file->LogBuffer );
-        //log_file->LogFile_fh.flush();
-        FILE_PRINT_TO_FILE( log_file->LogFile_fh, log_file->LogBuffer );
-        FILE_FLUSH( log_file->LogFile_fh );
+        if( log_file->type==0 ) /* type 0:txt */
+        {
+          FILE_PRINT_TO_FILE( log_file->LogFile_fh, log_file->LogBuffer );
+          FILE_FLUSH( log_file->LogFile_fh );
+        }
+        else /* type 1:bin */
+        {
+          FILE_WRITE_TO_FILE( (log_file->LogBuffer), 1, log_file->LogBufferLen, log_file->LogFile_fh );
+        }
 
         log_file->LogBuffer[0] = '\0';
         log_file->LogBufferLen = 0;
@@ -356,11 +392,9 @@ void LogInfoToFile( CONTROL_TYPE         *p_control,
       #if( EXE_MODE==0 ) /* 0 : IMU Mode */
         p_control->SDCardPresent = FALSE;
       #endif
-    }
-  }
-} /* End LogInfoToFile() */
-
-
+    } /* End if log_file->LogFile_fh!=NULL */
+  } /* End if log_file->LogBufferLen > MAX_LOG_BUFFER_STORE */
+} /* End LogToFile() */
 
 
 

@@ -95,6 +95,7 @@ void Common_Init ( CONTROL_TYPE       *p_control,
         LOG_INFO( " > SD Card Detected");
 
         /* Open Log Info File */
+        p_control->log_info_file.type = 0; /* type 0:txt */
         p_control->log_info_file.LogFileIdx = 0;
         GetNextLogFileName( p_control, &p_control->log_info_file );
         LOG_INFO( " > Using Log Info File %s", p_control->log_info_file.LogFileName);
@@ -112,6 +113,7 @@ void Common_Init ( CONTROL_TYPE       *p_control,
         }
         
         /* Open Log Data File */
+        p_control->log_data_file.type = 1; /* type 1:bin */
         p_control->log_data_file.LogFileIdx = 0;
         GetNextLogFileName( p_control, &p_control->log_data_file );
         LOG_INFO( " > Using Log Data File %s", p_control->log_data_file.LogFileName);
@@ -123,7 +125,7 @@ void Common_Init ( CONTROL_TYPE       *p_control,
         }
         else
         {
-          LOG_INFO( " > Log Data Open Failed, Disabline SD Logging" );
+          LOG_INFO( " > Log Data Open Failed, Disabling SD Logging" );
           p_control->SDCardPresent         = FALSE;
           p_control->log_data_file.enabled = FALSE;
         }
@@ -172,37 +174,40 @@ void Common_Init ( CONTROL_TYPE       *p_control,
       ** Open Files 
       */
 
-      /* Open Log Info File */
-      p_control->log_info_file.LogFileIdx = 0;
-      GetNextLogFileName( p_control, &p_control->log_info_file );
-      LOG_INFO( " > Using Log Info File %s", p_control->log_info_file.LogFileName);
-      p_control->log_info_file.LogFile_fh = FILE_OPEN_WRITE( p_control->log_info_file.LogFileName );
-      if( p_control->log_info_file.LogFile_fh!=NULL )
-      {
-        LOG_INFO( " > Log Info Open Successful");
-        p_control->log_info_file.enabled = TRUE;
-      }
-      else
-      {
-        LOG_INFO( " > Log Info Open Failed, Disabline File Logging" );
-        p_control->log_info_file.enabled = FALSE;
-      }
-      
-      /* Open Log Data File */
-      p_control->log_data_file.LogFileIdx = 0;
-      GetNextLogFileName( p_control, &p_control->log_data_file );
-      LOG_INFO( " > Using Log Data File %s", p_control->log_data_file.LogFileName);
-      //p_control->log_data_file.LogFile_fh = SD.open( p_control->log_data_file.LogFileName, FILE_WRITE );
-      if( p_control->log_data_file.LogFile_fh!=NULL )
-      {
-        LOG_INFO( " > Log Data Open Successful");
-        p_control->log_data_file.enabled = TRUE;
-      }
-      else
-      {
-        LOG_INFO( " > Log Data Open Failed, Disabline File Logging" );
-        p_control->log_data_file.enabled = FALSE;
-      }
+        /* Open Log Info File */
+        p_control->log_info_file.type = 0; /* type 0:txt */
+        p_control->log_info_file.LogFileIdx = 0;
+        GetNextLogFileName( p_control, &p_control->log_info_file );
+        LOG_INFO( " > Using Log Info File %s", p_control->log_info_file.LogFileName);
+        p_control->log_info_file.LogFile_fh = FILE_OPEN_WRITE( p_control->log_info_file.LogFileName );
+        if( p_control->log_info_file.LogFile_fh!=NULL )
+        {
+          LOG_INFO( " > Log Info Open Successful");
+          p_control->log_info_file.enabled = TRUE;
+        }
+        else
+        {
+          LOG_INFO( " > Log Info Open Failed, Disabline File Logging" );
+          p_control->SDCardPresent         = FALSE;
+          p_control->log_info_file.enabled = FALSE;
+        }
+        
+        /* Open Log Data File */
+        p_control->log_data_file.type = 1; /* type 1:bin */
+        p_control->log_data_file.LogFileIdx = 0;
+        GetNextLogFileName( p_control, &p_control->log_data_file );
+        LOG_INFO( " > Using Log Data File %s", p_control->log_data_file.LogFileName);
+        p_control->log_data_file.LogFile_fh = FILE_OPEN_WRITE( p_control->log_data_file.LogFileName );
+        if( p_control->log_data_file.LogFile_fh!=NULL )
+        {
+          LOG_INFO( " > Log Data Open Successful");
+          p_control->log_data_file.enabled = TRUE;
+        }
+        else
+        {
+          LOG_INFO( " > Log Data Open Failed, Disabling File Logging" );
+          p_control->log_data_file.enabled = FALSE;
+        }
       
       /* Close both files if either failed */
       if( (p_control->log_info_file.enabled==FALSE) ||

@@ -52,7 +52,7 @@ void
 delay( unsigned int mseconds );
 
 void 
-LogInfoToFile( 
+LogToFile( 
       CONTROL_TYPE         *p_control,
       OUTPUT_LOG_FILE_TYPE *log_file,
       char*                 msg  );

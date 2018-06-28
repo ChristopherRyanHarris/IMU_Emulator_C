@@ -425,7 +425,7 @@
 	"../Include/Common_Config.h"
 	"../Include/Emulator_Protos.h"
 
-1530148444 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\common_config.h
+1530166727 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\common_config.h
 	<math.h>
 	<stdio.h>
 	<stdio.h>
@@ -477,7 +477,7 @@
 1530148710 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\imu9250_config.h
 	"../Include/Math.h"
 
-1530148667 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\emulator_protos.h
+1530165719 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\emulator_protos.h
 	"../Include/Common_Config.h"
 	<math.h>
 	<string.h>
@@ -489,7 +489,7 @@
 	"../Include/WISE_Config.h"
 	"../Include/Communication_Config.h"
 
-1530154132 source:c:\users\christopher harris\documents\11.githubp\imu_emulator_c\src\common_functions.c
+1530170580 source:c:\users\christopher harris\documents\11.githubp\imu_emulator_c\src\common_functions.c
 	"../Include/Common_Config.h"
 	"../Include/Emulator_Protos.h"
 
@@ -505,7 +505,7 @@
 	"../Include/Common_Config.h"
 	"../Include/Emulator_Protos.h"
 
-1530155689 source:c:\users\christopher harris\documents\11.githubp\imu_emulator_c\src\emulator_functions.c
+1530169930 source:c:\users\christopher harris\documents\11.githubp\imu_emulator_c\src\emulator_functions.c
 	"../Include/Common_Config.h"
 	"../Include/Emulator_Protos.h"
 
@@ -517,7 +517,7 @@
 	"../Include/Common_Config.h"
 	"../Include/Emulator_Protos.h"
 
-1530156375 source:c:\users\christopher harris\documents\11.githubp\imu_emulator_c\src\logging_functions.c
+1530170556 source:c:\users\christopher harris\documents\11.githubp\imu_emulator_c\src\logging_functions.c
 	"../Include/Common_Config.h"
 	"../Include/Emulator_Protos.h"
 
@@ -542,5 +542,5 @@
 	"../Include/IMU10736_Config.h"
 	"../Include/IMU9250_Config.h"
 
-1530156510 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\log_config.h
+1530170695 c:\users\christopher harris\documents\11.githubp\imu_emulator_c\include\log_config.h
 
